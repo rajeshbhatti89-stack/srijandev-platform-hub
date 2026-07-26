@@ -27,8 +27,24 @@ app.use(cookieParser());
 // Dynamic Subdomain & Tenant Resolver
 app.use(tenantResolver);
 
+// Service Worker Cache Buster
+app.get('/sw.js', (req, res) => {
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+  res.setHeader('Content-Type', 'application/javascript');
+  res.send(`
+    self.addEventListener('install', () => self.skipWaiting());
+    self.addEventListener('activate', (event) => {
+      event.waitUntil(
+        caches.keys().then(keys => Promise.all(keys.map(k => caches.delete(k))))
+          .then(() => self.registration.unregister())
+      );
+    });
+  `);
+});
+
 // Explicit Root Landing Page Route (Executed BEFORE express.static)
 app.get('/', (req, res) => {
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
   if (req.isTenantPortal || req.query.tenant) {
     return res.sendFile(path.join(__dirname, 'public', 'portal.html'));
   }
@@ -37,6 +53,7 @@ app.get('/', (req, res) => {
 
 // Explicit Redirect for /auth.html -> /
 app.get('/auth.html', (req, res) => {
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
   res.redirect(301, '/');
 });
 
