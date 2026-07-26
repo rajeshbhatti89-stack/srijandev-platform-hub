@@ -49,9 +49,11 @@ async function requireAuth(req, res, next) {
       });
     }
 
-    // MANDATORY GUARDRAIL 2: Strict Tenant Isolation on Login
+    // MANDATORY GUARDRAIL 2: Strict Tenant Isolation
     if (dbUser.role !== 'super_admin') {
-      if (!req.tenantId || dbUser.tenant_id !== req.tenantId) {
+      if (!req.tenantId) {
+        req.tenantId = dbUser.tenant_id;
+      } else if (dbUser.tenant_id !== req.tenantId) {
         return res.status(403).json({
           error: 'Cross-Tenant Access Denied',
           message: 'Your account is not authorized to access this client portal.'
