@@ -9,8 +9,6 @@ async function runSimulationSuite() {
 
   // Initialize DB & Server
   await seedDatabase();
-  require('../server');
-  await new Promise(res => setTimeout(res, 1000));
 
   let overallSuccess = true;
   const results = [];

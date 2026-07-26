@@ -8,8 +8,6 @@ async function runSuspendDeleteTests() {
   console.log('======================================================================\n');
 
   await seedDatabase();
-  require('../server');
-  await new Promise(res => setTimeout(res, 1000));
 
   // 1. Super-Admin Login
   const adminLoginRes = await makeRequest('POST', '/api/admin/login', {
