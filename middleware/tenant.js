@@ -18,19 +18,33 @@ async function tenantResolver(req, res, next) {
       detectedSubdomain = headerTenant.toLowerCase().trim();
     } else if (host) {
       const hostname = host.split(':')[0].toLowerCase();
-      const parts = hostname.split('.');
 
-      if (
-        parts.length > 1 &&
-        !['www', 'localhost', 'srijandev', '127', '0'].includes(parts[0]) &&
-        (!hostname.endsWith('.in') || parts.length > 2 && parts[0] !== 'www')
-      ) {
-        detectedSubdomain = parts[0];
+      // Main Domain Bypass Check: If host is root platform, localhost, IP, or cloud host app name (e.g. srijandev-platform-hub.onrender.com)
+      const isMainSiteHost =
+        hostname === 'localhost' ||
+        hostname === '127.0.0.1' ||
+        hostname === 'srijandev.in' ||
+        hostname === 'www.srijandev.in' ||
+        hostname.includes('srijandev-platform-hub') ||
+        (hostname.endsWith('.onrender.com') && hostname.startsWith('srijandev-platform-hub')) ||
+        (hostname.endsWith('.vercel.app') && hostname.startsWith('srijandev-platform-hub')) ||
+        (hostname.endsWith('.railway.app') && hostname.startsWith('srijandev-platform-hub'));
+
+      if (!isMainSiteHost) {
+        const parts = hostname.split('.');
+
+        if (
+          parts.length > 1 &&
+          !['www', 'localhost', 'srijandev', 'srijandev-platform-hub', '127', '0'].includes(parts[0])
+        ) {
+          detectedSubdomain = parts[0];
+        }
       }
     }
 
     if (!detectedSubdomain) {
       req.isMainHub = true;
+      req.isMainSite = true;
       req.tenant = null;
       return next();
     }
@@ -81,6 +95,7 @@ async function tenantResolver(req, res, next) {
 
     // Attach Tenant Context to Request
     req.isMainHub = false;
+    req.isMainSite = false;
     req.isTenantPortal = true;
     req.tenant = {
       ...tenant,

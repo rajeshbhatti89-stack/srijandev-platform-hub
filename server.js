@@ -27,8 +27,8 @@ app.use(cookieParser());
 // Dynamic Subdomain & Tenant Resolver
 app.use(tenantResolver);
 
-// Serve Static Public Assets
-app.use(express.static(path.join(__dirname, 'public')));
+// Serve Static Public Assets (with index disabled for dynamic tenant routing)
+app.use(express.static(path.join(__dirname, 'public'), { index: false }));
 
 /* ==========================================================================
    1. PUBLIC MARKETING HUB & LEAD CAPTURE API
@@ -649,6 +649,9 @@ app.get(['/admin', '/super-admin'], (req, res) => {
 
 // Client Portal & Root Catch-all Route
 app.get('*', (req, res) => {
+  if (req.isMainSite || req.isMainHub) {
+    return res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  }
   if (req.isTenantPortal || req.query.tenant) {
     return res.sendFile(path.join(__dirname, 'public', 'portal.html'));
   }
