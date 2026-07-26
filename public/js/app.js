@@ -1,3 +1,24 @@
+// Global API Base Config for Static Hosting Environments
+const API_BASE_URL = (window.location.hostname.includes('srijandev.in') || window.location.hostname.includes('web.app'))
+  ? 'https://srijandev-platform-hub.onrender.com'
+  : '';
+
+async function apiFetch(urlPath, options = {}) {
+  const fullUrl = urlPath.startsWith('http') ? urlPath : `${API_BASE_URL}${urlPath}`;
+  const fetchOpts = {
+    credentials: 'include',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...(options.headers || {})
+    }
+  };
+  if (options.body && typeof options.body === 'object' && !(options.body instanceof FormData)) {
+    fetchOpts.body = JSON.stringify(options.body);
+  }
+  return fetch(fullUrl, fetchOpts);
+}
+
 // State Management
 let currentTenant = null;
 let currentUser = null;
@@ -18,9 +39,9 @@ function detectPageType() {
   const urlParams = new URLSearchParams(window.location.search);
   const tenantParam = urlParams.get('tenant');
 
-  if (path === '/admin' || path === '/super-admin') {
+  if (path === '/admin' || path === '/super-admin' || path.includes('admin.html')) {
     isAdminPage = true;
-  } else if (tenantParam || path === '/portal') {
+  } else if (tenantParam || path === '/portal' || path.includes('portal.html')) {
     isPortalPage = true;
   } else {
     isMarketingPage = true;
@@ -30,7 +51,7 @@ function detectPageType() {
 // Fetch Current Auth Session
 async function checkAuthStatus() {
   try {
-    const res = await fetch('/api/auth/me');
+    const res = await apiFetch('/api/auth/me');
     if (res.ok) {
       const data = await res.json();
       currentUser = data.user;
@@ -106,7 +127,7 @@ async function loadSuperAdminDashboard() {
 
 async function loadLeadsList() {
   try {
-    const res = await fetch('/api/admin/leads');
+    const res = await apiFetch('/api/admin/leads');
     if (!res.ok) return;
     const data = await res.json();
     const tbody = document.getElementById('leadsTableBody');
@@ -139,7 +160,7 @@ async function loadLeadsList() {
 
 async function loadTenantsList() {
   try {
-    const res = await fetch('/api/admin/tenants');
+    const res = await apiFetch('/api/admin/tenants');
     if (!res.ok) return;
     const data = await res.json();
     const tbody = document.getElementById('tenantsTableBody');
@@ -185,10 +206,9 @@ async function loadTenantsList() {
 
 async function handleToggleTenantStatus(tenantId, newStatus) {
   try {
-    const res = await fetch(`/api/admin/tenants/${tenantId}/status`, {
+    const res = await apiFetch(`/api/admin/tenants/${tenantId}/status`, {
       method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ status: newStatus })
+      body: { status: newStatus }
     });
     const data = await res.json();
     if (res.ok) {
@@ -207,7 +227,7 @@ async function handleDeleteTenant(tenantId, tenantName) {
     return;
   }
   try {
-    const res = await fetch(`/api/admin/tenants/${tenantId}`, {
+    const res = await apiFetch(`/api/admin/tenants/${tenantId}`, {
       method: 'DELETE'
     });
     const data = await res.json();
@@ -264,10 +284,9 @@ async function handleProvisionTenant(e) {
   };
 
   try {
-    const res = await fetch('/api/admin/provision', {
+    const res = await apiFetch('/api/admin/provision', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
+      body: payload
     });
 
     const data = await res.json();
@@ -289,7 +308,7 @@ async function handleProvisionTenant(e) {
 
 async function loadTenantPortal() {
   try {
-    const res = await fetch('/api/tenant/info');
+    const res = await apiFetch('/api/tenant/info');
     if (!res.ok) {
       const err = await res.json();
       showAlert(err.message || 'Tenant access error', 'error');
@@ -350,8 +369,8 @@ function switchClientTab(tabName) {
 async function loadWorkforceData() {
   try {
     const [attRes, leaveRes] = await Promise.all([
-      fetch('/api/tenant/attendance'),
-      fetch('/api/tenant/leaves')
+      apiFetch('/api/tenant/attendance'),
+      apiFetch('/api/tenant/leaves')
     ]);
 
     if (attRes.ok) {
@@ -390,10 +409,9 @@ async function handleClockAttendance(type) {
     return;
   }
   try {
-    const res = await fetch('/api/tenant/attendance/clock', {
+    const res = await apiFetch('/api/tenant/attendance/clock', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ type, latitude: 28.6139, longitude: 77.2090, location_name: 'Field Operation HQ' })
+      body: { type, latitude: 28.6139, longitude: 77.2090, location_name: 'Field Operation HQ' }
     });
     const data = await res.json();
     if (res.ok) {
@@ -421,10 +439,9 @@ async function handleLeaveSubmit(e) {
   };
 
   try {
-    const res = await fetch('/api/tenant/leaves', {
+    const res = await apiFetch('/api/tenant/leaves', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
+      body: payload
     });
     if (res.ok) {
       showAlert('Leave request submitted!', 'success');
@@ -442,9 +459,9 @@ async function handleLeaveSubmit(e) {
 async function loadPatrolData() {
   try {
     const [cpRes, scanRes, incRes] = await Promise.all([
-      fetch('/api/tenant/checkpoints'),
-      fetch('/api/tenant/scans'),
-      fetch('/api/tenant/incidents')
+      apiFetch('/api/tenant/checkpoints'),
+      apiFetch('/api/tenant/scans'),
+      apiFetch('/api/tenant/incidents')
     ]);
 
     if (cpRes.ok) {
@@ -505,10 +522,9 @@ async function handleScanSubmit() {
   }
 
   try {
-    const res = await fetch('/api/tenant/scans', {
+    const res = await apiFetch('/api/tenant/scans', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ checkpoint_id: cpId, notes })
+      body: { checkpoint_id: cpId, notes }
     });
     if (res.ok) {
       showAlert('QR Checkpoint Scan verified and logged!', 'success');
@@ -535,10 +551,9 @@ async function handleIncidentSubmit(e) {
   };
 
   try {
-    const res = await fetch('/api/tenant/incidents', {
+    const res = await apiFetch('/api/tenant/incidents', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
+      body: payload
     });
     if (res.ok) {
       showAlert('Security Incident report dispatched!', 'success');
@@ -570,26 +585,25 @@ function closeLeadModal() {
 async function handleLeadSubmit(e) {
   e.preventDefault();
   const payload = {
-    full_name: document.getElementById('leadFullName').value,
-    company_name: document.getElementById('leadCompany').value,
-    email: document.getElementById('leadEmail').value,
-    phone: document.getElementById('leadPhone').value,
-    employee_count: document.getElementById('leadEmpCount').value,
-    preferred_subdomain: document.getElementById('leadSubdomain').value,
-    required_suites: document.getElementById('leadSuites').value
+    full_name: document.getElementById('quoteContact')?.value || document.getElementById('leadFullName')?.value,
+    company_name: document.getElementById('quoteCompany')?.value || document.getElementById('leadCompany')?.value,
+    email: document.getElementById('quoteEmail')?.value || document.getElementById('leadEmail')?.value,
+    phone: document.getElementById('quotePhone')?.value || document.getElementById('leadPhone')?.value,
+    employee_count: document.getElementById('roiSlider')?.value || document.getElementById('leadEmpCount')?.value || '50',
+    preferred_subdomain: 'quote' + Date.now().toString().slice(-4),
+    required_suites: document.getElementById('quoteSuites')?.value || document.getElementById('leadSuites')?.value || 'Both Suites'
   };
 
   try {
-    const res = await fetch('/api/leads', {
+    const res = await apiFetch('/api/leads', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
+      body: payload
     });
 
     const data = await res.json();
     if (res.ok) {
       closeLeadModal();
-      showAlert(data.message, 'success');
+      showAlert(data.message || 'Quotation proposal request submitted!', 'success');
     } else {
       showAlert(data.message || data.error, 'error');
     }
@@ -626,10 +640,9 @@ async function handleLoginSubmit(e) {
   }
 
   try {
-    const res = await fetch(endpoint, {
+    const res = await apiFetch(endpoint, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password })
+      body: { email, password }
     });
 
     const data = await res.json();
@@ -640,19 +653,23 @@ async function handleLoginSubmit(e) {
       
       // Smart Post-Login Redirect
       setTimeout(() => {
+        const targetHost = (window.location.hostname.includes('srijandev.in') || window.location.hostname.includes('web.app'))
+          ? 'https://srijandev-platform-hub.onrender.com'
+          : '';
+
         if (currentUser.role === 'super_admin') {
-          window.location.href = '/admin.html';
+          window.location.href = `${targetHost}/admin.html`;
         } else if (currentUser.tenant_subdomain) {
-          window.location.href = `/portal.html?tenant=${currentUser.tenant_subdomain}`;
+          window.location.href = `${targetHost}/portal.html?tenant=${currentUser.tenant_subdomain}`;
         } else {
-          window.location.href = '/portal.html';
+          window.location.href = `${targetHost}/portal.html`;
         }
-      }, 500);
+      }, 400);
     } else {
       showAlert(data.message || data.error || 'Invalid email or password.', 'error');
     }
   } catch (err) {
-    showAlert('Login request failed. Please try again.', 'error');
+    showAlert('Login request failed. Please check network connection.', 'error');
   }
 }
 
