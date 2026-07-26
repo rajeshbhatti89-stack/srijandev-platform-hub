@@ -642,6 +642,19 @@ app.get('/api/tenant/analytics', requireAuth, async (req, res) => {
    5. PAGE ROUTER (Modular HTML Files)
    ========================================================================== */
 
+// Explicit Root Route
+app.get('/', (req, res) => {
+  if (req.isTenantPortal || req.query.tenant) {
+    return res.sendFile(path.join(__dirname, 'public', 'portal.html'));
+  }
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+// Explicit Redirect for deprecated /auth.html -> /
+app.get('/auth.html', (req, res) => {
+  res.redirect(301, '/');
+});
+
 // Admin Dashboard Route
 app.get(['/admin', '/super-admin'], (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'admin.html'));

@@ -45,7 +45,12 @@ async function testMainHostRouting() {
   if (unknownTenantRes.status !== 404 || !unknownTenantRes.rawBody.includes('Client Portal Not Found')) {
     throw new Error(`Unknown tenant handling failed! Status: ${unknownTenantRes.status}`);
   }
-  console.log('✓ Unknown Tenant Subdomain `nonexistent.srijandev.in` correctly returned 404 Portal Not Found.');
+  // Test 7: /auth.html -> 301 Redirect to /
+  const authRedirectRes = await makeHostRequest('srijandev.in', '/auth.html');
+  if (authRedirectRes.status !== 301 || authRedirectRes.headers.location !== '/') {
+    throw new Error(`/auth.html redirect failed! Got status: ${authRedirectRes.status}, Location: ${authRedirectRes.headers.location}`);
+  }
+  console.log('✓ Request for `/auth.html` correctly redirected with 301 to `/`.');
 
   console.log('\n======================================================');
   console.log('🎉 MAIN HOST DOMAIN ROUTING FIX VERIFIED 100% CLEAN!');
