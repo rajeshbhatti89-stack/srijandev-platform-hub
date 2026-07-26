@@ -611,12 +611,19 @@ function closeLoginModal() {
   if (modal) modal.classList.remove('active');
 }
 
-async function handleLogin(e) {
-  e.preventDefault();
-  const email = document.getElementById('loginEmail').value;
-  const password = document.getElementById('loginPassword').value;
+async function handleLoginSubmit(e) {
+  if (e) e.preventDefault();
+  const email = document.getElementById('loginEmail')?.value;
+  const password = document.getElementById('loginPassword')?.value;
+  const tenantInput = document.getElementById('loginTenant')?.value?.trim();
 
-  const endpoint = isAdminPage ? '/api/admin/login' : '/api/auth/login';
+  // Smart endpoint selection
+  let endpoint = '/api/auth/login';
+  if (isAdminPage || (email && email.toLowerCase() === 'rajeshbhatti89@gmail.com')) {
+    endpoint = '/api/admin/login';
+  } else if (tenantInput) {
+    endpoint = `/api/auth/login?tenant=${encodeURIComponent(tenantInput)}`;
+  }
 
   try {
     const res = await fetch(endpoint, {
@@ -626,18 +633,30 @@ async function handleLogin(e) {
     });
 
     const data = await res.json();
-    if (res.ok) {
+    if (res.ok && data.success) {
       currentUser = data.user;
       closeLoginModal();
       showAlert(`Welcome back, ${currentUser.name}!`, 'success');
-      window.location.reload();
+      
+      // Smart Post-Login Redirect
+      setTimeout(() => {
+        if (currentUser.role === 'super_admin') {
+          window.location.href = '/admin.html';
+        } else if (currentUser.tenant_subdomain) {
+          window.location.href = `/portal.html?tenant=${currentUser.tenant_subdomain}`;
+        } else {
+          window.location.href = '/portal.html';
+        }
+      }, 500);
     } else {
-      showAlert(data.message || data.error, 'error');
+      showAlert(data.message || data.error || 'Invalid email or password.', 'error');
     }
   } catch (err) {
-    showAlert('Login failed.', 'error');
+    showAlert('Login request failed. Please try again.', 'error');
   }
 }
+
+const handleLogin = handleLoginSubmit;
 
 async function handleLogout() {
   try {
