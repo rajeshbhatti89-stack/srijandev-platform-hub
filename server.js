@@ -27,6 +27,19 @@ app.use(cookieParser());
 // Dynamic Subdomain & Tenant Resolver
 app.use(tenantResolver);
 
+// Explicit Root Landing Page Route (Executed BEFORE express.static)
+app.get('/', (req, res) => {
+  if (req.isTenantPortal || req.query.tenant) {
+    return res.sendFile(path.join(__dirname, 'public', 'portal.html'));
+  }
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+// Explicit Redirect for /auth.html -> /
+app.get('/auth.html', (req, res) => {
+  res.redirect(301, '/');
+});
+
 // Serve Static Public Assets (with index disabled for dynamic tenant routing)
 app.use(express.static(path.join(__dirname, 'public'), { index: false }));
 
