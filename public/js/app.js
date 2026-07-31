@@ -1,717 +1,196 @@
-// Global API Base Config for Static Hosting Environments
-const API_BASE_URL = (window.location.hostname.includes('srijandev.in') || window.location.hostname.includes('web.app'))
-  ? 'https://srijandev-platform-hub.onrender.com'
-  : '';
+/* ==========================================================================
+   SRIJANDEV 3D TECH AGENCY - THREE.JS WEBGL & INTERACTIVE APP SCRIPT
+   ========================================================================== */
 
-async function apiFetch(urlPath, options = {}) {
-  const fullUrl = urlPath.startsWith('http') ? urlPath : `${API_BASE_URL}${urlPath}`;
-  const fetchOpts = {
-    credentials: 'include',
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...(options.headers || {})
+document.addEventListener('DOMContentLoaded', () => {
+
+  /* --------------------------------------------------------------------------
+     1. THREE.JS 3D INTERACTIVE HERO CANVAS SCENE
+     -------------------------------------------------------------------------- */
+  const canvasContainer = document.getElementById('threejs-canvas');
+
+  if (canvasContainer && typeof THREE !== 'undefined') {
+    // 1. Scene, Camera, Renderer
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(
+      60,
+      canvasContainer.clientWidth / canvasContainer.clientHeight,
+      0.1,
+      1000
+    );
+    camera.position.z = 4.5;
+
+    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+    renderer.setSize(canvasContainer.clientWidth, canvasContainer.clientHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    canvasContainer.appendChild(renderer.domElement);
+
+    // 2. Geometry: 3D Cyber Sphere & Particle Field
+    const sphereGeometry = new THREE.IcosahedronGeometry(1.8, 4);
+
+    // Wireframe Material
+    const wireframeMaterial = new THREE.MeshBasicMaterial({
+      color: 0x00f2fe,
+      wireframe: true,
+      transparent: true,
+      opacity: 0.35
+    });
+
+    const cyberSphere = new THREE.Mesh(sphereGeometry, wireframeMaterial);
+    scene.add(cyberSphere);
+
+    // Inner Glowing Core
+    const coreGeometry = new THREE.IcosahedronGeometry(1.2, 2);
+    const coreMaterial = new THREE.MeshBasicMaterial({
+      color: 0x7b2cbf,
+      wireframe: true,
+      transparent: true,
+      opacity: 0.5
+    });
+    const innerCore = new THREE.Mesh(coreGeometry, coreMaterial);
+    scene.add(innerCore);
+
+    // Particle Cloud Surround
+    const particlesCount = 700;
+    const posArray = new Float32Array(particlesCount * 3);
+
+    for (let i = 0; i < particlesCount * 3; i++) {
+      posArray[i] = (Math.random() - 0.5) * 10;
     }
-  };
-  if (options.body && typeof options.body === 'object' && !(options.body instanceof FormData)) {
-    fetchOpts.body = JSON.stringify(options.body);
+
+    const particlesGeometry = new THREE.BufferGeometry();
+    particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+
+    const particlesMaterial = new THREE.PointsMaterial({
+      size: 0.025,
+      color: 0x00f5a0,
+      transparent: true,
+      opacity: 0.7
+    });
+
+    const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+    scene.add(particlesMesh);
+
+    // 3. Mouse Parallax Movement Tracking
+    let mouseX = 0;
+    let mouseY = 0;
+    let targetX = 0;
+    let targetY = 0;
+
+    const windowHalfX = window.innerWidth / 2;
+    const windowHalfY = window.innerHeight / 2;
+
+    document.addEventListener('mousemove', (e) => {
+      mouseX = (e.clientX - windowHalfX) * 0.0005;
+      mouseY = (e.clientY - windowHalfY) * 0.0005;
+    });
+
+    // 4. Animation Loop (Hardware Accelerated 60FPS)
+    const animate = () => {
+      requestAnimationFrame(animate);
+
+      // Rotate 3D Geometries
+      cyberSphere.rotation.y += 0.004;
+      cyberSphere.rotation.x += 0.002;
+
+      innerCore.rotation.y -= 0.006;
+      innerCore.rotation.z += 0.003;
+
+      particlesMesh.rotation.y -= 0.001;
+
+      // Smooth Mouse Parallax Damping
+      targetX += (mouseX - targetX) * 0.05;
+      targetY += (mouseY - targetY) * 0.05;
+
+      cyberSphere.rotation.y += targetX * 0.5;
+      cyberSphere.rotation.x += targetY * 0.5;
+
+      renderer.render(scene, camera);
+    };
+
+    animate();
+
+    // 5. Window Resize Handler
+    window.addEventListener('resize', () => {
+      if (!canvasContainer) return;
+      const width = canvasContainer.clientWidth;
+      const height = canvasContainer.clientHeight;
+
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+      renderer.setSize(width, height);
+    });
   }
-  return fetch(fullUrl, fetchOpts);
-}
 
-// State Management
-let currentTenant = null;
-let currentUser = null;
-let isAdminPage = false;
-let isPortalPage = false;
-let isMarketingPage = false;
+  /* --------------------------------------------------------------------------
+     2. PROPOSAL / LEAD CAPTURE FORM HANDLER
+     -------------------------------------------------------------------------- */
+  const proposalForm = document.getElementById('proposalForm');
 
-document.addEventListener('DOMContentLoaded', async () => {
-  detectPageType();
-  await checkAuthStatus();
-  renderHeaderNav();
-  initPageData();
+  if (proposalForm) {
+    proposalForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const name = document.getElementById('fullName').value;
+      const phone = document.getElementById('phoneNum').value;
+      const service = document.getElementById('serviceType').value;
+
+      // Show sleek custom toast notification
+      showToast(`Thank you, ${name}! Your inquiry for "${service}" has been logged. Our technical lead will reach out to ${phone} within 2 hours.`);
+
+      proposalForm.reset();
+    });
+  }
+
+  /* --------------------------------------------------------------------------
+     3. TOAST NOTIFICATION UTILITY WITH ARIA ACCESSIBILITY
+     -------------------------------------------------------------------------- */
+  function showToast(message) {
+    const toastContainer = document.getElementById('toastContainer');
+    if (!toastContainer) return;
+
+    const toast = document.createElement('div');
+    toast.className = 'custom-toast';
+    toast.innerHTML = `
+      <div style="display:flex; align-items:center; gap:0.8rem;">
+        <i class="fa-solid fa-circle-check" style="font-size:1.4rem; color:#00f5a0;"></i>
+        <div>${message}</div>
+      </div>
+    `;
+
+    Object.assign(toast.style, {
+      position: 'fixed',
+      bottom: '2rem',
+      right: '2rem',
+      background: 'rgba(8, 13, 26, 0.95)',
+      backdropFilter: 'blur(16px)',
+      color: '#ffffff',
+      border: '1px solid rgba(0, 245, 160, 0.5)',
+      boxShadow: '0 10px 30px rgba(0, 0, 0, 0.6), 0 0 20px rgba(0, 245, 160, 0.3)',
+      padding: '1rem 1.4rem',
+      borderRadius: '16px',
+      zIndex: '3000',
+      fontSize: '0.9rem',
+      maxWidth: '400px',
+      transform: 'translateY(100px)',
+      opacity: '0',
+      transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)'
+    });
+
+    toastContainer.appendChild(toast);
+
+    // Animate In
+    setTimeout(() => {
+      toast.style.transform = 'translateY(0)';
+      toast.style.opacity = '1';
+    }, 50);
+
+    // Auto Remove After 5 Seconds
+    setTimeout(() => {
+      toast.style.transform = 'translateY(100px)';
+      toast.style.opacity = '0';
+      setTimeout(() => toast.remove(), 400);
+    }, 5000);
+  }
+
 });
-
-// Detect Active Page Type
-function detectPageType() {
-  const path = window.location.pathname;
-  const urlParams = new URLSearchParams(window.location.search);
-  const tenantParam = urlParams.get('tenant');
-
-  if (path === '/admin' || path === '/super-admin' || path.includes('admin.html')) {
-    isAdminPage = true;
-  } else if (tenantParam || path === '/portal' || path.includes('portal.html')) {
-    isPortalPage = true;
-  } else {
-    isMarketingPage = true;
-  }
-}
-
-// Fetch Current Auth Session
-async function checkAuthStatus() {
-  try {
-    const res = await apiFetch('/api/auth/me');
-    if (res.ok) {
-      const data = await res.json();
-      currentUser = data.user;
-      if (data.tenant) {
-        currentTenant = data.tenant;
-      }
-    } else {
-      currentUser = null;
-    }
-  } catch (err) {
-    currentUser = null;
-  }
-}
-
-// Render Universal Header Navigation & Quick Switcher
-function renderHeaderNav() {
-  const nav = document.getElementById('headerNav');
-  if (!nav) return;
-
-  const urlParams = new URLSearchParams(window.location.search);
-  const activeTenant = urlParams.get('tenant') || '';
-
-  nav.innerHTML = `
-    <div style="display:flex; align-items:center; gap: 10px;">
-      <select onchange="handleTenantSwitch(this.value)" class="form-select" style="padding:0.4rem 0.8rem; font-size:0.85rem; background: var(--bg-card);">
-        <option value="" ${isMarketingPage ? 'selected' : ''}>🌐 Marketing Hub (srijandev.in)</option>
-        <option value="apex" ${activeTenant === 'apex' ? 'selected' : ''}>🏢 Apex (Both Suites)</option>
-        <option value="shield" ${activeTenant === 'shield' ? 'selected' : ''}>🛡️ Shield (Patrol Only)</option>
-        <option value="logistics" ${activeTenant === 'logistics' ? 'selected' : ''}>🚛 Logistics (Workforce Only)</option>
-        <option value="admin" ${isAdminPage ? 'selected' : ''}>🔐 Super-Admin Panel</option>
-      </select>
-
-      ${currentUser ? `
-        <span style="font-size:0.85rem; color:var(--accent-cyan); font-weight:600;">👤 ${currentUser.name}</span>
-        <button class="btn btn-secondary btn-sm" onclick="handleLogout()">Logout</button>
-      ` : `
-        <button class="btn btn-primary btn-sm" onclick="openLoginModal()">Login</button>
-      `}
-    </div>
-  `;
-}
-
-function handleTenantSwitch(val) {
-  if (val === 'admin') {
-    window.location.href = '/admin';
-  } else if (val === '') {
-    window.location.href = '/';
-  } else {
-    window.location.href = `/?tenant=${val}`;
-  }
-}
-
-// Initialize Active Page Specific Data
-async function initPageData() {
-  if (isAdminPage) {
-    if (currentUser && currentUser.role === 'super_admin') {
-      loadSuperAdminDashboard();
-    } else {
-      openLoginModal('Super-Admin Login');
-    }
-  } else if (isPortalPage) {
-    await loadTenantPortal();
-  }
-}
-
-/* ==========================================================================
-   SUPER-ADMIN PANEL LOGIC (admin.html)
-   ========================================================================== */
-
-async function loadSuperAdminDashboard() {
-  await Promise.all([loadLeadsList(), loadTenantsList()]);
-}
-
-async function loadLeadsList() {
-  try {
-    const res = await apiFetch('/api/admin/leads');
-    if (!res.ok) return;
-    const data = await res.json();
-    const tbody = document.getElementById('leadsTableBody');
-    if (!tbody) return;
-
-    document.getElementById('statLeads').innerText = data.leads.length;
-
-    tbody.innerHTML = data.leads.map(l => `
-      <tr>
-        <td>#${l.id}</td>
-        <td><strong>${escapeHtml(l.company_name)}</strong></td>
-        <td>${escapeHtml(l.full_name || l.contact_person)}</td>
-        <td>${escapeHtml(l.email)}<br><small style="color:var(--text-muted);">${escapeHtml(l.phone)}</small></td>
-        <td><code style="color:var(--accent-cyan);">${escapeHtml(l.preferred_subdomain || l.desired_subdomain)}.srijandev.in</code></td>
-        <td><span class="badge badge-cyan">${escapeHtml(l.required_suites || 'Both Suites')}</span></td>
-        <td><span class="badge ${l.status === 'provisioned' ? 'badge-emerald' : 'badge-amber'}">${l.status}</span></td>
-        <td>
-          ${l.status !== 'provisioned' ? `
-            <button class="btn btn-emerald btn-sm" onclick="prefillProvisionFromLead(${l.id}, '${escapeJs(l.company_name)}', '${escapeJs(l.preferred_subdomain || l.desired_subdomain)}', '${escapeJs(l.email)}', '${escapeJs(l.full_name || l.contact_person)}')">
-              ⚡ Provision
-            </button>
-          ` : '<span style="color:var(--text-muted);">Provisioned</span>'}
-        </td>
-      </tr>
-    `).join('');
-  } catch (e) {
-    console.error('Error loading leads:', e);
-  }
-}
-
-async function loadTenantsList() {
-  try {
-    const res = await apiFetch('/api/admin/tenants');
-    if (!res.ok) return;
-    const data = await res.json();
-    const tbody = document.getElementById('tenantsTableBody');
-    if (!tbody) return;
-
-    document.getElementById('statTenants').innerText = data.tenants.length;
-
-    tbody.innerHTML = data.tenants.map(t => {
-      const suites = [];
-      if (t.enable_workforce) suites.push('<span class="badge badge-cyan">Smart Field Workforce</span>');
-      if (t.enable_patrol) suites.push('<span class="badge badge-indigo" style="background:rgba(99,102,241,0.15); color:var(--accent-indigo);">Security & Patrol</span>');
-      
-      const isSuspended = t.status === 'suspended';
-      const statusBadge = isSuspended
-        ? '<span class="badge badge-rose">suspended</span>'
-        : '<span class="badge badge-emerald">active</span>';
-
-      const toggleAction = isSuspended
-        ? `<button class="btn btn-emerald btn-sm" onclick="handleToggleTenantStatus(${t.id}, 'active')">Enable</button>`
-        : `<button class="btn btn-secondary btn-sm" style="color:var(--accent-amber);" onclick="handleToggleTenantStatus(${t.id}, 'suspended')">Disable</button>`;
-
-      return `
-        <tr>
-          <td>#${t.id}</td>
-          <td><strong>${escapeHtml(t.name)}</strong></td>
-          <td><a href="/?tenant=${t.subdomain}" target="_blank" style="font-weight:bold;">${escapeHtml(t.subdomain)}.srijandev.in</a></td>
-          <td>${escapeHtml(t.contact_email)}</td>
-          <td><div style="display:flex; gap:6px; flex-wrap:wrap;">${suites.join('')}</div></td>
-          <td>${statusBadge}</td>
-          <td>
-            <div style="display:flex; gap:6px;">
-              ${toggleAction}
-              <button class="btn btn-secondary btn-sm" style="color:var(--accent-rose);" onclick="handleDeleteTenant(${t.id}, '${escapeJs(t.name)}')">🗑️ Delete</button>
-            </div>
-          </td>
-        </tr>
-      `;
-    }).join('');
-  } catch (e) {
-    console.error('Error loading tenants:', e);
-  }
-}
-
-async function handleToggleTenantStatus(tenantId, newStatus) {
-  try {
-    const res = await apiFetch(`/api/admin/tenants/${tenantId}/status`, {
-      method: 'PATCH',
-      body: { status: newStatus }
-    });
-    const data = await res.json();
-    if (res.ok) {
-      showAlert(data.message, 'success');
-      loadTenantsList();
-    } else {
-      showAlert(data.message || data.error, 'error');
-    }
-  } catch (e) {
-    showAlert('Failed to update tenant status.', 'error');
-  }
-}
-
-async function handleDeleteTenant(tenantId, tenantName) {
-  if (!confirm(`Are you sure you want to permanently delete '${tenantName}' and all associated user data? This action cannot be undone.`)) {
-    return;
-  }
-  try {
-    const res = await apiFetch(`/api/admin/tenants/${tenantId}`, {
-      method: 'DELETE'
-    });
-    const data = await res.json();
-    if (res.ok) {
-      showAlert(data.message, 'success');
-      loadTenantsList();
-    } else {
-      showAlert(data.message || data.error, 'error');
-    }
-  } catch (e) {
-    showAlert('Failed to delete tenant.', 'error');
-  }
-}
-
-function prefillProvisionFromLead(leadId, company, subdomain, email, adminName) {
-  switchAdminTab('provision');
-  document.getElementById('provLeadId').value = leadId;
-  document.getElementById('provName').value = company;
-  document.getElementById('provSubdomain').value = subdomain;
-  document.getElementById('provEmail').value = email;
-  document.getElementById('provAdminName').value = adminName;
-  showAlert('Lead loaded into Provisioner Form.', 'success');
-}
-
-function switchAdminTab(tabName) {
-  document.querySelectorAll('.tabs-container .tab-btn').forEach(btn => btn.classList.remove('active'));
-  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-
-  if (tabName === 'provision') {
-    document.getElementById('adminTabProvision').classList.add('active');
-    document.getElementById('tabBtnProvision').classList.add('active');
-  } else if (tabName === 'leads') {
-    document.getElementById('adminTabLeads').classList.add('active');
-    document.getElementById('tabBtnLeads').classList.add('active');
-    loadLeadsList();
-  } else if (tabName === 'tenants') {
-    document.getElementById('adminTabTenants').classList.add('active');
-    document.getElementById('tabBtnTenants').classList.add('active');
-    loadTenantsList();
-  }
-}
-
-async function handleProvisionTenant(e) {
-  e.preventDefault();
-  const payload = {
-    lead_id: document.getElementById('provLeadId').value || null,
-    name: document.getElementById('provName').value,
-    subdomain: document.getElementById('provSubdomain').value,
-    contact_email: document.getElementById('provEmail').value,
-    admin_name: document.getElementById('provAdminName').value,
-    admin_password: document.getElementById('provPassword').value || 'WelcomeSrijan123!',
-    enable_workforce: document.getElementById('provEnableWorkforce').checked,
-    enable_patrol: document.getElementById('provEnablePatrol').checked
-  };
-
-  try {
-    const res = await apiFetch('/api/admin/provision', {
-      method: 'POST',
-      body: payload
-    });
-
-    const data = await res.json();
-    if (res.ok) {
-      showAlert(`Client Portal '${payload.name}' provisioned! Verification Link: ${data.verificationUrl}`, 'success');
-      document.getElementById('provisionForm').reset();
-      loadSuperAdminDashboard();
-    } else {
-      showAlert(data.message || data.error, 'error');
-    }
-  } catch (err) {
-    showAlert('Failed to provision client portal.', 'error');
-  }
-}
-
-/* ==========================================================================
-   DYNAMIC CLIENT TENANT PORTAL LOGIC (portal.html)
-   ========================================================================== */
-
-async function loadTenantPortal() {
-  try {
-    const res = await apiFetch('/api/tenant/info');
-    if (!res.ok) {
-      const err = await res.json();
-      showAlert(err.message || 'Tenant access error', 'error');
-      return;
-    }
-    const data = await res.json();
-    currentTenant = data.tenant;
-
-    document.getElementById('portalHeaderTitle').innerText = `${currentTenant.name}`;
-    document.getElementById('tenantTitle').innerText = currentTenant.name;
-    document.getElementById('tenantSubdomainBadge').innerText = `${currentTenant.subdomain}.srijandev.in`;
-
-    const badgesContainer = document.getElementById('tenantSuitesBadges');
-    const tabsContainer = document.getElementById('clientTabsContainer');
-    badgesContainer.innerHTML = '';
-    tabsContainer.innerHTML = '';
-
-    let firstActiveTab = null;
-
-    if (currentTenant.enable_workforce) {
-      badgesContainer.innerHTML += `<span class="badge badge-cyan">Smart Field Workforce</span>`;
-      tabsContainer.innerHTML += `<button class="tab-btn active" id="tabBtnWorkforce" onclick="switchClientTab('workforce')">📍 Smart Field Workforce Suite</button>`;
-      firstActiveTab = 'workforce';
-    }
-
-    if (currentTenant.enable_patrol) {
-      badgesContainer.innerHTML += `<span class="badge badge-indigo" style="background:rgba(99,102,241,0.15); color:var(--accent-indigo);">Security & Patrol</span>`;
-      tabsContainer.innerHTML += `<button class="tab-btn ${!firstActiveTab ? 'active' : ''}" id="tabBtnPatrol" onclick="switchClientTab('patrol')">🛡️ Security & Patrol Operations</button>`;
-      if (!firstActiveTab) firstActiveTab = 'patrol';
-    }
-
-    if (firstActiveTab) {
-      switchClientTab(firstActiveTab);
-    }
-  } catch (err) {
-    console.error('Failed to load tenant portal info:', err);
-  }
-}
-
-function switchClientTab(tabName) {
-  document.querySelectorAll('#clientTabsContainer .tab-btn').forEach(btn => btn.classList.remove('active'));
-  document.querySelectorAll('#tenantPortalView .tab-content').forEach(c => c.classList.remove('active'));
-
-  if (tabName === 'workforce') {
-    const btn = document.getElementById('tabBtnWorkforce');
-    if (btn) btn.classList.add('active');
-    document.getElementById('clientTabWorkforce').classList.add('active');
-    loadWorkforceData();
-  } else if (tabName === 'patrol') {
-    const btn = document.getElementById('tabBtnPatrol');
-    if (btn) btn.classList.add('active');
-    document.getElementById('clientTabPatrol').classList.add('active');
-    loadPatrolData();
-  }
-}
-
-// Workforce Suite API Handlers
-async function loadWorkforceData() {
-  try {
-    const [attRes, leaveRes] = await Promise.all([
-      apiFetch('/api/tenant/attendance'),
-      apiFetch('/api/tenant/leaves')
-    ]);
-
-    if (attRes.ok) {
-      const attData = await attRes.json();
-      document.getElementById('attendanceTableBody').innerHTML = attData.attendance.map(a => `
-        <tr>
-          <td><strong>${escapeHtml(a.user_name)}</strong></td>
-          <td><span class="badge ${a.type === 'clock_in' ? 'badge-emerald' : 'badge-amber'}">${a.type.replace('_', ' ').toUpperCase()}</span></td>
-          <td><code>${a.latitude ? a.latitude.toFixed(4) : 28.6139}, ${a.longitude ? a.longitude.toFixed(4) : 77.2090}</code></td>
-          <td>${escapeHtml(a.location_name || 'Main Gate Location')}</td>
-          <td>${new Date(a.timestamp).toLocaleString()}</td>
-        </tr>
-      `).join('');
-    }
-
-    if (leaveRes.ok) {
-      const leaveData = await leaveRes.json();
-      document.getElementById('leavesTableBody').innerHTML = leaveData.leaves.map(l => `
-        <tr>
-          <td><strong>${escapeHtml(l.user_name)}</strong></td>
-          <td><span class="badge badge-cyan">${l.leave_type.toUpperCase()}</span></td>
-          <td>${l.start_date} to ${l.end_date}</td>
-          <td>${escapeHtml(l.reason || 'N/A')}</td>
-          <td><span class="badge badge-emerald">${l.status}</span></td>
-        </tr>
-      `).join('');
-    }
-  } catch (e) {
-    console.error('Error loading workforce data:', e);
-  }
-}
-
-async function handleClockAttendance(type) {
-  if (!currentUser) {
-    openLoginModal();
-    return;
-  }
-  try {
-    const res = await apiFetch('/api/tenant/attendance/clock', {
-      method: 'POST',
-      body: { type, latitude: 28.6139, longitude: 77.2090, location_name: 'Field Operation HQ' }
-    });
-    const data = await res.json();
-    if (res.ok) {
-      document.getElementById('clockStatusMsg').innerHTML = `<span style="color:var(--accent-emerald);">Recorded ${type.replace('_', ' ')} at ${new Date().toLocaleTimeString()}</span>`;
-      loadWorkforceData();
-    } else {
-      showAlert(data.message || data.error, 'error');
-    }
-  } catch (e) {
-    showAlert('Clocking failed.', 'error');
-  }
-}
-
-async function handleLeaveSubmit(e) {
-  e.preventDefault();
-  if (!currentUser) {
-    openLoginModal();
-    return;
-  }
-  const payload = {
-    leave_type: document.getElementById('leaveType').value,
-    start_date: document.getElementById('leaveStart').value,
-    end_date: document.getElementById('leaveEnd').value,
-    reason: 'Operational Leave'
-  };
-
-  try {
-    const res = await apiFetch('/api/tenant/leaves', {
-      method: 'POST',
-      body: payload
-    });
-    if (res.ok) {
-      showAlert('Leave request submitted!', 'success');
-      loadWorkforceData();
-    } else {
-      const data = await res.json();
-      showAlert(data.message || data.error, 'error');
-    }
-  } catch (e) {
-    showAlert('Failed to submit leave.', 'error');
-  }
-}
-
-// Patrol Operations Suite API Handlers
-async function loadPatrolData() {
-  try {
-    const [cpRes, scanRes, incRes] = await Promise.all([
-      apiFetch('/api/tenant/checkpoints'),
-      apiFetch('/api/tenant/scans'),
-      apiFetch('/api/tenant/incidents')
-    ]);
-
-    if (cpRes.ok) {
-      const cpData = await cpRes.json();
-      const select = document.getElementById('scanCheckpointSelect');
-      select.innerHTML = cpData.checkpoints.map(c => `<option value="${c.id}">${escapeHtml(c.name)} (${c.qr_code_data})</option>`).join('');
-
-      document.getElementById('checkpointsTableBody').innerHTML = cpData.checkpoints.map(c => `
-        <tr>
-          <td><strong>${escapeHtml(c.name)}</strong></td>
-          <td><code style="color:var(--accent-cyan);">${escapeHtml(c.qr_code_data)}</code></td>
-          <td>${escapeHtml(c.location_description || 'Building Perimeter')}</td>
-        </tr>
-      `).join('');
-    }
-
-    if (scanRes.ok) {
-      const scanData = await scanRes.json();
-      document.getElementById('scansTableBody').innerHTML = scanData.scans.map(s => `
-        <tr>
-          <td><strong>${escapeHtml(s.guard_name)}</strong></td>
-          <td>${escapeHtml(s.checkpoint_name)}</td>
-          <td>${escapeHtml(s.notes)}</td>
-          <td>${new Date(s.timestamp).toLocaleTimeString()}</td>
-        </tr>
-      `).join('');
-    }
-
-    if (incRes.ok) {
-      const incData = await incRes.json();
-      document.getElementById('incidentsTableBody').innerHTML = incData.incidents.map(i => `
-        <tr>
-          <td><strong>${escapeHtml(i.title)}</strong></td>
-          <td>${escapeHtml(i.description)}</td>
-          <td>${escapeHtml(i.reporter_name)}</td>
-          <td><span class="badge ${i.severity === 'critical' ? 'badge-rose' : 'badge-amber'}">${i.severity.toUpperCase()}</span></td>
-          <td><span class="badge badge-cyan">${i.status}</span></td>
-          <td>${new Date(i.timestamp).toLocaleString()}</td>
-        </tr>
-      `).join('');
-    }
-  } catch (e) {
-    console.error('Error loading patrol data:', e);
-  }
-}
-
-async function handleScanSubmit() {
-  if (!currentUser) {
-    openLoginModal();
-    return;
-  }
-  const cpId = document.getElementById('scanCheckpointSelect').value;
-  const notes = document.getElementById('scanNotes').value;
-
-  if (!cpId) {
-    showAlert('Select a checkpoint to scan.', 'error');
-    return;
-  }
-
-  try {
-    const res = await apiFetch('/api/tenant/scans', {
-      method: 'POST',
-      body: { checkpoint_id: cpId, notes }
-    });
-    if (res.ok) {
-      showAlert('QR Checkpoint Scan verified and logged!', 'success');
-      loadPatrolData();
-    } else {
-      const data = await res.json();
-      showAlert(data.message || data.error, 'error');
-    }
-  } catch (e) {
-    showAlert('Failed to log patrol scan.', 'error');
-  }
-}
-
-async function handleIncidentSubmit(e) {
-  e.preventDefault();
-  if (!currentUser) {
-    openLoginModal();
-    return;
-  }
-  const payload = {
-    title: document.getElementById('incTitle').value,
-    severity: document.getElementById('incSeverity').value,
-    description: document.getElementById('incDesc').value
-  };
-
-  try {
-    const res = await apiFetch('/api/tenant/incidents', {
-      method: 'POST',
-      body: payload
-    });
-    if (res.ok) {
-      showAlert('Security Incident report dispatched!', 'success');
-      loadPatrolData();
-    } else {
-      const data = await res.json();
-      showAlert(data.message || data.error, 'error');
-    }
-  } catch (e) {
-    showAlert('Failed to log incident.', 'error');
-  }
-}
-
-/* ==========================================================================
-   MODAL & AUTHENTICATION HANDLERS
-   ========================================================================== */
-
-function openLeadModal(tierName = '') {
-  const modal = document.getElementById('leadModal');
-  if (!modal) return;
-  modal.classList.add('active');
-}
-
-function closeLeadModal() {
-  const modal = document.getElementById('leadModal');
-  if (modal) modal.classList.remove('active');
-}
-
-async function handleLeadSubmit(e) {
-  e.preventDefault();
-  const payload = {
-    full_name: document.getElementById('quoteContact')?.value || document.getElementById('leadFullName')?.value,
-    company_name: document.getElementById('quoteCompany')?.value || document.getElementById('leadCompany')?.value,
-    email: document.getElementById('quoteEmail')?.value || document.getElementById('leadEmail')?.value,
-    phone: document.getElementById('quotePhone')?.value || document.getElementById('leadPhone')?.value,
-    employee_count: document.getElementById('roiSlider')?.value || document.getElementById('leadEmpCount')?.value || '50',
-    preferred_subdomain: 'quote' + Date.now().toString().slice(-4),
-    required_suites: document.getElementById('quoteSuites')?.value || document.getElementById('leadSuites')?.value || 'Both Suites'
-  };
-
-  try {
-    const res = await apiFetch('/api/leads', {
-      method: 'POST',
-      body: payload
-    });
-
-    const data = await res.json();
-    if (res.ok) {
-      closeLeadModal();
-      showAlert(data.message || 'Quotation proposal request submitted!', 'success');
-    } else {
-      showAlert(data.message || data.error, 'error');
-    }
-  } catch (err) {
-    showAlert('Submission error. Please check form inputs.', 'error');
-  }
-}
-
-function openLoginModal(title = 'Sign In') {
-  const modal = document.getElementById('loginModal');
-  if (!modal) return;
-  const titleEl = document.getElementById('loginModalTitle');
-  if (titleEl) titleEl.innerText = title;
-  modal.classList.add('active');
-}
-
-function closeLoginModal() {
-  const modal = document.getElementById('loginModal');
-  if (modal) modal.classList.remove('active');
-}
-
-async function handleLoginSubmit(e) {
-  if (e) e.preventDefault();
-  const email = document.getElementById('loginEmail')?.value;
-  const password = document.getElementById('loginPassword')?.value;
-  const tenantInput = document.getElementById('loginTenant')?.value?.trim();
-
-  // Smart endpoint selection
-  let endpoint = '/api/auth/login';
-  if (isAdminPage || (email && email.toLowerCase() === 'rajeshbhatti89@gmail.com')) {
-    endpoint = '/api/admin/login';
-  } else if (tenantInput) {
-    endpoint = `/api/auth/login?tenant=${encodeURIComponent(tenantInput)}`;
-  }
-
-  try {
-    const res = await apiFetch(endpoint, {
-      method: 'POST',
-      body: { email, password }
-    });
-
-    const data = await res.json();
-    if (res.ok && data.success) {
-      currentUser = data.user;
-      closeLoginModal();
-      showAlert(`Welcome back, ${currentUser.name}!`, 'success');
-      
-      // Smart Post-Login Redirect
-      setTimeout(() => {
-        const targetHost = (window.location.hostname.includes('srijandev.in') || window.location.hostname.includes('web.app'))
-          ? 'https://srijandev-platform-hub.onrender.com'
-          : '';
-
-        if (currentUser.role === 'super_admin') {
-          window.location.href = `${targetHost}/admin.html`;
-        } else if (currentUser.tenant_subdomain) {
-          window.location.href = `${targetHost}/portal.html?tenant=${currentUser.tenant_subdomain}`;
-        } else {
-          window.location.href = `${targetHost}/portal.html`;
-        }
-      }, 400);
-    } else {
-      showAlert(data.message || data.error || 'Invalid email or password.', 'error');
-    }
-  } catch (err) {
-    showAlert('Login request failed. Please check network connection.', 'error');
-  }
-}
-
-const handleLogin = handleLoginSubmit;
-
-async function handleLogout() {
-  try {
-    await fetch('/api/auth/logout', { method: 'POST' });
-    await fetch('/api/admin/logout', { method: 'POST' });
-  } catch (e) {}
-  currentUser = null;
-  currentTenant = null;
-  document.cookie = "srijan_user=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-  showAlert('Logged out successfully.', 'success');
-  setTimeout(() => {
-    window.location.href = isAdminPage ? '/admin' : '/';
-  }, 400);
-}
-
-// Utility: Notifications & Sanitization
-function showAlert(msg, type = 'info') {
-  const container = document.getElementById('alertContainer');
-  if (!container) return;
-
-  const alert = document.createElement('div');
-  alert.className = `alert-banner`;
-  alert.style.borderColor = type === 'error' ? 'var(--accent-rose)' : 'var(--accent-emerald)';
-  alert.style.background = type === 'error' ? 'rgba(244,63,94,0.15)' : 'rgba(16,185,129,0.15)';
-  alert.innerHTML = `<div><strong>${type.toUpperCase()}:</strong> ${escapeHtml(msg)}</div>`;
-
-  container.appendChild(alert);
-  setTimeout(() => alert.remove(), 6000);
-}
-
-function escapeHtml(str) {
-  if (!str) return '';
-  return String(str).replace(/[&<>"']/g, match => ({
-    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
-  })[match]);
-}
-
-function escapeJs(str) {
-  if (!str) return '';
-  return String(str).replace(/'/g, "\\'");
-}

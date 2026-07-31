@@ -3,353 +3,400 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Srijan Dev | 3D Web Design, Mobile Apps & Security Agency</title>
+  <meta name="description" content="Custom 3D website design, secure web application development, Android app development, and cybersecurity management services by SrijanDev.">
+  <meta name="keywords" content="3D web development, Web design agency, Android app development, cybersecurity audits, penetration testing, Three.js agency, full stack web apps, SrijanDev">
+  <link rel="canonical" href="https://srijandev.in/">
   <meta name="google-site-verification" content="Sja-G5FVfqUyuUHIymyHbUJtHBZbvas565B6d80Qcmc">
-  <title>SrijanDev | Enterprise Operations & Management Hub</title>
-  <link rel="stylesheet" href="/css/style.css">
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://srijandev.in/">
+  <meta property="og:title" content="Srijan Dev | 3D Web Design, Mobile Apps & Security Agency">
+  <meta property="og:description" content="Custom 3D website design, secure web application development, Android app development, and cybersecurity management services.">
+  <meta property="og:image" content="https://srijandev.in/images/og-cover.png">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content="https://srijandev.in/">
+  <meta name="twitter:title" content="Srijan Dev | 3D Web Design & Security Agency">
+  <meta name="twitter:description" content="Custom 3D website design, secure web application development, Android app development, and cybersecurity audits.">
+
+  <!-- Schema.org JSON-LD Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ProfessionalService",
+    "name": "SrijanDev Digital Agency",
+    "image": "https://srijandev.in/images/logo.png",
+    "@id": "https://srijandev.in",
+    "url": "https://srijandev.in",
+    "telephone": "+919857579111",
+    "email": "contact@srijandev.in",
+    "priceRange": "$$",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "India",
+      "addressCountry": "IN"
+    },
+    "hasOfferCatalog": {
+      "@type": "OfferCatalog",
+      "name": "Core Tech & Creative Agency Services",
+      "itemListElement": [
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "Website Designing & UI/UX",
+            "description": "High-converting, responsive website design with modern UI/UX and performance tuning."
+          }
+        },
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "Security Management & Audits",
+            "description": "Comprehensive cybersecurity audits, penetration testing, SSL/DDoS protection, and code hardening."
+          }
+        },
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "Web App & Android App Development",
+            "description": "Full-stack web applications and native/cross-platform Android apps built with React, Node, Kotlin, and Flutter."
+          }
+        },
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "3D Interactive Web Development",
+            "description": "Immersive 3D web experiences and WebGL product visualizations using Three.js and React Three Fiber."
+          }
+        }
+      ]
+    }
+  }
+  </script>
+
+  <!-- External Libraries -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-  <!-- App Header -->
+  <!-- ==========================================================================
+       1. NAVIGATION HEADER
+       ========================================================================== -->
   <header class="app-header">
     <div class="header-container">
-      <div class="brand-section">
+      <a href="#home" class="brand-section">
         <div class="brand-logo">S</div>
         <div class="brand-title-group">
           <div class="brand-name">SrijanDev</div>
-          <div class="brand-subtitle">OPERATIONS & MANAGEMENT PORTAL</div>
+          <div class="brand-subtitle">3D WEB & SECURITY AGENCY</div>
         </div>
-      </div>
+      </a>
 
-      <div class="header-nav" id="headerNav">
-        <!-- Rendered by app.js -->
-      </div>
+      <nav class="header-nav">
+        <a href="#services" class="nav-link">SERVICES</a>
+        <a href="#tech-stack" class="nav-link">TECH STACK</a>
+        <a href="#security" class="nav-link">SECURITY</a>
+        <a href="#contact" class="btn-primary-glow">ESTIMATE PROJECT</a>
+      </nav>
+
+      <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle Navigation">
+        <i class="fa-solid fa-bars"></i>
+      </button>
     </div>
   </header>
 
   <!-- Main Content Area -->
-  <main class="content-area">
-    <div id="alertContainer" style="max-width: 1280px; margin: 1rem auto; padding: 0 1.5rem;"></div>
+  <main class="content-area" id="home">
 
-    <!-- CRED Hero Section -->
+    <!-- ==========================================================================
+         2. HERO SECTION WITH THREE.JS 3D CANVAS
+         ========================================================================== -->
     <section class="hero-section">
-      <div class="hero-badge">
-        <span style="width: 8px; height: 8px; background: var(--accent-cyan); border-radius: 50%; display: inline-block; box-shadow: 0 0 10px var(--accent-cyan);"></span>
-        <span>SrijanDev Operational OS &bull; Multi-Tenant Platform</span>
-      </div>
+      <!-- Three.js 3D WebGL Background Canvas -->
+      <div id="threejs-canvas" class="hero-3d-canvas"></div>
 
-      <h1 class="hero-title">
-        Next-Gen Operational Precision for <span class="text-neon-cyan">Field Force</span> & <span class="text-neon-emerald">Security Patrols</span>
-      </h1>
-
-      <p class="hero-desc">
-        Empower your enterprise with ultra-secure, isolated client portals combining GPS Geofence Attendance, Automated Leave Workflows, QR Checkpoint Verifications, and Live Incident Command.
-      </p>
-
-      <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
-        <button class="btn btn-primary" onclick="scrollToQuotationForm()">
-          ⚡ Request Custom Proposal
-        </button>
-        <button class="btn btn-secondary" onclick="openLoginModal('Client Sign In')">
-          🔐 Client Portal Sign In
-        </button>
-      </div>
-
-      <!-- Live Telemetry Bar -->
-      <div class="telemetry-ticker">
-        <div class="ticker-item">
-          <div class="ticker-val text-neon-cyan">99.98%</div>
-          <div class="ticker-lbl">GPS Geofence Precision</div>
+      <div class="hero-content">
+        <div class="hero-badge">
+          <span class="badge-dot"></span>
+          <span>SrijanDev Agency &bull; 3D Interactive & Security Engineers</span>
         </div>
-        <div class="ticker-item" style="border-left: 1px solid var(--border-color); padding-left: 1.5rem;">
-          <div class="ticker-val text-neon-emerald">&lt; 1ms</div>
-          <div class="ticker-lbl">WAL DB Engine Latency</div>
-        </div>
-        <div class="ticker-item" style="border-left: 1px solid var(--border-color); padding-left: 1.5rem;">
-          <div class="ticker-val" style="color: var(--accent-purple);">100%</div>
-          <div class="ticker-lbl">Isolated Client Architecture</div>
-        </div>
-        <div class="ticker-item" style="border-left: 1px solid var(--border-color); padding-left: 1.5rem;">
-          <div class="ticker-val" style="color: var(--accent-amber);">2FA & Cookies</div>
-          <div class="ticker-lbl">Enterprise Security Tier</div>
+
+        <h1 class="hero-title">
+          Engineering <span class="text-neon-cyan">3D Interactive Webs</span> & <span class="text-neon-emerald">Fortified Mobile Apps</span>
+        </h1>
+
+        <p class="hero-desc">
+          We combine cutting-edge Three.js WebGL graphics, full-stack React & Android application engineering, and enterprise-grade cybersecurity management to build next-generation digital products.
+        </p>
+
+        <div class="hero-cta-group">
+          <a href="#services" class="btn-hero-primary">
+            Explore Services <i class="fa-solid fa-arrow-right"></i>
+          </a>
+          <a href="#contact" class="btn-hero-secondary">
+            Request Proposal <i class="fa-solid fa-paper-plane"></i>
+          </a>
         </div>
       </div>
     </section>
 
-    <div style="max-width: 1280px; margin: 0 auto; padding: 0 1.5rem;">
+    <!-- ==========================================================================
+         3. CORE AGENCY SERVICES GRID
+         ========================================================================== -->
+    <section class="section-wrapper" id="services">
+      <div class="section-header">
+        <p class="section-sub">Capabilities & Solutions</p>
+        <h2 class="section-title">Core Agency Services</h2>
+        <p class="section-desc">Tailor-made digital engineering crafted with precision, high performance, and robust security.</p>
+      </div>
 
-      <!-- Interactive Suite Tabs & Showcase -->
-      <section style="text-align: center; margin-bottom: 4rem;">
-        <div style="font-size: 0.8rem; font-weight: 800; color: var(--accent-cyan); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 0.5rem;">Operational Suite Architecture</div>
-        <h2 class="text-metallic" style="font-size: 2.2rem; font-weight: 900; margin-bottom: 1.5rem;">Two Specialized Suites. One Unified Platform.</h2>
-
-        <div class="tab-switcher">
-          <button class="tab-btn active" id="tabWorkforce" onclick="switchSuiteTab('workforce')">👥 Smart Field Workforce Suite</button>
-          <button class="tab-btn" id="tabSecurity" onclick="switchSuiteTab('security')">🛡️ Security Patrol Operations Suite</button>
-        </div>
-
-        <!-- Suite Cards Container -->
-        <div class="card-grid" id="suiteContainer">
-          <!-- Rendered dynamically by app.js / inline switch -->
-        </div>
-      </section>
-
-      <!-- CRED Interactive ROI Calculator -->
-      <section class="roi-container">
-        <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 2.5rem; align-items: center;">
-          <div>
-            <span class="hero-badge" style="margin-bottom: 1rem;">Dynamic ROI Calculator</span>
-            <h2 class="text-metallic" style="font-size: 2rem; font-weight: 900; margin-bottom: 1rem;">Estimate Your Monthly Operational Savings</h2>
-            <p style="color: var(--text-muted); font-size: 0.95rem;">Drag the slider to match your active field staff size and see live efficiency gains.</p>
-
-            <div style="margin-top: 2rem;">
-              <div style="display: flex; justify-content: space-between; font-weight: 800; font-size: 1.1rem;">
-                <span>Active Field Workforce Size:</span>
-                <span id="workforceValDisplay" class="text-neon-cyan" style="font-size: 1.4rem;">50 Personnel</span>
-              </div>
-              <input type="range" min="10" max="500" value="50" class="roi-slider" id="roiSlider" oninput="updateRoiCalc(this.value)">
-            </div>
+      <div class="services-grid">
+        <!-- Service 1: Website Designing & UI/UX -->
+        <article class="service-card">
+          <div class="service-icon-box cyan-glow">
+            <i class="fa-solid fa-palette"></i>
           </div>
+          <h3 class="service-card-title">Website Designing & UI/UX</h3>
+          <p class="service-card-desc">
+            Responsive, ultra-modern, high-converting web layouts designed with intuitive user journeys, accessibility (a11y), and lightning-fast load times.
+          </p>
+          <ul class="service-feature-list">
+            <li><i class="fa-solid fa-check text-cyan"></i> Custom Responsive Design</li>
+            <li><i class="fa-solid fa-check text-cyan"></i> Modern Figma UI/UX Prototypes</li>
+            <li><i class="fa-solid fa-check text-cyan"></i> SEO & Accessibility Optimized</li>
+          </ul>
+        </article>
 
-          <div style="background: rgba(5, 7, 12, 0.8); border: 1px solid var(--border-glow); border-radius: 20px; padding: 2rem; text-align: center;">
-            <div style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Estimated Monthly Savings</div>
-            <div id="roiSavingsDisplay" class="text-neon-emerald" style="font-size: 2.8rem; font-weight: 900; margin: 0.5rem 0;">₹ 1,75,000</div>
-
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color);">
-              <div>
-                <div style="font-size: 0.75rem; color: var(--text-muted);">Admin Hours Saved</div>
-                <div id="roiHoursDisplay" style="font-weight: 800; font-size: 1.2rem; color: var(--accent-cyan);">140 hrs / mo</div>
-              </div>
-              <div>
-                <div style="font-size: 0.75rem; color: var(--text-muted);">Patrol Compliance</div>
-                <div style="font-weight: 800; font-size: 1.2rem; color: var(--accent-emerald);">99.8% Verified</div>
-              </div>
-            </div>
+        <!-- Service 2: Security Management -->
+        <article class="service-card">
+          <div class="service-icon-box emerald-glow">
+            <i class="fa-solid fa-shield-halved"></i>
           </div>
+          <h3 class="service-card-title">Security Management & Audits</h3>
+          <p class="service-card-desc">
+            Comprehensive cybersecurity protection, penetration testing, server hardening, vulnerability remediation, SSL setup, and real-time DDoS mitigation.
+          </p>
+          <ul class="service-feature-list">
+            <li><i class="fa-solid fa-check text-emerald"></i> Vulnerability & Pen Testing</li>
+            <li><i class="fa-solid fa-check text-emerald"></i> Code Hardening & SSL/TLS</li>
+            <li><i class="fa-solid fa-check text-emerald"></i> DDoS Protection & WAF</li>
+          </ul>
+        </article>
+
+        <!-- Service 3: Web App & Android App Development -->
+        <article class="service-card">
+          <div class="service-icon-box purple-glow">
+            <i class="fa-solid fa-mobile-screen-button"></i>
+          </div>
+          <h3 class="service-card-title">Web & Android App Development</h3>
+          <p class="service-card-desc">
+            Scalable full-stack web portals and native/cross-platform Android applications built using React, Node.js, Kotlin, and Flutter frameworks.
+          </p>
+          <ul class="service-feature-list">
+            <li><i class="fa-solid fa-check text-purple"></i> Full-Stack SaaS Web Apps</li>
+            <li><i class="fa-solid fa-check text-purple"></i> Native & Cross-Platform Android</li>
+            <li><i class="fa-solid fa-check text-purple"></i> RESTful & GraphQL APIs</li>
+          </ul>
+        </article>
+
+        <!-- Service 4: 3D Interactive Web Development -->
+        <article class="service-card">
+          <div class="service-icon-box indigo-glow">
+            <i class="fa-solid fa-cube"></i>
+          </div>
+          <h3 class="service-card-title">3D Interactive Web Development</h3>
+          <p class="service-card-desc">
+            Immersive 3D web environments, interactive WebGL particle systems, 3D product configurators, and Three.js / React Three Fiber visual effects.
+          </p>
+          <ul class="service-feature-list">
+            <li><i class="fa-solid fa-check text-indigo"></i> Three.js / WebGL Animation</li>
+            <li><i class="fa-solid fa-check text-indigo"></i> Interactive 3D Product Visuals</li>
+            <li><i class="fa-solid fa-check text-indigo"></i> Hardware-Accelerated 60FPS</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         4. TECH STACK & SECURITY BADGES
+         ========================================================================== -->
+    <section class="section-wrapper" id="tech-stack">
+      <div class="section-header">
+        <p class="section-sub">Tech Stack & Infrastructure</p>
+        <h2 class="section-title">Engineered With Elite Technologies</h2>
+        <p class="section-desc">We leverage industry-proven frameworks, 3D graphics libraries, and security protocols.</p>
+      </div>
+
+      <div class="tech-grid">
+        <div class="tech-card">
+          <i class="fa-brands fa-react tech-icon text-cyan"></i>
+          <div class="tech-name">React / Next.js</div>
         </div>
-      </section>
 
-      <!-- Quotation Form Section -->
-      <section id="quotationSection" style="margin-bottom: 5rem;">
-        <div style="text-align: center; max-width: 700px; margin: 0 auto 3rem auto;">
-          <span class="hero-badge">Enterprise Quotation</span>
-          <h2 class="text-metallic" style="font-size: 2.3rem; font-weight: 900; margin-bottom: 0.8rem;">Get Your Customized Enterprise Proposal</h2>
-          <p style="color: var(--text-muted); font-size: 0.95rem;">Fill in your organization details. Our team will provision your dedicated isolated client portal within 24 hours.</p>
+        <div class="tech-card">
+          <i class="fa-solid fa-cube tech-icon text-indigo"></i>
+          <div class="tech-name">Three.js WebGL</div>
         </div>
 
-        <div style="max-width: 680px; margin: 0 auto; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 24px; padding: 2.5rem; backdrop-filter: blur(16px);">
-          <form id="leadQuoteForm" onsubmit="handleLeadSubmission(event)">
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem;">
-              <div class="form-group">
-                <label class="form-label">Organization / Client Name</label>
-                <input type="text" id="quoteCompany" class="form-input" placeholder="e.g. Apex Security Solutions" required>
-              </div>
-              <div class="form-group">
-                <label class="form-label">Contact Person Name</label>
-                <input type="text" id="quoteContact" class="form-input" placeholder="e.g. Rajesh Kumar" required>
-              </div>
-            </div>
+        <div class="tech-card">
+          <i class="fa-brands fa-android tech-icon text-emerald"></i>
+          <div class="tech-name">Android SDK & Kotlin</div>
+        </div>
 
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem;">
-              <div class="form-group">
-                <label class="form-label">Work Email Address</label>
-                <input type="email" id="quoteEmail" class="form-input" placeholder="name@company.com" required>
-              </div>
-              <div class="form-group">
-                <label class="form-label">Phone Number</label>
-                <input type="tel" id="quotePhone" class="form-input" placeholder="+91 98765 43210" required>
-              </div>
+        <div class="tech-card">
+          <i class="fa-brands fa-node-js tech-icon text-emerald"></i>
+          <div class="tech-name">Node.js / Express</div>
+        </div>
+
+        <div class="tech-card">
+          <i class="fa-solid fa-shield-cat tech-icon text-purple"></i>
+          <div class="tech-name">Cybersecurity Audits</div>
+        </div>
+
+        <div class="tech-card">
+          <i class="fa-solid fa-database tech-icon text-amber"></i>
+          <div class="tech-name">SQLite & Postgres</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         5. SECURITY STANDARDS SECTION
+         ========================================================================== -->
+    <section class="section-wrapper" id="security">
+      <div class="security-banner">
+        <div class="security-banner-content">
+          <div class="security-badge-tag"><i class="fa-solid fa-lock"></i> Bank-Grade Security Pledge</div>
+          <h2 class="security-title">Zero Compromise Security Architecture</h2>
+          <p class="security-desc">
+            Every application built by SrijanDev undergoes rigorous penetration testing, OWASP Top-10 audit compliance, TLS encryption, and secure API token handling before deployment.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         6. CONTACT & LEAD CAPTURE FORM
+         ========================================================================== -->
+    <section class="section-wrapper" id="contact">
+      <div class="section-header">
+        <p class="section-sub">Start Your Project</p>
+        <h2 class="section-title">Request a Project Proposal</h2>
+        <p class="section-desc">Have a new website, Android app, 3D experience, or security audit in mind? Get in touch with our engineering team.</p>
+      </div>
+
+      <div class="contact-card">
+        <form id="proposalForm" class="proposal-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="fullName">Full Name *</label>
+              <input type="text" id="fullName" class="form-control" placeholder="Alex Morgan" required>
             </div>
 
             <div class="form-group">
-              <label class="form-label">Select Desired Suite(s)</label>
-              <select id="quoteSuites" class="form-select">
-                <option value="Both Field Workforce & Security Patrol Suites">Both Suites (Workforce + Patrol - Recommended)</option>
-                <option value="Smart Field Workforce Suite Only">Smart Field Workforce Suite Only</option>
-                <option value="Security Patrol Operations Suite Only">Security Patrol Operations Suite Only</option>
+              <label for="emailAddr">Email Address *</label>
+              <input type="email" id="emailAddr" class="form-control" placeholder="alex@company.com" required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="phoneNum">Phone Number *</label>
+              <input type="tel" id="phoneNum" class="form-control" placeholder="+91 98575 79111" required>
+            </div>
+
+            <div class="form-group">
+              <label for="serviceType">Service Required *</label>
+              <select id="serviceType" class="form-control" required>
+                <option value="3D Website Designing">3D Website Designing & UI/UX</option>
+                <option value="Security Management & Audit">Security Management & Audit</option>
+                <option value="Web & Android App Dev">Web & Android App Development</option>
+                <option value="Interactive 3D Web">Interactive 3D Web (Three.js)</option>
               </select>
             </div>
+          </div>
 
-            <div class="form-group">
-              <label class="form-label">Special Requirements / Notes</label>
-              <textarea id="quoteNotes" class="form-input" rows="3" placeholder="Specify personnel count, multi-location requirements, or custom integrations..."></textarea>
-            </div>
+          <div class="form-group">
+            <label for="projectDesc">Project Overview / Requirements</label>
+            <textarea id="projectDesc" class="form-control" rows="4" placeholder="Tell us about your project vision, timeline, or security requirements..."></textarea>
+          </div>
 
-            <button type="submit" class="btn btn-emerald" style="width: 100%; font-size: 1rem; padding: 0.9rem;">
-              🚀 Submit Quotation Request
-            </button>
-          </form>
-        </div>
-      </section>
+          <button type="submit" class="btn-submit-proposal">
+            <i class="fa-solid fa-paper-plane"></i> Submit Proposal Request
+          </button>
+        </form>
+      </div>
+    </section>
 
-    </div>
   </main>
 
-  <!-- Login Modal Dialog -->
-  <div class="modal-backdrop" id="loginModal">
-    <div class="modal-content">
-      <button class="modal-close" onclick="closeLoginModal()">&times;</button>
-      <div style="text-align: center; margin-bottom: 1.8rem;">
-        <div class="brand-logo" style="margin: 0 auto 1rem auto;">S</div>
-        <h3 id="modalTitle" class="text-metallic" style="font-size: 1.5rem; font-weight: 800;">SrijanDev Portal Login</h3>
-        <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 4px;">Enter your credentials to access your portal</p>
-      </div>
-
-      <form id="loginForm" onsubmit="handleLoginSubmit(event)">
-        <div class="form-group">
-          <label class="form-label">Email Address</label>
-          <input type="email" id="loginEmail" class="form-input" placeholder="admin@company.com" required>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">Password</label>
-          <input type="password" id="loginPassword" class="form-input" placeholder="••••••••" required>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">Tenant Subdomain (Optional for Super-Admin)</label>
-          <input type="text" id="loginTenant" class="form-input" placeholder="e.g. apex (leave blank for Super-Admin)">
-        </div>
-
-        <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.85rem; margin-top: 0.5rem;">
-          Sign In to SrijanDev
-        </button>
-      </form>
-    </div>
-  </div>
-
-  <!-- Footer -->
+  <!-- ==========================================================================
+       7. FOOTER
+       ========================================================================== -->
   <footer class="app-footer">
-    <div class="footer-content">
-      <div class="brand-section">
-        <div class="brand-logo">S</div>
-        <div class="brand-title-group" style="text-align: left;">
-          <div class="brand-name">SrijanDev</div>
-          <div class="brand-subtitle">OPERATIONS & MANAGEMENT PORTAL</div>
+    <div class="footer-container">
+      <div class="footer-col-brand">
+        <div class="brand-name">SrijanDev</div>
+        <p class="footer-desc">
+          Building high-performance 3D interactive web experiences, full-stack Android applications, and enterprise security management.
+        </p>
+      </div>
+
+      <div class="footer-col">
+        <h4 class="footer-title">Services</h4>
+        <ul class="footer-links">
+          <li><a href="#services">3D Web Design</a></li>
+          <li><a href="#services">Security Audits</a></li>
+          <li><a href="#services">Android App Dev</a></li>
+          <li><a href="#services">Three.js Interactive</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4 class="footer-title">Navigation</h4>
+        <ul class="footer-links">
+          <li><a href="#home">Home</a></li>
+          <li><a href="#services">Services</a></li>
+          <li><a href="#tech-stack">Tech Stack</a></li>
+          <li><a href="#contact">Contact Us</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4 class="footer-title">Connect</h4>
+        <div class="footer-socials">
+          <a href="https://github.com/rajeshbhatti89-stack" target="_blank" rel="noopener" aria-label="GitHub"><i class="fa-brands fa-github"></i></a>
+          <a href="mailto:contact@srijandev.in" aria-label="Email"><i class="fa-solid fa-envelope"></i></a>
+          <a href="tel:+919857579111" aria-label="Phone"><i class="fa-solid fa-phone"></i></a>
         </div>
       </div>
+    </div>
 
-      <div class="footer-links">
-        <a href="#quotationSection" onclick="scrollToQuotationForm()">Get Proposal</a>
-        <a href="javascript:void(0)" onclick="openLoginModal('Client Sign In')">Client Portal</a>
-        <a href="javascript:void(0)" onclick="openLoginModal('Super-Admin Login')">Super-Admin Panel</a>
-      </div>
-
-      <div style="color: var(--text-muted); font-size: 0.85rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem; width: 100%;">
-        <div>&copy; 2026 <strong>SrijanDev Team</strong>. All rights reserved. Enterprise Operational OS.</div>
-        <div style="margin-top: 4px;">Public Contact: <a href="mailto:contact@srijandev.in" style="color: var(--accent-cyan);">contact@srijandev.in</a></div>
-      </div>
+    <div class="footer-bottom">
+      <div>&copy; 2026 SrijanDev. All rights reserved.</div>
+      <div>Designed with Three.js & Cyber-Engineered Security</div>
     </div>
   </footer>
 
-  <script src="/js/app.js"></script>
-  <script>
-    // Suite Tab Handler
-    function switchSuiteTab(type) {
-      const workforceBtn = document.getElementById('tabWorkforce');
-      const securityBtn = document.getElementById('tabSecurity');
-      const container = document.getElementById('suiteContainer');
+  <!-- Notification Toast Container with ARIA accessibility -->
+  <div id="toastContainer" role="status" aria-live="polite"></div>
 
-      if (type === 'workforce') {
-        workforceBtn.classList.add('active');
-        securityBtn.classList.remove('active');
-        container.innerHTML = `
-          <div class="glass-card">
-            <div class="card-icon" style="color: var(--accent-cyan);">📍</div>
-            <h3 class="card-title">GPS Location Attendance</h3>
-            <p class="card-desc">Geofence-bound clock-in verification prevents proxy attendance with precise latitude & longitude coordinates.</p>
-            <ul class="feature-list">
-              <li>Real-time Geofence Radius Verification</li>
-              <li>Automated Late Clock-in Flags & Notifications</li>
-              <li>Device Signal & Battery Status Monitoring</li>
-            </ul>
-          </div>
-
-          <div class="glass-card">
-            <div class="card-icon" style="color: var(--accent-emerald);">📅</div>
-            <h3 class="card-title">Automated Leave System</h3>
-            <p class="card-desc">Streamlined digital leave requests, supervisor approvals, and quota balancing without manual paperwork.</p>
-            <ul class="feature-list">
-              <li>One-click Leave Application & Approval</li>
-              <li>Casual, Sick, & Earned Leave Balance Tracking</li>
-              <li>Automated Monthly Timesheet Compilation</li>
-            </ul>
-          </div>
-
-          <div class="glass-card">
-            <div class="card-icon" style="color: var(--accent-amber);">🚗</div>
-            <h3 class="card-title">Conveyance Tracking</h3>
-            <p class="card-desc">Verified distance logging and travel expense claims backed by live GPS route tracking.</p>
-            <ul class="feature-list">
-              <li>Live Traveled Distance Metering</li>
-              <li>Automated Fuel Reimbursement Calculation</li>
-              <li>Exportable Conveyance Audit Reports</li>
-            </ul>
-          </div>
-        `;
-      } else {
-        securityBtn.classList.add('active');
-        workforceBtn.classList.remove('active');
-        container.innerHTML = `
-          <div class="glass-card">
-            <div class="card-icon" style="color: var(--accent-purple);">🔳</div>
-            <h3 class="card-title">QR Checkpoint Scans</h3>
-            <p class="card-desc">Instant QR code scanning at security posts ensures guards complete scheduled patrol rounds.</p>
-            <ul class="feature-list">
-              <li>Tamper-proof Encrypted QR Patrol Checkpoints</li>
-              <li>Timestamped Inspection Scan Activity Stream</li>
-              <li>Missed Patrol Alert Triggers</li>
-            </ul>
-          </div>
-
-          <div class="glass-card">
-            <div class="card-icon" style="color: var(--accent-rose);">🚨</div>
-            <h3 class="card-title">Real-Time Incident SOS</h3>
-            <p class="card-desc">Immediate incident reporting with photo attachments and severity classification for swift response.</p>
-            <ul class="feature-list">
-              <li>One-tap Emergency Panic SOS Broadcasting</li>
-              <li>Severity Rating (Low, High, Critical) & Resolution Workflow</li>
-              <li>Photo & Note Evidence Logging</li>
-            </ul>
-          </div>
-
-          <div class="glass-card">
-            <div class="card-icon" style="color: var(--accent-cyan);">🛡️</div>
-            <h3 class="card-title">Sentinel Command Overview</h3>
-            <p class="card-desc">Centralized command center dashboard for security supervisors to monitor all active field posts live.</p>
-            <ul class="feature-list">
-              <li>Live Operational Status Dashboard</li>
-              <li>Guard Shift Allocation & Duty Rosters</li>
-              <li>Instant Emergency Broadcast Dispatch</li>
-            </ul>
-          </div>
-        `;
-      }
-    }
-
-    // ROI Calculator Handler
-    function updateRoiCalc(val) {
-      document.getElementById('workforceValDisplay').textContent = `${val} Personnel`;
-      const num = parseInt(val, 10);
-      const hoursSaved = Math.round(num * 2.8);
-      const rupeesSaved = (num * 3500).toLocaleString('en-IN');
-      document.getElementById('roiHoursDisplay').textContent = `${hoursSaved} hrs / mo`;
-      document.getElementById('roiSavingsDisplay').textContent = `₹ ${rupeesSaved}`;
-    }
-
-    // Scroll Helper
-    function scrollToQuotationForm() {
-      const section = document.getElementById('quotationSection');
-      if (section) section.scrollIntoView({ behavior: 'smooth' });
-    }
-
-    // Initial Suite Tab Render
-    document.addEventListener('DOMContentLoaded', () => {
-      switchSuiteTab('workforce');
-      updateRoiCalc(50);
-    });
-  </script>
+  <!-- Main JavaScript File -->
+  <script src="js/app.js"></script>
 </body>
 </html>
