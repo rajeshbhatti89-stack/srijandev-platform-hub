@@ -42,6 +42,20 @@ app.get('/sw.js', (req, res) => {
   `);
 });
 
+// Explicit Raw XML Sitemap Route
+app.get('/sitemap.xml', (req, res) => {
+  res.setHeader('Cache-Control', 'public, max-age=86400, must-revalidate');
+  res.setHeader('Content-Type', 'application/xml; charset=utf-8');
+  res.sendFile(path.join(__dirname, 'public', 'sitemap.xml'));
+});
+
+// Explicit Robots.txt Route
+app.get('/robots.txt', (req, res) => {
+  res.setHeader('Cache-Control', 'public, max-age=86400, must-revalidate');
+  res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+  res.sendFile(path.join(__dirname, 'public', 'robots.txt'));
+});
+
 // Explicit Root Landing Page Route (Executed BEFORE express.static)
 app.get('/', (req, res) => {
   res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');

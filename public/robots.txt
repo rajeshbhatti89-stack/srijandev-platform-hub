@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://srijandev.in/sitemap.xml
