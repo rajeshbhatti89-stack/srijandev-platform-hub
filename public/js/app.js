@@ -18,12 +18,20 @@ document.addEventListener('DOMContentLoaded', () => {
       0.1,
       1000
     );
-    camera.position.z = 5;
+    camera.position.z = 4.8;
 
     const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
     renderer.setSize(canvasContainer.clientWidth, canvasContainer.clientHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     canvasContainer.appendChild(renderer.domElement);
+
+    // Add Scene Lighting
+    const pointLight = new THREE.PointLight(0x00f2fe, 2.5, 12);
+    pointLight.position.set(2, 2, 4);
+    scene.add(pointLight);
+
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+    scene.add(ambientLight);
 
     // 2. BUILD 3D CYBER-ROBOT ASSEMBLY GROUP
     const robotGroup = new THREE.Group();
@@ -34,18 +42,18 @@ document.addEventListener('DOMContentLoaded', () => {
       color: 0x00f2fe,
       wireframe: true,
       transparent: true,
-      opacity: 0.4
+      opacity: 0.65
     });
     const robotHead = new THREE.Mesh(headGeometry, headMaterial);
     robotGroup.add(robotHead);
 
     // B) Outer Cyber Helmet Shell (Dodecahedron Shield)
-    const helmetShellGeometry = new THREE.DodecahedronGeometry(1.3, 1);
+    const helmetShellGeometry = new THREE.DodecahedronGeometry(1.4, 1);
     const helmetShellMaterial = new THREE.MeshBasicMaterial({
-      color: 0x7b2cbf,
+      color: 0xa855f7,
       wireframe: true,
       transparent: true,
-      opacity: 0.3
+      opacity: 0.5
     });
     const helmetShell = new THREE.Mesh(helmetShellGeometry, helmetShellMaterial);
     robotGroup.add(helmetShell);
