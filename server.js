@@ -56,7 +56,22 @@ app.get('/robots.txt', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'robots.txt'));
 });
 
-// Explicit Contact Page Route
+// Explicit Page Routes
+app.get(['/services', '/services.html'], (req, res) => {
+  res.setHeader('Cache-Control', 'public, max-age=3600, must-revalidate');
+  res.sendFile(path.join(__dirname, 'public', 'services.html'));
+});
+
+app.get(['/tech-stack', '/tech-stack.html'], (req, res) => {
+  res.setHeader('Cache-Control', 'public, max-age=3600, must-revalidate');
+  res.sendFile(path.join(__dirname, 'public', 'tech-stack.html'));
+});
+
+app.get(['/security', '/security.html'], (req, res) => {
+  res.setHeader('Cache-Control', 'public, max-age=3600, must-revalidate');
+  res.sendFile(path.join(__dirname, 'public', 'security.html'));
+});
+
 app.get(['/contact', '/contact.html'], (req, res) => {
   res.setHeader('Cache-Control', 'public, max-age=3600, must-revalidate');
   res.sendFile(path.join(__dirname, 'public', 'contact.html'));
