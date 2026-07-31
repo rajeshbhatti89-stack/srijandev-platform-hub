@@ -42,17 +42,22 @@ app.get('/sw.js', (req, res) => {
   `);
 });
 
-// Explicit Raw XML Sitemap Route
+// Explicit Raw XML Sitemap Route (Explicit HTTP 200 OK & Unrestricted CORS for Googlebot)
 app.get('/sitemap.xml', (req, res) => {
-  res.setHeader('Cache-Control', 'public, max-age=86400, must-revalidate');
+  res.status(200);
   res.setHeader('Content-Type', 'application/xml; charset=utf-8');
+  res.setHeader('Cache-Control', 'public, max-age=86400, must-revalidate');
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('X-Content-Type-Options', 'nosniff');
   res.sendFile(path.join(__dirname, 'public', 'sitemap.xml'));
 });
 
 // Explicit Robots.txt Route
 app.get('/robots.txt', (req, res) => {
-  res.setHeader('Cache-Control', 'public, max-age=86400, must-revalidate');
+  res.status(200);
   res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+  res.setHeader('Cache-Control', 'public, max-age=86400, must-revalidate');
+  res.setHeader('Access-Control-Allow-Origin', '*');
   res.sendFile(path.join(__dirname, 'public', 'robots.txt'));
 });
 

@@ -1,16 +1,16 @@
 /* ==========================================================================
-   SRIJANDEV 3D TECH AGENCY - THREE.JS WEBGL & INTERACTIVE APP SCRIPT
+   SRIJANDEV 3D TECH AGENCY - THREE.JS 3D CYBER-ROBOT & INTERACTIVE APP
    ========================================================================== */
 
 document.addEventListener('DOMContentLoaded', () => {
 
   /* --------------------------------------------------------------------------
-     1. THREE.JS 3D INTERACTIVE HERO CANVAS SCENE
+     1. THREE.JS 3D INTERACTIVE CYBER-ROBOT CANVASES
      -------------------------------------------------------------------------- */
   const canvasContainer = document.getElementById('threejs-canvas');
 
   if (canvasContainer && typeof THREE !== 'undefined') {
-    // 1. Scene, Camera, Renderer
+    // 1. Scene, Camera & WebGL Renderer
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(
       60,
@@ -18,60 +18,122 @@ document.addEventListener('DOMContentLoaded', () => {
       0.1,
       1000
     );
-    camera.position.z = 4.5;
+    camera.position.z = 5;
 
     const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
     renderer.setSize(canvasContainer.clientWidth, canvasContainer.clientHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     canvasContainer.appendChild(renderer.domElement);
 
-    // 2. Geometry: 3D Cyber Sphere & Particle Field
-    const sphereGeometry = new THREE.IcosahedronGeometry(1.8, 4);
+    // 2. BUILD 3D CYBER-ROBOT ASSEMBLY GROUP
+    const robotGroup = new THREE.Group();
 
-    // Wireframe Material
-    const wireframeMaterial = new THREE.MeshBasicMaterial({
+    // A) Robot Head (Angular Cybernetic Helmet)
+    const headGeometry = new THREE.BoxGeometry(1.6, 1.4, 1.4);
+    const headMaterial = new THREE.MeshBasicMaterial({
       color: 0x00f2fe,
       wireframe: true,
       transparent: true,
-      opacity: 0.35
+      opacity: 0.4
+    });
+    const robotHead = new THREE.Mesh(headGeometry, headMaterial);
+    robotGroup.add(robotHead);
+
+    // B) Outer Cyber Helmet Shell (Dodecahedron Shield)
+    const helmetShellGeometry = new THREE.DodecahedronGeometry(1.3, 1);
+    const helmetShellMaterial = new THREE.MeshBasicMaterial({
+      color: 0x7b2cbf,
+      wireframe: true,
+      transparent: true,
+      opacity: 0.3
+    });
+    const helmetShell = new THREE.Mesh(helmetShellGeometry, helmetShellMaterial);
+    robotGroup.add(helmetShell);
+
+    // C) Robot Glowing Eyes (Emerald Lenses)
+    const eyeGeometry = new THREE.SphereGeometry(0.18, 16, 16);
+    const eyeMaterial = new THREE.MeshBasicMaterial({
+      color: 0x00f5a0,
+      transparent: true,
+      opacity: 0.95
     });
 
-    const cyberSphere = new THREE.Mesh(sphereGeometry, wireframeMaterial);
-    scene.add(cyberSphere);
+    const leftEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
+    leftEye.position.set(-0.4, 0.2, 0.72);
+    robotGroup.add(leftEye);
 
-    // Inner Glowing Core
-    const coreGeometry = new THREE.IcosahedronGeometry(1.2, 2);
-    const coreMaterial = new THREE.MeshBasicMaterial({
-      color: 0x7b2cbf,
+    const rightEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
+    rightEye.position.set(0.4, 0.2, 0.72);
+    robotGroup.add(rightEye);
+
+    // D) Robot Visor Glowing Core Strip
+    const visorGeometry = new THREE.BoxGeometry(1.2, 0.22, 0.1);
+    const visorMaterial = new THREE.MeshBasicMaterial({
+      color: 0x00f2fe,
+      transparent: true,
+      opacity: 0.7
+    });
+    const visor = new THREE.Mesh(visorGeometry, visorMaterial);
+    visor.position.set(0, 0.2, 0.68);
+    robotGroup.add(visor);
+
+    // E) Cyber Neck & Torso Chassis
+    const neckGeometry = new THREE.CylinderGeometry(0.35, 0.45, 0.6, 12);
+    const neckMaterial = new THREE.MeshBasicMaterial({
+      color: 0x64748b,
       wireframe: true,
       transparent: true,
       opacity: 0.5
     });
-    const innerCore = new THREE.Mesh(coreGeometry, coreMaterial);
-    scene.add(innerCore);
+    const neck = new THREE.Mesh(neckGeometry, neckMaterial);
+    neck.position.set(0, -1.0, 0);
+    robotGroup.add(neck);
 
-    // Particle Cloud Surround
-    const particlesCount = 700;
+    // F) Rotating Orbital Tech Rings
+    const ringGeometry1 = new THREE.TorusGeometry(2.1, 0.02, 16, 100);
+    const ringMaterial1 = new THREE.MeshBasicMaterial({
+      color: 0x00f2fe,
+      transparent: true,
+      opacity: 0.5
+    });
+    const orbitalRing1 = new THREE.Mesh(ringGeometry1, ringMaterial1);
+    orbitalRing1.rotation.x = Math.PI / 3;
+    robotGroup.add(orbitalRing1);
+
+    const ringGeometry2 = new THREE.TorusGeometry(2.4, 0.015, 16, 100);
+    const ringMaterial2 = new THREE.MeshBasicMaterial({
+      color: 0x00f5a0,
+      transparent: true,
+      opacity: 0.4
+    });
+    const orbitalRing2 = new THREE.Mesh(ringGeometry2, ringMaterial2);
+    orbitalRing2.rotation.y = Math.PI / 4;
+    robotGroup.add(orbitalRing2);
+
+    scene.add(robotGroup);
+
+    // 3. BACKGROUND CYBER PARTICLE MATRIX
+    const particlesCount = 850;
     const posArray = new Float32Array(particlesCount * 3);
 
     for (let i = 0; i < particlesCount * 3; i++) {
-      posArray[i] = (Math.random() - 0.5) * 10;
+      posArray[i] = (Math.random() - 0.5) * 12;
     }
 
     const particlesGeometry = new THREE.BufferGeometry();
     particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
 
     const particlesMaterial = new THREE.PointsMaterial({
-      size: 0.025,
-      color: 0x00f5a0,
+      size: 0.028,
+      color: 0x00f2fe,
       transparent: true,
-      opacity: 0.7
+      opacity: 0.6
     });
 
-    const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
-    scene.add(particlesMesh);
+    const particleSystem = new THREE.Points(particlesGeometry, particlesMaterial);
+    scene.add(particleSystem);
 
-    // 3. Mouse Parallax Movement Tracking
+    // 4. MOUSE PARALLAX CURSOR TRACKING (Robot Looks at User Cursor)
     let mouseX = 0;
     let mouseY = 0;
     let targetX = 0;
@@ -81,36 +143,35 @@ document.addEventListener('DOMContentLoaded', () => {
     const windowHalfY = window.innerHeight / 2;
 
     document.addEventListener('mousemove', (e) => {
-      mouseX = (e.clientX - windowHalfX) * 0.0005;
-      mouseY = (e.clientY - windowHalfY) * 0.0005;
+      mouseX = (e.clientX - windowHalfX) * 0.0008;
+      mouseY = (e.clientY - windowHalfY) * 0.0008;
     });
 
-    // 4. Animation Loop (Hardware Accelerated 60FPS)
+    // 5. HARDWARE ACCELERATED ANIMATION LOOP (60 FPS)
     const animate = () => {
       requestAnimationFrame(animate);
 
-      // Rotate 3D Geometries
-      cyberSphere.rotation.y += 0.004;
-      cyberSphere.rotation.x += 0.002;
-
-      innerCore.rotation.y -= 0.006;
-      innerCore.rotation.z += 0.003;
-
-      particlesMesh.rotation.y -= 0.001;
-
-      // Smooth Mouse Parallax Damping
+      // Smooth Robot Damping & Eye-Tracking Cursor Movement
       targetX += (mouseX - targetX) * 0.05;
       targetY += (mouseY - targetY) * 0.05;
 
-      cyberSphere.rotation.y += targetX * 0.5;
-      cyberSphere.rotation.x += targetY * 0.5;
+      robotGroup.rotation.y = targetX * 1.5;
+      robotGroup.rotation.x = targetY * 1.2;
+
+      // Rotate Tech Rings in Opposite Directions
+      orbitalRing1.rotation.z += 0.008;
+      orbitalRing2.rotation.z -= 0.006;
+      particleSystem.rotation.y += 0.0008;
+
+      // Floating Bobbing Effect for Robot Head
+      robotGroup.position.y = Math.sin(Date.now() * 0.002) * 0.12;
 
       renderer.render(scene, camera);
     };
 
     animate();
 
-    // 5. Window Resize Handler
+    // 6. Window Resize Listener
     window.addEventListener('resize', () => {
       if (!canvasContainer) return;
       const width = canvasContainer.clientWidth;
@@ -123,43 +184,36 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   /* --------------------------------------------------------------------------
-     2. PROPOSAL / LEAD CAPTURE FORM HANDLER
+     2. FORM SUBMISSION HANDLERS WITH ACCESSIBLE TOASTS
      -------------------------------------------------------------------------- */
   const proposalForm = document.getElementById('proposalForm');
-
   if (proposalForm) {
-    proposalForm.addEventListener('submit', async (e) => {
+    proposalForm.addEventListener('submit', (e) => {
       e.preventDefault();
-
       const name = document.getElementById('fullName').value;
       const phone = document.getElementById('phoneNum').value;
       const service = document.getElementById('serviceType').value;
 
-      // Show sleek custom toast notification
-      showToast(`Thank you, ${name}! Your inquiry for "${service}" has been logged. Our technical lead will reach out to ${phone} within 2 hours.`);
-
+      showToast(`Thank you, ${name}! Your proposal request for "${service}" has been received. Our team will reach out to ${phone} within 2 hours.`);
       proposalForm.reset();
     });
   }
 
   const contactPageForm = document.getElementById('contactPageForm');
-
   if (contactPageForm) {
     contactPageForm.addEventListener('submit', (e) => {
       e.preventDefault();
-
       const name = document.getElementById('cName').value;
       const phone = document.getElementById('cPhone').value;
       const service = document.getElementById('cService').value;
 
-      showToast(`Thank you, ${name}! Message received for "${service}". Our team will contact you at ${phone} or contact@srijandev.in shortly.`);
-
+      showToast(`Thank you, ${name}! Message logged for "${service}". We will contact you at ${phone} or contact@srijandev.in shortly.`);
       contactPageForm.reset();
     });
   }
 
   /* --------------------------------------------------------------------------
-     3. TOAST NOTIFICATION UTILITY WITH ARIA ACCESSIBILITY
+     3. TOAST NOTIFICATION UTILITY (ARIA LIVE REGION)
      -------------------------------------------------------------------------- */
   function showToast(message) {
     const toastContainer = document.getElementById('toastContainer');
@@ -169,7 +223,7 @@ document.addEventListener('DOMContentLoaded', () => {
     toast.className = 'custom-toast';
     toast.innerHTML = `
       <div style="display:flex; align-items:center; gap:0.8rem;">
-        <i class="fa-solid fa-circle-check" style="font-size:1.4rem; color:#00f5a0;"></i>
+        <i class="fa-solid fa-robot" style="font-size:1.4rem; color:#00f5a0;"></i>
         <div>${message}</div>
       </div>
     `;
@@ -195,13 +249,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     toastContainer.appendChild(toast);
 
-    // Animate In
     setTimeout(() => {
       toast.style.transform = 'translateY(0)';
       toast.style.opacity = '1';
     }, 50);
 
-    // Auto Remove After 5 Seconds
     setTimeout(() => {
       toast.style.transform = 'translateY(100px)';
       toast.style.opacity = '0';
