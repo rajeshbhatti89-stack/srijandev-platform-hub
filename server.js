@@ -56,6 +56,12 @@ app.get('/robots.txt', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'robots.txt'));
 });
 
+// Explicit Contact Page Route
+app.get(['/contact', '/contact.html'], (req, res) => {
+  res.setHeader('Cache-Control', 'public, max-age=3600, must-revalidate');
+  res.sendFile(path.join(__dirname, 'public', 'contact.html'));
+});
+
 // Explicit Root Landing Page Route (Executed BEFORE express.static)
 app.get('/', (req, res) => {
   res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');

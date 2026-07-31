@@ -142,6 +142,22 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  const contactPageForm = document.getElementById('contactPageForm');
+
+  if (contactPageForm) {
+    contactPageForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const name = document.getElementById('cName').value;
+      const phone = document.getElementById('cPhone').value;
+      const service = document.getElementById('cService').value;
+
+      showToast(`Thank you, ${name}! Message received for "${service}". Our team will contact you at ${phone} or contact@srijandev.in shortly.`);
+
+      contactPageForm.reset();
+    });
+  }
+
   /* --------------------------------------------------------------------------
      3. TOAST NOTIFICATION UTILITY WITH ARIA ACCESSIBILITY
      -------------------------------------------------------------------------- */
