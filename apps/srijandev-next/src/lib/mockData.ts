@@ -62,6 +62,30 @@ export const CORPORATE_SERVICES: ServiceItem[] = [
     technologies: ['React Native', 'Flutter', 'TypeScript', 'Firebase'],
     startingPrice: '$6,499',
   },
+  {
+    id: 'workforce-ops',
+    slug: 'workforce-field-operations',
+    title: 'Smart Workforce & Field Operations Suite',
+    shortDesc: 'Complete workforce management platform for shift scheduling, geolocation check-ins, attendance, and expense tracking.',
+    fullDesc: 'Inspired by modern operations platforms like Unolo, SrijanDev Workforce Suite empowers managers to track field staff check-ins, automate shift planning, process expense claims, and view real-time location metrics in a single dashboard.',
+    icon: 'Briefcase',
+    features: ['Geolocation Shift Check-In', 'Automated Shift Scheduling', 'Expense & Travel Reimbursement Claims', 'Timesheets & Attendance Audit'],
+    benefits: ['Reduce workforce tracking errors by 90%', 'Automated shift alerts & manager approvals', 'Real-time location map feed'],
+    technologies: ['Next.js 15', 'TypeScript', 'Prisma', 'PostgreSQL', 'TailwindCSS'],
+    startingPrice: '$5,499',
+  },
+  {
+    id: 'digital-consulting',
+    slug: 'digital-transformation-consulting',
+    title: 'Enterprise Architecture & IT Consulting',
+    shortDesc: 'Strategic technology roadmap, legacy system modernization, security compliance audits, and performance tuning.',
+    fullDesc: 'Inspired by top software consultancies like TechPurple, our senior software architects evaluate your technology stack, identify security bottlenecks, and guide legacy modernization into cloud-native microservices.',
+    icon: 'Code2',
+    features: ['Architectural Code Audits', 'Zero-Downtime Migration Strategy', 'SAIF & Security Compliance', 'Performance & Load Optimization'],
+    benefits: ['Sub-second response time guarantee', 'Seamless legacy-to-cloud transition'],
+    technologies: ['Next.js', 'React 19', 'Kubernetes', 'AWS', 'Python', 'Terraform'],
+    startingPrice: '$7,999',
+  },
 ];
 
 export const PORTFOLIO_PROJECTS: PortfolioItem[] = [
