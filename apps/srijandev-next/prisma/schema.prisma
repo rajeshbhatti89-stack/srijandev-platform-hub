@@ -1,0 +1,111 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  ADMIN
+  MANAGER
+  EMPLOYEE
+}
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  REVIEW
+  COMPLETED
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum LeadStage {
+  NEW
+  CONTACTED
+  PROPOSAL
+  NEGOTIATION
+  WON
+  LOST
+}
+
+model User {
+  id           String       @id @default(uuid())
+  email        String       @unique
+  name         String
+  role         Role         @default(EMPLOYEE)
+  department   String?
+  avatar       String?
+  phone        String?
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  tasks        Task[]       @relation("AssignedTasks")
+  attendances  Attendance[]
+}
+
+model Attendance {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  date        DateTime @default(now())
+  checkIn     DateTime
+  checkOut    DateTime?
+  status      String   @default("PRESENT")
+  hoursWorked Float    @default(0)
+  location    String?
+}
+
+model Task {
+  id          String     @id @default(uuid())
+  title       String
+  description String?
+  status      TaskStatus @default(TODO)
+  priority    Priority   @default(MEDIUM)
+  category    String
+  assigneeId  String
+  assignee    User       @relation("AssignedTasks", fields: [assigneeId], references: [id])
+  dueDate     DateTime?
+  createdAt   DateTime   @default(now())
+}
+
+model CRMLead {
+  id          String    @id @default(uuid())
+  companyName String
+  contactName String
+  email       String
+  phone       String?
+  value       Float
+  stage       LeadStage @default(NEW)
+  assignedTo  String
+  createdAt   DateTime  @default(now())
+}
+
+model Service {
+  id            String   @id @default(uuid())
+  slug          String   @unique
+  title         String
+  shortDesc     String
+  fullDesc      String
+  icon          String
+  startingPrice String
+  createdAt     DateTime @default(now())
+}
+
+model BlogPost {
+  id          String   @id @default(uuid())
+  slug        String   @unique
+  title       String
+  excerpt     String
+  content     String
+  category    String
+  publishedAt DateTime @default(now())
+  readTime    String
+  image       String
+}
