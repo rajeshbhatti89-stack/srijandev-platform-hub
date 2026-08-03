@@ -82,6 +82,19 @@ app.get(['/contact', '/contact.html'], (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'contact.html'));
 });
 
+// Explicit Portal Routes (Corporate TechPurple Portal & Business Unolo Platform)
+const NEXT_APP_PORTAL_URL = process.env.NEXT_APP_URL || 'http://localhost:3000';
+
+app.get(['/corporate', '/corporate.html'], (req, res) => {
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+  res.redirect(`${NEXT_APP_PORTAL_URL}/?portal=corporate`);
+});
+
+app.get(['/platform', '/platform.html'], (req, res) => {
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+  res.redirect(`${NEXT_APP_PORTAL_URL}/?portal=platform`);
+});
+
 // Explicit Root Landing Page Route (Executed BEFORE express.static)
 app.get('/', (req, res) => {
   res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
