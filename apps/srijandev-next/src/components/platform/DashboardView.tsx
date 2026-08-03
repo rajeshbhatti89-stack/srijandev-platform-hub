@@ -31,6 +31,12 @@ interface DashboardViewProps {
 }
 
 export const DashboardView: React.FC<DashboardViewProps> = ({ setActiveTab }) => {
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
   return (
     <div className="space-y-8">
       
@@ -134,23 +140,25 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ setActiveTab }) =>
           </div>
 
           <div className="h-72 w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={revenueData}>
-                <defs>
-                  <linearGradient id="colorRev" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#7c3aed" stopOpacity={0.5} />
-                    <stop offset="95%" stopColor="#7c3aed" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#1f293d" />
-                <XAxis dataKey="month" stroke="#64748b" fontSize={12} />
-                <YAxis stroke="#64748b" fontSize={12} />
-                <Tooltip
-                  contentStyle={{ backgroundColor: '#121723', borderColor: '#334155', borderRadius: '12px', color: '#fff' }}
-                />
-                <Area type="monotone" dataKey="revenue" stroke="#7c3aed" strokeWidth={3} fillOpacity={1} fill="url(#colorRev)" />
-              </AreaChart>
-            </ResponsiveContainer>
+            {mounted && (
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={revenueData}>
+                  <defs>
+                    <linearGradient id="colorRev" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#7c3aed" stopOpacity={0.5} />
+                      <stop offset="95%" stopColor="#7c3aed" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#1f293d" />
+                  <XAxis dataKey="month" stroke="#64748b" fontSize={12} />
+                  <YAxis stroke="#64748b" fontSize={12} />
+                  <Tooltip
+                    contentStyle={{ backgroundColor: '#121723', borderColor: '#334155', borderRadius: '12px', color: '#fff' }}
+                  />
+                  <Area type="monotone" dataKey="revenue" stroke="#7c3aed" strokeWidth={3} fillOpacity={1} fill="url(#colorRev)" />
+                </AreaChart>
+              </ResponsiveContainer>
+            )}
           </div>
         </div>
 

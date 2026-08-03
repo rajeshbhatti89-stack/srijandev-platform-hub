@@ -53,6 +53,15 @@ function PageContent() {
   const [isCommandOpen, setIsCommandOpen] = useState<boolean>(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState<boolean>(false);
   const [isNotificationOpen, setIsNotificationOpen] = useState<boolean>(false);
+  const [mounted, setMounted] = useState<boolean>(false);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return <div className="min-h-screen bg-dark-bg" />;
+  }
 
   return (
     <main className="min-h-screen bg-dark-bg text-slate-100 relative">
