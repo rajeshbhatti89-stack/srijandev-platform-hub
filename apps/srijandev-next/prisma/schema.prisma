@@ -8,9 +8,14 @@ generator client {
 }
 
 enum Role {
+  SUPER_ADMIN
   ADMIN
+  HR
   MANAGER
+  TEAM_LEAD
   EMPLOYEE
+  CLIENT
+  GUEST
 }
 
 enum TaskStatus {
@@ -36,18 +41,47 @@ enum LeadStage {
   LOST
 }
 
+enum LeaveStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum TicketStatus {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+}
+
 model User {
   id           String       @id @default(uuid())
   email        String       @unique
   name         String
   role         Role         @default(EMPLOYEE)
-  department   String?
+  departmentId String?
+  department   Department?  @relation(fields: [departmentId], references: [id])
   avatar       String?
   phone        String?
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @updatedAt
   tasks        Task[]       @relation("AssignedTasks")
   attendances  Attendance[]
+  projects     ProjectMember[]
+  messages     Message[]
+  notifications Notification[]
+  invoices     Invoice[]
+  leaves       Leave[]
+  performanceReviews PerformanceReview[]
+}
+
+model Department {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  description String?
+  managerId   String?
+  users       User[]
+  createdAt   DateTime @default(now())
 }
 
 model Attendance {
@@ -62,6 +96,29 @@ model Attendance {
   location    String?
 }
 
+model Project {
+  id          String          @id @default(uuid())
+  name        String
+  description String?
+  clientName  String
+  startDate   DateTime
+  endDate     DateTime?
+  budget      Float           @default(0)
+  status      String          @default("ACTIVE")
+  members     ProjectMember[]
+  tasks       Task[]
+  createdAt   DateTime        @default(now())
+}
+
+model ProjectMember {
+  id        String   @id @default(uuid())
+  projectId String
+  project   Project  @relation(fields: [projectId], references: [id])
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  role      String   @default("CONTRIBUTOR")
+}
+
 model Task {
   id          String     @id @default(uuid())
   title       String
@@ -71,6 +128,8 @@ model Task {
   category    String
   assigneeId  String
   assignee    User       @relation("AssignedTasks", fields: [assigneeId], references: [id])
+  projectId   String?
+  project     Project?   @relation(fields: [projectId], references: [id])
   dueDate     DateTime?
   createdAt   DateTime   @default(now())
 }
@@ -85,6 +144,82 @@ model CRMLead {
   stage       LeadStage @default(NEW)
   assignedTo  String
   createdAt   DateTime  @default(now())
+}
+
+model Invoice {
+  id          String   @id @default(uuid())
+  invoiceNo   String   @unique
+  clientName  String
+  userId      String?
+  user        User?    @relation(fields: [userId], references: [id])
+  amount      Float
+  status      String   @default("PENDING")
+  issueDate   DateTime @default(now())
+  dueDate     DateTime
+}
+
+model Leave {
+  id          String      @id @default(uuid())
+  userId      String
+  user        User        @relation(fields: [userId], references: [id])
+  type        String      @default("PAID")
+  startDate   DateTime
+  endDate     DateTime
+  reason      String
+  status      LeaveStatus @default(PENDING)
+  createdAt   DateTime    @default(now())
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  title     String
+  message   String
+  type      String   @default("INFO")
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model Message {
+  id             String   @id @default(uuid())
+  senderId       String
+  sender         User     @relation(fields: [senderId], references: [id])
+  conversationId String
+  content        String
+  createdAt      DateTime @default(now())
+}
+
+model PerformanceReview {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  reviewer    String
+  rating      Float
+  feedback    String
+  period      String
+  createdAt   DateTime @default(now())
+}
+
+model KnowledgeBase {
+  id          String   @id @default(uuid())
+  title       String
+  slug        String   @unique
+  content     String
+  category    String
+  views       Int      @default(0)
+  createdAt   DateTime @default(now())
+}
+
+model SupportTicket {
+  id          String       @id @default(uuid())
+  ticketNo    String       @unique
+  subject     String
+  description String
+  priority    Priority     @default(MEDIUM)
+  status      TicketStatus @default(OPEN)
+  customer    String
+  createdAt   DateTime     @default(now())
 }
 
 model Service {

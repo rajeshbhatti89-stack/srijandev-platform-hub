@@ -1,8 +1,6 @@
 'use client';
 
 import React, { useState } from 'react';
-import Link from 'next/link';
-import { motion } from 'framer-motion';
 import {
   LayoutDashboard,
   Users,
@@ -15,12 +13,15 @@ import {
   ShieldCheck,
   ChevronLeft,
   ChevronRight,
-  LogOut,
-  Bell,
-  Search,
+  Briefcase,
+  DollarSign,
+  Calendar,
   UserCheck,
+  HardDrive,
+  Target,
+  BookOpen,
+  MessageSquare,
 } from 'lucide-react';
-import { PortalSwitcher } from './PortalSwitcher';
 
 interface PlatformSidebarProps {
   activeTab: string;
@@ -32,13 +33,22 @@ export const PlatformSidebar: React.FC<PlatformSidebarProps> = ({ activeTab, set
 
   const menuItems = [
     { id: 'dashboard', label: 'Executive Dashboard', icon: LayoutDashboard },
+    { id: 'projects', label: 'Projects & Gantt', icon: Briefcase },
     { id: 'employees', label: 'Employee Directory', icon: Users, badge: '148' },
     { id: 'attendance', label: 'Attendance & Clock-In', icon: Clock },
+    { id: 'leaves', label: 'PTO & Leave Mgmt', icon: Calendar },
     { id: 'tasks', label: 'Task Kanban Board', icon: Kanban, badge: '4 Open' },
-    { id: 'crm', label: 'CRM & Deals Pipeline', icon: Building },
-    { id: 'documents', label: 'Document Center', icon: FileText },
+    { id: 'crm', label: 'Enterprise CRM', icon: Building },
+    { id: 'finance', label: 'Invoices & Payroll', icon: DollarSign },
+    { id: 'chat', label: 'Internal Team Chat', icon: MessageSquare, badge: 'Live' },
+    { id: 'files', label: 'File Manager Vault', icon: HardDrive },
+    { id: 'org', label: 'Org Chart Tree', icon: Users },
+    { id: 'recruitment', label: 'ATS Recruitment', icon: UserCheck },
+    { id: 'assets', label: 'Hardware Assets', icon: HardDrive },
+    { id: 'performance', label: 'OKRs & Goals', icon: Target },
+    { id: 'knowledge', label: 'Support & Docs', icon: BookOpen },
     { id: 'analytics', label: 'Reports & Intelligence', icon: BarChart3 },
-    { id: 'settings', label: 'Settings & RBAC', icon: Settings },
+    { id: 'admin', label: 'Admin RBAC Panel', icon: ShieldCheck },
   ];
 
   return (
@@ -58,7 +68,7 @@ export const PlatformSidebar: React.FC<PlatformSidebarProps> = ({ activeTab, set
             </div>
             <div>
               <div className="text-base font-extrabold text-white tracking-tight">SrijanDev Ops</div>
-              <div className="text-[10px] text-cyan-400 font-mono font-semibold">SAAS PLATFORM v2.5</div>
+              <div className="text-[10px] text-cyan-400 font-mono font-semibold">ENTERPRISE SAAS v2.5</div>
             </div>
           </div>
         )}
@@ -77,7 +87,7 @@ export const PlatformSidebar: React.FC<PlatformSidebarProps> = ({ activeTab, set
       </div>
 
       {/* Navigation Menu Links */}
-      <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-1.5">
+      <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-1">
         {menuItems.map((item) => {
           const Icon = item.icon;
           const isActive = activeTab === item.id;
@@ -85,16 +95,16 @@ export const PlatformSidebar: React.FC<PlatformSidebarProps> = ({ activeTab, set
             <button
               key={item.id}
               onClick={() => setActiveTab(item.id)}
-              className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl font-medium text-sm transition-all duration-200 ${
+              className={`w-full flex items-center space-x-3 px-3 py-2 rounded-xl font-medium text-xs transition-all duration-200 ${
                 isActive
                   ? 'bg-gradient-to-r from-cyan-500/20 to-brand-600/20 text-cyan-300 border border-cyan-500/30 shadow-lg'
                   : 'text-slate-400 hover:bg-slate-800/40 hover:text-slate-200'
               }`}
             >
-              <Icon className={`w-5 h-5 flex-shrink-0 ${isActive ? 'text-cyan-400' : 'text-slate-400'}`} />
+              <Icon className={`w-4 h-4 flex-shrink-0 ${isActive ? 'text-cyan-400' : 'text-slate-400'}`} />
               {!collapsed && <span className="truncate">{item.label}</span>}
               {!collapsed && item.badge && (
-                <span className="ml-auto px-2 py-0.5 text-[10px] font-bold rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
+                <span className="ml-auto px-2 py-0.5 text-[9px] font-bold rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
                   {item.badge}
                 </span>
               )}
@@ -119,9 +129,8 @@ export const PlatformSidebar: React.FC<PlatformSidebarProps> = ({ activeTab, set
               <div className="text-sm font-semibold text-white truncate">Rajesh Bhatti</div>
               <div className="flex items-center space-x-1">
                 <span className="px-1.5 py-0.2 text-[9px] font-mono font-bold bg-purple-500/20 text-purple-300 rounded border border-purple-500/30">
-                  ADMIN
+                  SUPER ADMIN
                 </span>
-                <span className="text-[11px] text-slate-400 truncate">Engineering</span>
               </div>
             </div>
           )}

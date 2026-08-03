@@ -1,0 +1,9 @@
+{
+  "name": "SrijanDev Multi-Portal Platform",
+  "short_name": "SrijanDev",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0d14",
+  "theme_color": "#7c3aed",
+  "description": "Enterprise Corporate Web Portal & Workforce SaaS Operations Platform"
+}
