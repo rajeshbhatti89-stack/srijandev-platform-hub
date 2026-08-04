@@ -54,7 +54,7 @@ import { Bell, Search, ShieldCheck, User } from 'lucide-react';
 
 function PageContent() {
   const { activePortal } = usePortal();
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const [platformTab, setPlatformTab] = useState<string>('dashboard');
   const [pulseTab, setPulseTab] = useState<string>('pulse-dashboard');
   const [isCommandOpen, setIsCommandOpen] = useState<boolean>(false);
@@ -160,11 +160,11 @@ function PageContent() {
                   </button>
 
                   <button
-                    onClick={() => setIsAuthModalOpen(true)}
+                    onClick={() => user ? logout() : setIsAuthModalOpen(true)}
                     className="px-3 py-1.5 rounded-xl glass-panel text-xs text-slate-300 hover:text-white font-semibold flex items-center space-x-2 border border-slate-700"
                   >
                     <User className="w-3.5 h-3.5 text-purple-400" />
-                    <span>{user ? user.name : 'Sign In'}</span>
+                    <span>{user ? 'Logout' : 'Sign In'}</span>
                   </button>
 
                   <PortalSwitcher variant="header" />
@@ -250,12 +250,12 @@ function PageContent() {
                 <div className="flex items-center space-x-3">
                   <PortalSwitcher variant="header" />
                   <button
-                    onClick={() => setIsAuthModalOpen(true)}
+                    onClick={() => user ? logout() : setIsAuthModalOpen(true)}
                     className="px-3 py-1.5 rounded-xl text-xs text-slate-300 hover:text-white font-semibold flex items-center space-x-2 border border-emerald-900/40"
                     style={{ background: 'rgba(16,185,129,0.05)' }}
                   >
                     <User className="w-3.5 h-3.5 text-emerald-400" />
-                    <span>{user ? user.name : 'Sign In'}</span>
+                    <span>{user ? 'Logout' : 'Sign In'}</span>
                   </button>
                 </div>
               </header>

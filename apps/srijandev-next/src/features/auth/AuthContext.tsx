@@ -23,14 +23,7 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<UserSession | null>({
-    id: 'emp-1',
-    name: 'Rajesh Bhatti',
-    email: 'rajesh@srijandev.com',
-    role: 'ADMIN',
-    department: 'Engineering',
-    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80',
-  });
+  const [user, setUser] = useState<UserSession | null>(null);
 
   const login = (email: string, role: UserRole = 'ADMIN') => {
     setUser({
