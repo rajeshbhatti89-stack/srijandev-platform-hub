@@ -121,23 +121,15 @@ app.get(['/platform', '/platform.html'], (req, res) => {
   res.redirect(`${baseUrl}/?portal=platform`);
 });
 
-// Explicit Root Landing Page Route (Executed BEFORE express.static)
+// Root API Status Route (replaces old HTML landing page serving)
 app.get('/', (req, res) => {
-  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
-  if (req.isTenantPortal || req.query.tenant) {
-    return res.sendFile(path.join(__dirname, 'public', 'portal.html'));
-  }
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  res.status(200).json({ status: 'ok', service: 'SrijanDev Backend API', timestamp: new Date().toISOString() });
 });
 
-// Explicit Redirect for /auth.html -> /
+// Redirect deprecated /auth.html -> /
 app.get('/auth.html', (req, res) => {
-  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
   res.redirect(301, '/');
 });
-
-// Serve Static Public Assets (with index disabled for dynamic tenant routing)
-app.use(express.static(path.join(__dirname, 'public'), { index: false }));
 
 /* ==========================================================================
    1. PUBLIC MARKETING HUB & LEAD CAPTURE API
@@ -766,36 +758,12 @@ app.get('/api/tenant/analytics', requireAuth, async (req, res) => {
 });
 
 /* ==========================================================================
-   5. PAGE ROUTER (Modular HTML Files)
+   5. 404 FALLBACK (API-only backend — no HTML serving)
    ========================================================================== */
 
-// Explicit Root Route
-app.get('/', (req, res) => {
-  if (req.isTenantPortal || req.query.tenant) {
-    return res.sendFile(path.join(__dirname, 'public', 'portal.html'));
-  }
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
-
-// Explicit Redirect for deprecated /auth.html -> /
-app.get('/auth.html', (req, res) => {
-  res.redirect(301, '/');
-});
-
-// Admin Dashboard Route
-app.get(['/admin', '/super-admin'], (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'admin.html'));
-});
-
-// Client Portal & Root Catch-all Route
-app.get('*', (req, res) => {
-  if (req.isMainSite || req.isMainHub) {
-    return res.sendFile(path.join(__dirname, 'public', 'index.html'));
-  }
-  if (req.isTenantPortal || req.query.tenant) {
-    return res.sendFile(path.join(__dirname, 'public', 'portal.html'));
-  }
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+// Catch-all 404 for unknown routes
+app.use((req, res) => {
+  res.status(404).json({ error: 'Not Found', message: `Route ${req.method} ${req.path} does not exist on this API server.` });
 });
 
 // HTTP Server & WebSocket Telemetry Server Setup
