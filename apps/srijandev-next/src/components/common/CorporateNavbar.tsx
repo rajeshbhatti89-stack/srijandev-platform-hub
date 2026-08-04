@@ -15,19 +15,19 @@ export const CorporateNavbar: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           
-          {/* SrijanDev Brand Logo */}
+          {/* SrijanDev Nexus Brand Logo */}
           <Link href="/" className="flex items-center space-x-3 group">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 via-purple-500 to-cyan-400 p-0.5 shadow-glow-purple group-hover:scale-105 transition-transform duration-300">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 via-violet-500 to-purple-400 p-0.5 shadow-glow-purple group-hover:scale-105 transition-transform duration-300">
               <div className="w-full h-full bg-dark-bg rounded-[10px] flex items-center justify-center">
-                <ShieldCheck className="w-6 h-6 text-brand-400 group-hover:text-cyan-300 transition-colors" />
+                <ShieldCheck className="w-6 h-6 text-violet-400 group-hover:text-purple-300 transition-colors" />
               </div>
             </div>
             <div className="flex flex-col">
               <span className="text-xl font-extrabold tracking-tight gradient-text font-sans">
-                SrijanDev
+                SrijanDev <span className="font-light italic text-violet-300">Nexus</span>
               </span>
               <span className="text-[10px] text-slate-400 tracking-widest uppercase font-semibold">
-                Next-Gen Enterprise
+                Tech Agency & IT Services
               </span>
             </div>
           </Link>

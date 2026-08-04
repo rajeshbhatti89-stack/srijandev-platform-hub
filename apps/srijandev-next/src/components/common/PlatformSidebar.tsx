@@ -61,19 +61,19 @@ export const PlatformSidebar: React.FC<PlatformSidebarProps> = ({ activeTab, set
       <div className="h-20 flex items-center justify-between px-4 border-b border-slate-800/80">
         {!collapsed && (
           <div className="flex items-center space-x-3">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-cyan-500 to-brand-600 p-0.5 shadow-glow-cyan">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-600 p-0.5 shadow-glow-cyan">
               <div className="w-full h-full bg-dark-bg rounded-[10px] flex items-center justify-center">
-                <ShieldCheck className="w-5 h-5 text-cyan-400" />
+                <ShieldCheck className="w-5 h-5 text-emerald-400" />
               </div>
             </div>
             <div>
-              <div className="text-base font-extrabold text-white tracking-tight">SrijanDev Ops</div>
-              <div className="text-[10px] text-cyan-400 font-mono font-semibold">ENTERPRISE SAAS v2.5</div>
+              <div className="text-[11px] font-extrabold text-white tracking-tight">SrijanDev <span className="text-emerald-400 font-light italic">Pulse</span></div>
+              <div className="text-[9px] text-emerald-400 font-mono font-semibold">FIELD FORCE PLATFORM</div>
             </div>
           </div>
         )}
         {collapsed && (
-          <div className="mx-auto w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-brand-600 p-0.5 flex items-center justify-center shadow-glow-cyan">
+          <div className="mx-auto w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-600 p-0.5 flex items-center justify-center shadow-glow-cyan">
             <ShieldCheck className="w-6 h-6 text-white" />
           </div>
         )}

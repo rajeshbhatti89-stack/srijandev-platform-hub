@@ -1,4 +1,4 @@
-export type PortalType = 'corporate' | 'platform';
+export type PortalType = 'corporate' | 'platform' | 'pulse';
 
 export interface PortalContextType {
   activePortal: PortalType;

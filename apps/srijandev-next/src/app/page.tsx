@@ -44,12 +44,19 @@ import { AnalyticsView } from '@/components/platform/AnalyticsView';
 import { AdminView } from '@/components/platform/AdminView';
 import { PermissionGuard } from '@/components/common/PermissionGuard';
 
+// SrijanDev Pulse — Field Force Portal
+import { PulseSidebar } from '@/components/pulse/PulseSidebar';
+import { PulseDashboard } from '@/components/pulse/PulseDashboard';
+import { PulseGPSView } from '@/components/pulse/PulseGPSView';
+import { PulseAttendanceView, PulsePatrolView, PulseIncidentView, PulseLeaveView } from '@/components/pulse/PulseOperationsViews';
+
 import { Bell, Search, ShieldCheck, User } from 'lucide-react';
 
 function PageContent() {
   const { activePortal } = usePortal();
   const { user } = useAuth();
   const [platformTab, setPlatformTab] = useState<string>('dashboard');
+  const [pulseTab, setPulseTab] = useState<string>('pulse-dashboard');
   const [isCommandOpen, setIsCommandOpen] = useState<boolean>(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState<boolean>(false);
   const [isNotificationOpen, setIsNotificationOpen] = useState<boolean>(false);
@@ -189,6 +196,62 @@ function PageContent() {
                 )}
               </div>
 
+            </div>
+          </motion.div>
+        )}
+
+        {/* PORTAL 3: SRIJANDEV PULSE — FIELD FORCE PLATFORM */}
+        {activePortal === 'pulse' && (
+          <motion.div
+            key="pulse-portal"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            transition={{ duration: 0.3 }}
+            className="flex min-h-screen"
+            style={{ background: '#030f08' }}
+          >
+            {/* Pulse Sidebar */}
+            <PulseSidebar activeTab={pulseTab} setActiveTab={setPulseTab} />
+
+            {/* Pulse Main Content */}
+            <div className="flex-1 flex flex-col min-w-0 overflow-y-auto">
+              
+              {/* Pulse Top Header */}
+              <header className="h-16 sticky top-0 z-20 px-6 flex items-center justify-between border-b border-emerald-900/40 backdrop-blur-xl" style={{ background: 'rgba(2,13,10,0.9)' }}>
+                <div className="flex items-center space-x-3">
+                  <div className="flex items-center space-x-2 text-xs text-slate-500">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+                    <span className="text-emerald-500 font-mono font-semibold">LIVE</span>
+                    <span>•</span>
+                    <span>SrijanDev Pulse Field Operations</span>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <PortalSwitcher variant="header" />
+                  <button
+                    onClick={() => setIsAuthModalOpen(true)}
+                    className="px-3 py-1.5 rounded-xl text-xs text-slate-300 hover:text-white font-semibold flex items-center space-x-2 border border-emerald-900/40"
+                    style={{ background: 'rgba(16,185,129,0.05)' }}
+                  >
+                    <User className="w-3.5 h-3.5 text-emerald-400" />
+                    <span>{user ? user.name : 'Sign In'}</span>
+                  </button>
+                </div>
+              </header>
+
+              {/* Pulse Views */}
+              <div className="p-6 md:p-8 flex-1 max-w-7xl mx-auto w-full">
+                {pulseTab === 'pulse-dashboard' && <PulseDashboard setActiveTab={setPulseTab} />}
+                {pulseTab === 'pulse-gps' && <PulseGPSView />}
+                {pulseTab === 'pulse-attendance' && <PulseAttendanceView />}
+                {pulseTab === 'pulse-patrol' && <PulsePatrolView />}
+                {pulseTab === 'pulse-incidents' && <PulseIncidentView />}
+                {pulseTab === 'pulse-leaves' && <PulseLeaveView />}
+                {pulseTab === 'pulse-analytics' && <AnalyticsView />}
+                {pulseTab === 'pulse-agents' && <EmployeeView />}
+                {pulseTab === 'pulse-admin' && <PermissionGuard requiredRole="ADMIN"><AdminView /></PermissionGuard>}
+              </div>
             </div>
           </motion.div>
         )}

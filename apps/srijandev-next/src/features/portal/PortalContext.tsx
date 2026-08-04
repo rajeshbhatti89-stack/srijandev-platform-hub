@@ -13,7 +13,7 @@ export const PortalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   useEffect(() => {
     // Read local storage on initial mount
     const savedPortal = localStorage.getItem('srijandev_active_portal') as PortalType;
-    if (savedPortal === 'corporate' || savedPortal === 'platform') {
+    if (savedPortal === 'corporate' || savedPortal === 'platform' || savedPortal === 'pulse') {
       setActivePortal(savedPortal);
     }
   }, []);
@@ -45,7 +45,9 @@ export const PortalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.altKey && (e.key === 's' || e.key === 'S')) {
         e.preventDefault();
-        const next = activePortal === 'corporate' ? 'platform' : 'corporate';
+        const cycle: PortalType[] = ['corporate', 'platform', 'pulse'];
+        const currentIndex = cycle.indexOf(activePortal);
+        const next = cycle[(currentIndex + 1) % cycle.length];
         switchPortal(next);
       }
     };
