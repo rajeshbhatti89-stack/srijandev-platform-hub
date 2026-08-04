@@ -129,7 +129,7 @@ function PageContent() {
             className="flex min-h-screen bg-dark-bg"
           >
             {/* Platform Sidebar */}
-            <PlatformSidebar activeTab={platformTab} setActiveTab={setPlatformTab} />
+            {user ? <PlatformSidebar activeTab={platformTab} setActiveTab={setPlatformTab} /> : null}
 
             {/* Platform Main Workspace Area */}
             <div className="flex-1 flex flex-col min-w-0 overflow-y-auto">
@@ -173,26 +173,46 @@ function PageContent() {
 
               {/* Dynamic Platform Views */}
               <div className="p-6 md:p-8 flex-1 max-w-7xl mx-auto w-full">
-                {platformTab === 'dashboard' && <DashboardView setActiveTab={setPlatformTab} />}
-                {platformTab === 'projects' && <ProjectsView />}
-                {platformTab === 'employees' && <EmployeeView />}
-                {platformTab === 'attendance' && <AttendanceView />}
-                {platformTab === 'leaves' && <LeaveView />}
-                {platformTab === 'tasks' && <TaskBoardView />}
-                {platformTab === 'crm' && <EnterpriseCRM />}
-                {platformTab === 'finance' && <FinanceView />}
-                {platformTab === 'chat' && <InternalChatView />}
-                {platformTab === 'files' && <FileManagerView />}
-                {platformTab === 'org' && <OrgChartView />}
-                {platformTab === 'recruitment' && <RecruitmentView />}
-                {platformTab === 'assets' && <AssetInventoryView />}
-                {platformTab === 'performance' && <PerformanceView />}
-                {platformTab === 'knowledge' && <KnowledgeBaseView />}
-                {platformTab === 'analytics' && <AnalyticsView />}
-                {platformTab === 'admin' && (
-                  <PermissionGuard requiredRole="ADMIN">
-                    <AdminView />
-                  </PermissionGuard>
+                {!user ? (
+                  <div className="flex flex-col items-center justify-center h-full pt-20">
+                    <div className="w-20 h-20 bg-slate-900 rounded-full flex items-center justify-center mb-6 shadow-glow-purple">
+                      <ShieldCheck className="w-10 h-10 text-brand-400" />
+                    </div>
+                    <h2 className="text-3xl font-bold text-white mb-3">Authentication Required</h2>
+                    <p className="text-slate-400 max-w-md text-center mb-8">
+                      You must be signed in to access the SrijanDev Nexus Enterprise Platform. Please authenticate to continue.
+                    </p>
+                    <button
+                      onClick={() => setIsAuthModalOpen(true)}
+                      className="px-8 py-3 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-bold shadow-lg shadow-brand-500/30 transition-all"
+                    >
+                      Sign In to Platform
+                    </button>
+                  </div>
+                ) : (
+                  <>
+                    {platformTab === 'dashboard' && <DashboardView setActiveTab={setPlatformTab} />}
+                    {platformTab === 'projects' && <ProjectsView />}
+                    {platformTab === 'employees' && <EmployeeView />}
+                    {platformTab === 'attendance' && <AttendanceView />}
+                    {platformTab === 'leaves' && <LeaveView />}
+                    {platformTab === 'tasks' && <TaskBoardView />}
+                    {platformTab === 'crm' && <EnterpriseCRM />}
+                    {platformTab === 'finance' && <FinanceView />}
+                    {platformTab === 'chat' && <InternalChatView />}
+                    {platformTab === 'files' && <FileManagerView />}
+                    {platformTab === 'org' && <OrgChartView />}
+                    {platformTab === 'recruitment' && <RecruitmentView />}
+                    {platformTab === 'assets' && <AssetInventoryView />}
+                    {platformTab === 'performance' && <PerformanceView />}
+                    {platformTab === 'knowledge' && <KnowledgeBaseView />}
+                    {platformTab === 'analytics' && <AnalyticsView />}
+                    {platformTab === 'admin' && (
+                      <PermissionGuard requiredRole="ADMIN">
+                        <AdminView />
+                      </PermissionGuard>
+                    )}
+                  </>
                 )}
               </div>
 
@@ -212,7 +232,7 @@ function PageContent() {
             style={{ background: '#030f08' }}
           >
             {/* Pulse Sidebar */}
-            <PulseSidebar activeTab={pulseTab} setActiveTab={setPulseTab} />
+            {user ? <PulseSidebar activeTab={pulseTab} setActiveTab={setPulseTab} /> : null}
 
             {/* Pulse Main Content */}
             <div className="flex-1 flex flex-col min-w-0 overflow-y-auto">
@@ -242,15 +262,35 @@ function PageContent() {
 
               {/* Pulse Views */}
               <div className="p-6 md:p-8 flex-1 max-w-7xl mx-auto w-full">
-                {pulseTab === 'pulse-dashboard' && <PulseDashboard setActiveTab={setPulseTab} />}
-                {pulseTab === 'pulse-gps' && <PulseGPSView />}
-                {pulseTab === 'pulse-attendance' && <PulseAttendanceView />}
-                {pulseTab === 'pulse-patrol' && <PulsePatrolView />}
-                {pulseTab === 'pulse-incidents' && <PulseIncidentView />}
-                {pulseTab === 'pulse-leaves' && <PulseLeaveView />}
-                {pulseTab === 'pulse-analytics' && <AnalyticsView />}
-                {pulseTab === 'pulse-agents' && <EmployeeView />}
-                {pulseTab === 'pulse-admin' && <PermissionGuard requiredRole="ADMIN"><AdminView /></PermissionGuard>}
+                {!user ? (
+                  <div className="flex flex-col items-center justify-center h-full pt-20">
+                    <div className="w-20 h-20 bg-emerald-950 rounded-full flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(16,185,129,0.3)]">
+                      <ShieldCheck className="w-10 h-10 text-emerald-400" />
+                    </div>
+                    <h2 className="text-3xl font-bold text-white mb-3">Field Agent Login</h2>
+                    <p className="text-emerald-200/60 max-w-md text-center mb-8">
+                      You must be signed in to access the SrijanDev Pulse Field Force Dashboard. Please authenticate to continue.
+                    </p>
+                    <button
+                      onClick={() => setIsAuthModalOpen(true)}
+                      className="px-8 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold shadow-lg shadow-emerald-600/30 transition-all"
+                    >
+                      Authenticate Agent
+                    </button>
+                  </div>
+                ) : (
+                  <>
+                    {pulseTab === 'pulse-dashboard' && <PulseDashboard setActiveTab={setPulseTab} />}
+                    {pulseTab === 'pulse-gps' && <PulseGPSView />}
+                    {pulseTab === 'pulse-attendance' && <PulseAttendanceView />}
+                    {pulseTab === 'pulse-patrol' && <PulsePatrolView />}
+                    {pulseTab === 'pulse-incidents' && <PulseIncidentView />}
+                    {pulseTab === 'pulse-leaves' && <PulseLeaveView />}
+                    {pulseTab === 'pulse-analytics' && <AnalyticsView />}
+                    {pulseTab === 'pulse-agents' && <EmployeeView />}
+                    {pulseTab === 'pulse-admin' && <PermissionGuard requiredRole="ADMIN"><AdminView /></PermissionGuard>}
+                  </>
+                )}
               </div>
             </div>
           </motion.div>
