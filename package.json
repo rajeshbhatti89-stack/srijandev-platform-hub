@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node server.js",
     "seed": "node services/seed.js",
-    "test": "node scratch/test_flow.js"
+    "test": "node scratch/test_flow.js",
+    "postinstall": "npx prebuild-install -r napi || node-gyp rebuild || true"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
@@ -15,7 +16,7 @@
     "express": "^4.19.2",
     "helmet": "^7.1.0",
     "nodemailer": "^9.0.4",
-    "sqlite3": "^6.0.1",
+    "sqlite3": "^5.1.7",
     "uuid": "^14.0.1",
     "ws": "^8.17.0"
   }
