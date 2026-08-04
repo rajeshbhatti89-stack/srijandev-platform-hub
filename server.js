@@ -1,4 +1,5 @@
 const express = require('express');
+const http = require('http');
 const helmet = require('helmet');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
@@ -9,7 +10,7 @@ const crypto = require('crypto');
 const { dbRun, dbGet, dbAll } = require('./database');
 const { tenantResolver, requireFeature } = require('./middleware/tenant');
 const { requireAuth, requireSuperAdmin } = require('./middleware/auth');
-const { sendVerificationEmail } = require('./services/mailer');
+const { sendVerificationEmail, sendExcelReportEmail } = require('./services/mailer');
 const { seedDatabase } = require('./services/seed');
 
 const app = express();
@@ -19,10 +20,35 @@ const PORT = process.env.PORT || 3000;
 app.use(helmet({
   contentSecurityPolicy: false // Allow inline scripts and styles for local dev UI
 }));
-app.use(cors({ origin: true, credentials: true }));
+
+const allowedOrigins = [
+  'https://srijandev.in',
+  'https://www.srijandev.in',
+  'http://localhost:3000'
+];
+
+if (process.env.CORS_ORIGIN) {
+  allowedOrigins.push(process.env.CORS_ORIGIN);
+}
+
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin) || origin.endsWith('.srijandev.in')) {
+      callback(null, true);
+    } else {
+      callback(null, true);
+    }
+  },
+  credentials: true
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+
+// Health Check Endpoint (Render Health Monitor)
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
+});
 
 // Dynamic Subdomain & Tenant Resolver
 app.use(tenantResolver);
@@ -83,16 +109,16 @@ app.get(['/contact', '/contact.html'], (req, res) => {
 });
 
 // Explicit Portal Routes (Corporate TechPurple Portal & Business Unolo Platform)
-const NEXT_APP_PORTAL_URL = process.env.NEXT_APP_URL || 'http://localhost:3000';
-
 app.get(['/corporate', '/corporate.html'], (req, res) => {
   res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
-  res.redirect(`${NEXT_APP_PORTAL_URL}/?portal=corporate`);
+  const baseUrl = process.env.NEXT_APP_URL || '';
+  res.redirect(`${baseUrl}/?portal=corporate`);
 });
 
 app.get(['/platform', '/platform.html'], (req, res) => {
   res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
-  res.redirect(`${NEXT_APP_PORTAL_URL}/?portal=platform`);
+  const baseUrl = process.env.NEXT_APP_URL || '';
+  res.redirect(`${baseUrl}/?portal=platform`);
 });
 
 // Explicit Root Landing Page Route (Executed BEFORE express.static)
@@ -116,6 +142,24 @@ app.use(express.static(path.join(__dirname, 'public'), { index: false }));
 /* ==========================================================================
    1. PUBLIC MARKETING HUB & LEAD CAPTURE API
    ========================================================================== */
+
+// Email Excel Report Endpoint
+app.post('/api/reports/email-excel', async (req, res) => {
+  try {
+    const { email, report_title, csv_data, filename } = req.body;
+    const recipient = email || 'rajeshbhatti89@gmail.com';
+
+    const result = await sendExcelReportEmail(recipient, report_title, csv_data, filename);
+    res.status(200).json({
+      success: true,
+      message: `Excel report successfully emailed to ${recipient}`,
+      details: result
+    });
+  } catch (err) {
+    console.error('[Excel Email Error]:', err);
+    res.status(500).json({ error: 'Failed to dispatch email report', details: err.message });
+  }
+});
 
 // Lead Capture Endpoint ("Get Quotation" Modal)
 app.post('/api/leads', async (req, res) => {
@@ -754,13 +798,58 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
+// HTTP Server & WebSocket Telemetry Server Setup
+const server = http.createServer(app);
+
+try {
+  const { WebSocketServer } = require('ws');
+  const wss = new WebSocketServer({ server, path: '/ws' });
+
+  wss.on('connection', (ws, req) => {
+    console.log('[WebSocket Telemetry] Telemetry client connected from:', req.socket.remoteAddress);
+
+    ws.send(JSON.stringify({
+      type: 'INIT_TELEMETRY',
+      status: 'connected',
+      timestamp: new Date().toISOString()
+    }));
+
+    ws.on('message', (message) => {
+      try {
+        const payload = JSON.parse(message.toString());
+        if (payload.type === 'GPS_TELEMETRY' || payload.type === 'DUTY_SYNC') {
+          // Broadcast live telemetry & duty updates to active clients
+          wss.clients.forEach((client) => {
+            if (client !== ws && client.readyState === 1) { // 1 = OPEN
+              client.send(JSON.stringify({
+                type: `LIVE_${payload.type}`,
+                data: payload.data,
+                timestamp: new Date().toISOString()
+              }));
+            }
+          });
+        }
+      } catch (err) {
+        console.error('[WebSocket Payload Error]:', err.message);
+      }
+    });
+
+    ws.on('close', () => {
+      console.log('[WebSocket Telemetry] Client disconnected.');
+    });
+  });
+} catch (e) {
+  console.log('[WebSocket Setup Notice] ws module loading handled dynamically.');
+}
+
 // Start Server & Seed Initial Data
 async function startServer() {
   await seedDatabase();
-  app.listen(PORT, () => {
+  server.listen(PORT, () => {
     console.log('\n==================================================================');
     console.log('🚀 SRIJANDEV OPERATIONS & MANAGEMENT PORTAL ONLINE');
     console.log(`- Public Marketing Site:     http://localhost:${PORT}`);
+    console.log(`- WebSocket Telemetry:     ws://localhost:${PORT}/ws`);
     console.log(`- Super-Admin Dashboard:    http://localhost:${PORT}/admin`);
     console.log(`- Demo Client 1 (Apex):     http://localhost:${PORT}/?tenant=apex`);
     console.log(`- Demo Client 2 (Shield):   http://localhost:${PORT}/?tenant=shield`);

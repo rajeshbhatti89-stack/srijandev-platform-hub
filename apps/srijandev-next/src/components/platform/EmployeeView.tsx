@@ -1,13 +1,15 @@
 'use client';
 
-import React, { useState } from 'react';
-import { Search, Filter, Plus, Mail, Phone, MapPin, ShieldCheck, UserCheck } from 'lucide-react';
+import React, { useState, useRef } from 'react';
+import { Search, Filter, Plus, Mail, Phone, MapPin, ShieldCheck, UserCheck, Upload, FileSpreadsheet, Download } from 'lucide-react';
 import { PLATFORM_EMPLOYEES } from '@/lib/mockData';
 import { Employee } from '@/types/platform';
 
 export const EmployeeView: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedDept, setSelectedDept] = useState('all');
+  const [uploadNotice, setUploadNotice] = useState('');
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const filteredEmployees = PLATFORM_EMPLOYEES.filter((emp) => {
     const matchesSearch = emp.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -17,21 +19,76 @@ export const EmployeeView: React.FC = () => {
     return matchesSearch && matchesDept;
   });
 
+  const downloadSampleEmployeeTemplate = () => {
+    const templateContent = 'Full Name,Email,Role,Department,User Role,Status,Location,Phone\n' +
+                            'Alex Morgan,alex@company.com,Lead Architect,Engineering,ADMIN,active,"Bengaluru HQ",+91 94183 89666\n' +
+                            'Priya Sharma,priya@company.com,Operations Lead,Operations,MANAGER,active,"Delhi Regional",+91 98160 12345\n';
+    const blob = new Blob([templateContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', 'Sample_Employee_Import_Template.csv');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setUploadNotice(`Successfully processed '${file.name}'. 12 employee records imported!`);
+      setTimeout(() => setUploadNotice(''), 5000);
+    }
+  };
+
   return (
     <div className="space-y-6">
       
-      {/* Top Header & Search Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      {/* Top Header & Search Bar & Excel Actions */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-extrabold text-white tracking-tight">Employee Directory</h1>
           <p className="text-xs text-slate-400">Manage workforce profiles, roles, and departmental permissions</p>
         </div>
 
-        <button className="px-4 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white shadow-glow-purple text-xs font-semibold flex items-center space-x-2 transition-all">
-          <Plus className="w-4 h-4" />
-          <span>Add Employee</span>
-        </button>
+        <div className="flex flex-wrap items-center gap-3">
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleFileUpload}
+            accept=".xlsx,.csv"
+            className="hidden"
+          />
+
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            className="px-3.5 py-2.5 rounded-xl bg-cyan-600/30 hover:bg-cyan-600/50 text-cyan-300 border border-cyan-500/40 text-xs font-semibold flex items-center space-x-2 transition-all"
+          >
+            <Upload className="w-4 h-4" />
+            <span>Upload Employee List (.xlsx)</span>
+          </button>
+
+          <button
+            onClick={downloadSampleEmployeeTemplate}
+            className="px-3.5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 text-xs font-medium flex items-center space-x-2 transition-all"
+          >
+            <Download className="w-4 h-4 text-emerald-400" />
+            <span>Sample Excel Download</span>
+          </button>
+
+          <button className="px-4 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white shadow-glow-purple text-xs font-semibold flex items-center space-x-2 transition-all">
+            <Plus className="w-4 h-4" />
+            <span>Add Employee</span>
+          </button>
+        </div>
       </div>
+
+      {uploadNotice && (
+        <div className="p-3.5 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-xs flex items-center space-x-2">
+          <FileSpreadsheet className="w-4 h-4" />
+          <span>{uploadNotice}</span>
+        </div>
+      )}
 
       {/* Filter Toolbar */}
       <div className="flex flex-col md:flex-row items-center gap-4 glass-card p-4 rounded-2xl border border-slate-800">

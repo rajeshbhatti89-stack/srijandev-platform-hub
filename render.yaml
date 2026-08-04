@@ -1,12 +1,15 @@
 services:
   - type: web
-    name: srijandev-platform-hub
+    name: srijandev-backend
     env: node
     region: singapore
     buildCommand: npm install
-    startCommand: node server.js
+    startCommand: npm start
+    healthCheckPath: /health
     envVars:
-      - key: PORT
-        value: 10000
       - key: NODE_ENV
         value: production
+      - key: PORT
+        value: 10000
+      - key: CORS_ORIGIN
+        value: https://srijandev.in

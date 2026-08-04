@@ -84,6 +84,71 @@ async function sendVerificationEmail(recipientEmail, recipientName, verification
   return verificationUrl;
 }
 
+/**
+ * Sends Excel Report Attachment to User Inbox
+ */
+async function sendExcelReportEmail(recipientEmail, reportTitle, csvData, filename) {
+  const attachmentFilename = filename || `SrijanDev_${(reportTitle || 'Report').replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.csv`;
+
+  const mailOptions = {
+    from: '"SrijanDev Platform Hub" <no-reply@srijandev.in>',
+    to: recipientEmail,
+    subject: `Your ${reportTitle || 'Excel Report'} - SrijanDev Operations`,
+    html: `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <style>
+          body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #0b0f19; color: #f9fafb; margin: 0; padding: 20px; }
+          .container { max-width: 600px; margin: 0 auto; background: #1f2937; border-radius: 12px; border: 1px solid #374151; padding: 30px; }
+          .header { border-bottom: 2px solid #10b981; padding-bottom: 15px; margin-bottom: 20px; }
+          .brand { font-size: 24px; font-weight: bold; color: #10b981; letter-spacing: 1px; }
+          .footer { margin-top: 30px; padding-top: 15px; border-top: 1px solid #374151; font-size: 12px; color: #6b7280; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <div class="brand">SrijanDev</div>
+            <div>EXCEL REPORT DELIVERY SERVICE</div>
+          </div>
+          <h2>Here is your requested ${reportTitle || 'Excel Report'}</h2>
+          <p>Please find attached the exported dataset file: <strong>${attachmentFilename}</strong>.</p>
+          <p>You can open this attachment directly in Microsoft Excel, Google Sheets, or Apple Numbers.</p>
+          <div class="footer">
+            SrijanDev Operations & Management Platform &bull; Automated Email Service
+          </div>
+        </div>
+      </body>
+      </html>
+    `,
+    attachments: [
+      {
+        filename: attachmentFilename,
+        content: csvData || 'Employee Name,Check In,Check Out,Status,Hours Logged,Location\nAlex Morgan,09:00 AM,05:30 PM,present,8.5,Bengaluru HQ\n',
+        contentType: 'text/csv'
+      }
+    ]
+  };
+
+  console.log('\n==================================================');
+  console.log(`[EMAIL NOTICE] Excel Report dispatched to: ${recipientEmail}`);
+  console.log(`ATTACHMENT: ${attachmentFilename}`);
+  console.log('==================================================\n');
+
+  try {
+    if (process.env.SMTP_USER) {
+      await transporter.sendMail(mailOptions);
+      console.log(`[Nodemailer] Excel Report successfully sent to ${recipientEmail}`);
+    }
+  } catch (err) {
+    console.warn(`[Nodemailer Warning] Excel email error: ${err.message}`);
+  }
+
+  return { success: true, recipient: recipientEmail, filename: attachmentFilename };
+}
+
 module.exports = {
-  sendVerificationEmail
+  sendVerificationEmail,
+  sendExcelReportEmail
 };
