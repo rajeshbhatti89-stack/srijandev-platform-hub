@@ -50,7 +50,7 @@ import { PulseDashboard } from '@/components/pulse/PulseDashboard';
 import { PulseGPSView } from '@/components/pulse/PulseGPSView';
 import { PulseAttendanceView, PulsePatrolView, PulseIncidentView, PulseLeaveView } from '@/components/pulse/PulseOperationsViews';
 
-import { Bell, Search, ShieldCheck, User } from 'lucide-react';
+import { Bell, Search, ShieldCheck, User, Home, LogOut } from 'lucide-react';
 
 function PageContent() {
   const { activePortal } = usePortal();
@@ -60,6 +60,7 @@ function PageContent() {
   const [isCommandOpen, setIsCommandOpen] = useState<boolean>(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState<boolean>(false);
   const [isNotificationOpen, setIsNotificationOpen] = useState<boolean>(false);
+  const { switchPortal } = usePortal();
   const [mounted, setMounted] = useState<boolean>(false);
 
   React.useEffect(() => {
@@ -160,10 +161,21 @@ function PageContent() {
                   </button>
 
                   <button
-                    onClick={() => user ? logout() : setIsAuthModalOpen(true)}
+                    onClick={() => switchPortal('corporate')}
                     className="px-3 py-1.5 rounded-xl glass-panel text-xs text-slate-300 hover:text-white font-semibold flex items-center space-x-2 border border-slate-700"
                   >
-                    <User className="w-3.5 h-3.5 text-purple-400" />
+                    <Home className="w-3.5 h-3.5 text-brand-400" />
+                    <span>Website</span>
+                  </button>
+
+                  <button
+                    onClick={() => user ? logout() : setIsAuthModalOpen(true)}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center space-x-2 border transition-colors ${
+                      user ? 'bg-red-500/10 border-red-500/30 text-red-400 hover:bg-red-500/20 hover:text-red-300' 
+                           : 'glass-panel text-slate-300 hover:text-white border-slate-700'
+                    }`}
+                  >
+                    {user ? <LogOut className="w-3.5 h-3.5" /> : <User className="w-3.5 h-3.5 text-purple-400" />}
                     <span>{user ? 'Logout' : 'Sign In'}</span>
                   </button>
 
@@ -249,12 +261,25 @@ function PageContent() {
                 </div>
                 <div className="flex items-center space-x-3">
                   <PortalSwitcher variant="header" />
+                  
                   <button
-                    onClick={() => user ? logout() : setIsAuthModalOpen(true)}
+                    onClick={() => switchPortal('corporate')}
                     className="px-3 py-1.5 rounded-xl text-xs text-slate-300 hover:text-white font-semibold flex items-center space-x-2 border border-emerald-900/40"
                     style={{ background: 'rgba(16,185,129,0.05)' }}
                   >
-                    <User className="w-3.5 h-3.5 text-emerald-400" />
+                    <Home className="w-3.5 h-3.5 text-emerald-400" />
+                    <span>Website</span>
+                  </button>
+
+                  <button
+                    onClick={() => user ? logout() : setIsAuthModalOpen(true)}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center space-x-2 border transition-colors ${
+                      user ? 'bg-red-500/10 border-red-500/30 text-red-400 hover:bg-red-500/20' 
+                           : 'text-slate-300 hover:text-white border-emerald-900/40'
+                    }`}
+                    style={user ? {} : { background: 'rgba(16,185,129,0.05)' }}
+                  >
+                    {user ? <LogOut className="w-3.5 h-3.5" /> : <User className="w-3.5 h-3.5 text-emerald-400" />}
                     <span>{user ? 'Logout' : 'Sign In'}</span>
                   </button>
                 </div>
