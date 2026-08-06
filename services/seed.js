@@ -29,7 +29,11 @@ async function seedDatabase() {
       enable_workforce: 1,
       enable_patrol: 1,
       adminName: 'Apex Tenant Admin',
-      adminPass: 'ApexAdmin123!'
+      adminPass: 'ApexAdmin123!',
+      primary_color: '#00f2fe',
+      enabled_modules: '["dashboard", "staff_management", "patrols", "multi_site_selector"]',
+      role_menu_config: '{"staff_management": "Workforce on Duty"}',
+      seed_staff: false
     },
     {
       name: 'Shield Patrol Operations',
@@ -38,7 +42,11 @@ async function seedDatabase() {
       enable_workforce: 0,
       enable_patrol: 1,
       adminName: 'Shield Patrol Admin',
-      adminPass: 'ShieldAdmin123!'
+      adminPass: 'ShieldAdmin123!',
+      primary_color: '#a855f7',
+      enabled_modules: '["dashboard", "patrols"]',
+      role_menu_config: '{}',
+      seed_staff: true
     },
     {
       name: 'Logistics Force Operations',
@@ -47,7 +55,11 @@ async function seedDatabase() {
       enable_workforce: 1,
       enable_patrol: 0,
       adminName: 'Logistics Admin',
-      adminPass: 'LogisticsAdmin123!'
+      adminPass: 'LogisticsAdmin123!',
+      primary_color: '#00f5a0',
+      enabled_modules: '["dashboard", "staff_management"]',
+      role_menu_config: '{}',
+      seed_staff: true
     }
   ];
 
@@ -55,9 +67,9 @@ async function seedDatabase() {
     let tenant = await dbGet('SELECT id FROM tenants WHERE subdomain = ?', [t.subdomain]);
     if (!tenant) {
       const res = await dbRun(
-        `INSERT INTO tenants (name, subdomain, contact_email, enable_workforce, enable_patrol, status)
-         VALUES (?, ?, ?, ?, ?, 'active')`,
-        [t.name, t.subdomain, t.email, t.enable_workforce, t.enable_patrol]
+        `INSERT INTO tenants (name, subdomain, contact_email, enable_workforce, enable_patrol, primary_color, enabled_modules, role_menu_config, status)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'active')`,
+        [t.name, t.subdomain, t.email, t.enable_workforce, t.enable_patrol, t.primary_color, t.enabled_modules, t.role_menu_config]
       );
       tenant = { id: res.lastID };
       console.log(`[Seed] Tenant created: ${t.name} (${t.subdomain}.srijandev.in)`);
@@ -79,8 +91,8 @@ async function seedDatabase() {
 
       const userId = userRes.lastID;
 
-      // Seed Workforce suite data if enabled
-      if (t.enable_workforce) {
+      // Seed Workforce suite data if enabled and seed_staff is true
+      if (t.enable_workforce && t.seed_staff !== false) {
         await dbRun(
           `INSERT INTO attendance_logs (tenant_id, user_id, type, latitude, longitude, location_name)
            VALUES (?, ?, 'clock_in', 28.6139, 77.2090, 'Delhi HQ Main Gate')`,
@@ -93,8 +105,8 @@ async function seedDatabase() {
         );
       }
 
-      // Seed Patrol suite data if enabled
-      if (t.enable_patrol) {
+      // Seed Patrol suite data if enabled and seed_staff is true
+      if (t.enable_patrol && t.seed_staff !== false) {
         const cpRes = await dbRun(
           `INSERT INTO patrol_checkpoints (tenant_id, name, qr_code_data, latitude, longitude, location_description)
            VALUES (?, 'Checkpoint Alpha - Server Room', 'QR_APEX_CP_001', 28.6145, 77.2095, 'Building A, 2nd Floor')`,

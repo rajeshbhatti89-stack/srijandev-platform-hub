@@ -1,8 +1,6 @@
 import { Platform } from 'react-native';
 
-const WS_URL = __DEV__ 
-  ? (Platform.OS === 'android' ? 'ws://10.0.2.2:3000/ws' : 'ws://localhost:3000/ws')
-  : 'wss://api.srijandev.in/ws';
+const WS_URL = 'wss://api.srijandev.in/ws';
 
 let ws: WebSocket | null = null;
 let reconnectTimer: any = null;

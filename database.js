@@ -25,6 +25,11 @@ db.serialize(() => {
       contact_email TEXT NOT NULL,
       enable_workforce INTEGER NOT NULL DEFAULT 1,
       enable_patrol INTEGER NOT NULL DEFAULT 1,
+      logo_url TEXT,
+      primary_color TEXT,
+      custom_title TEXT,
+      enabled_modules TEXT,
+      role_menu_config TEXT,
       status TEXT NOT NULL DEFAULT 'active',
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )

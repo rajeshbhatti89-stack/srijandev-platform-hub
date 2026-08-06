@@ -4,9 +4,7 @@ import { Platform } from 'react-native';
 
 // For local Android emulator testing, localhost is 10.0.2.2
 // In production, this should be https://api.srijandev.in
-const API_URL = __DEV__ 
-  ? (Platform.OS === 'android' ? 'http://10.0.2.2:3000' : 'http://localhost:3000')
-  : 'https://api.srijandev.in';
+const API_URL = 'https://api.srijandev.in';
 
 export const apiClient = axios.create({
   baseURL: API_URL,
