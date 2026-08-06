@@ -7,6 +7,7 @@
     "start": "node server.js",
     "seed": "node services/seed.js",
     "test": "node scratch/test_flow.js",
+    "test:staff": "node scratch/test_staff_mobile_revoke.js",
     "postinstall": "npx prebuild-install -r napi || node-gyp rebuild || true"
   },
   "dependencies": {
@@ -15,6 +16,7 @@
     "cors": "^2.8.5",
     "express": "^4.19.2",
     "helmet": "^7.1.0",
+    "jsonwebtoken": "^9.0.3",
     "nodemailer": "^9.0.4",
     "sqlite3": "^5.1.7",
     "uuid": "^14.0.1",

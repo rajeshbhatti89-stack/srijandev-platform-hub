@@ -21,18 +21,30 @@ apiClient.interceptors.request.use(async (config) => {
     const sessionData = await SecureStore.getItemAsync('srijan_user_mobile');
     if (sessionData) {
       const parsed = JSON.parse(sessionData);
-      // Backend uses cookies, but for mobile we might need to send it in headers
-      // Since it's a mobile app, we simulate the cookie or auth header based on the backend implementation
-      // For this implementation, we will pass the session info or token
-      config.headers['Authorization'] = `Bearer ${parsed.id}`; 
-      // Note: Actual backend currently relies on cookies. If needed, the backend can be adjusted 
-      // to accept Authorization header for mobile clients.
+      // Use the proper JWT token provided by the updated backend
+      // Fallback to id for backward compatibility during testing if token doesn't exist
+      config.headers['Authorization'] = `Bearer ${parsed.token || parsed.id}`; 
     }
   } catch (e) {
     console.error('Error fetching session data', e);
   }
   return config;
 });
+
+// Interceptor to handle network errors and offline/weak network connections
+apiClient.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    // If the error is related to network issues or timeouts
+    if (!error.response) {
+      // Network error, Server offline, or CORS issue
+      alert('Network Error: Please check your connection and try again.');
+    } else if (error.code === 'ECONNABORTED') {
+      alert('Connection Timeout: The network is weak or the server is unresponsive.');
+    }
+    return Promise.reject(error);
+  }
+);
 
 export const saveSession = async (userSession: any) => {
   await SecureStore.setItemAsync('srijan_user_mobile', JSON.stringify(userSession));

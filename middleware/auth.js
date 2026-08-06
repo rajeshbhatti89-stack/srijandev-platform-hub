@@ -1,5 +1,6 @@
 const { dbGet } = require('../database');
-
+const jwt = require('jsonwebtoken');
+const JWT_SECRET = process.env.JWT_SECRET || 'super-secret-key-123';
 /**
  * Middleware: Verifies Authentication & Email Verification Status
  */
@@ -17,8 +18,8 @@ async function requireAuth(req, res, next) {
       }
     } else if (authHeader && authHeader.startsWith('Bearer ')) {
       try {
-        const decoded = Buffer.from(authHeader.split(' ')[1], 'base64').toString('utf-8');
-        sessionUser = JSON.parse(decoded);
+        const tokenStr = authHeader.split(' ')[1];
+        sessionUser = jwt.verify(tokenStr, JWT_SECRET);
       } catch (e) {
         sessionUser = null;
       }

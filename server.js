@@ -6,6 +6,9 @@ const cookieParser = require('cookie-parser');
 const path = require('path');
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
+const jwt = require('jsonwebtoken');
+
+const JWT_SECRET = process.env.JWT_SECRET || 'super-secret-key-123';
 
 const { dbRun, dbGet, dbAll } = require('./database');
 const { tenantResolver, requireFeature } = require('./middleware/tenant');
@@ -106,6 +109,12 @@ app.get(['/security', '/security.html'], (req, res) => {
 app.get(['/contact', '/contact.html'], (req, res) => {
   res.setHeader('Cache-Control', 'public, max-age=3600, must-revalidate');
   res.sendFile(path.join(__dirname, 'public', 'contact.html'));
+});
+
+// Explicit Admin Route
+app.get(['/admin', '/admin.html'], (req, res) => {
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+  res.sendFile(path.join(__dirname, 'public', 'admin.html'));
 });
 
 // Explicit Portal Routes (Corporate TechPurple Portal & Business Unolo Platform)
@@ -269,6 +278,11 @@ app.post(['/api/admin/provision', '/api/super-admin/provision'], requireAuth, re
       admin_password,
       enable_workforce,
       enable_patrol,
+      logo_url,
+      primary_color,
+      custom_title,
+      enabled_modules,
+      role_menu_config,
       lead_id
     } = req.body;
 
@@ -285,14 +299,19 @@ app.post(['/api/admin/provision', '/api/super-admin/provision'], requireAuth, re
 
     // Insert Tenant Record
     const tenantRes = await dbRun(
-      `INSERT INTO tenants (name, subdomain, contact_email, enable_workforce, enable_patrol, status)
-       VALUES (?, ?, ?, ?, ?, 'active')`,
+      `INSERT INTO tenants (name, subdomain, contact_email, enable_workforce, enable_patrol, logo_url, primary_color, custom_title, enabled_modules, role_menu_config, status)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'active')`,
       [
         name,
         cleanedSubdomain,
         contact_email,
         enable_workforce ? 1 : 0,
-        enable_patrol ? 1 : 0
+        enable_patrol ? 1 : 0,
+        logo_url || null,
+        primary_color || null,
+        custom_title || null,
+        enabled_modules ? JSON.stringify(enabled_modules) : null,
+        role_menu_config ? JSON.stringify(role_menu_config) : null
       ]
     );
 
@@ -363,6 +382,44 @@ app.patch(['/api/admin/tenants/:id/status', '/api/super-admin/tenants/:id/status
   } catch (err) {
     console.error('[Tenant Status Toggle Error]:', err);
     res.status(500).json({ error: 'Failed to update tenant status', details: err.message });
+  }
+});
+
+// Update Tenant Configuration (Customization Engine)
+app.put(['/api/admin/tenants/:id', '/api/super-admin/tenants/:id'], requireAuth, requireSuperAdmin, async (req, res) => {
+  try {
+    const tenantId = req.params.id;
+    const {
+      logo_url,
+      primary_color,
+      custom_title,
+      enabled_modules,
+      role_menu_config
+    } = req.body;
+
+    const tenant = await dbGet('SELECT id FROM tenants WHERE id = ?', [tenantId]);
+    if (!tenant) {
+      return res.status(404).json({ error: 'Tenant not found.' });
+    }
+
+    await dbRun(
+      `UPDATE tenants 
+       SET logo_url = ?, primary_color = ?, custom_title = ?, enabled_modules = ?, role_menu_config = ?
+       WHERE id = ?`,
+      [
+        logo_url || null,
+        primary_color || null,
+        custom_title || null,
+        enabled_modules ? JSON.stringify(enabled_modules) : null,
+        role_menu_config ? JSON.stringify(role_menu_config) : null,
+        tenantId
+      ]
+    );
+
+    res.json({ success: true, message: 'Tenant customization updated successfully.' });
+  } catch (err) {
+    console.error('[Tenant Customization Error]:', err);
+    res.status(500).json({ error: 'Failed to update tenant customization', details: err.message });
   }
 });
 
@@ -457,8 +514,10 @@ app.post('/api/auth/login', async (req, res) => {
       tenant_subdomain: user.subdomain
     };
 
+    const token = jwt.sign(userSession, JWT_SECRET, { expiresIn: '7d' });
+
     res.cookie('srijan_user', JSON.stringify(userSession), { path: '/', httpOnly: true, maxAge: 24 * 60 * 60 * 1000 });
-    res.json({ success: true, user: userSession });
+    res.json({ success: true, user: userSession, token });
   } catch (err) {
     console.error('[Auth Login Error]:', err);
     res.status(500).json({ error: 'Login failure', details: err.message });
@@ -551,7 +610,88 @@ app.get('/api/tenant/info', (req, res) => {
   res.json({ tenant: req.tenant });
 });
 
+app.get('/api/tenant/config', (req, res) => {
+  if (!req.tenant) {
+    return res.status(400).json({ error: 'No tenant context present.' });
+  }
+  res.json({
+    tenant_id: req.tenant.id,
+    name: req.tenant.name,
+    subdomain: req.tenant.subdomain,
+    logo_url: req.tenant.logo_url,
+    primary_color: req.tenant.primary_color,
+    custom_title: req.tenant.custom_title,
+    enabled_modules: req.tenant.enabled_modules ? JSON.parse(req.tenant.enabled_modules) : [],
+    role_menu_config: req.tenant.role_menu_config ? JSON.parse(req.tenant.role_menu_config) : {},
+    enable_workforce: req.tenant.enable_workforce,
+    enable_patrol: req.tenant.enable_patrol
+  });
+});
+
 // ----- SMART FIELD WORKFORCE SUITE -----
+
+app.get('/api/staff', requireAuth, async (req, res) => {
+  try {
+    if (req.user.role !== 'client_admin') {
+      return res.status(403).json({ error: 'Access Denied', message: 'Only Client Admins can view staff.' });
+    }
+    const staff = await dbAll(
+      'SELECT id, name, email, role, created_at FROM users WHERE tenant_id = ? AND role = "staff" ORDER BY created_at DESC',
+      [req.tenantId]
+    );
+    res.json({ staff });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch staff', details: err.message });
+  }
+});
+
+app.post('/api/staff/add', requireAuth, async (req, res) => {
+  try {
+    if (req.user.role !== 'client_admin') {
+      return res.status(403).json({ error: 'Access Denied', message: 'Only Client Admins can add staff.' });
+    }
+    const { name, email, password } = req.body;
+    if (!name || !email || !password) {
+      return res.status(400).json({ error: 'Name, email, and password are required.' });
+    }
+    
+    // Check if user already exists
+    const existingUser = await dbGet('SELECT id FROM users WHERE tenant_id = ? AND lower(email) = lower(?)', [req.tenantId, email]);
+    if (existingUser) {
+      return res.status(409).json({ error: 'Email already exists for this tenant.' });
+    }
+    
+    const passwordHash = await bcrypt.hash(password, 12);
+    const resRun = await dbRun(
+      'INSERT INTO users (tenant_id, name, email, password_hash, role, email_verified) VALUES (?, ?, ?, ?, "staff", 1)',
+      [req.tenantId, name, email, passwordHash]
+    );
+    
+    res.status(201).json({ success: true, id: resRun.lastID, message: 'Staff member added successfully.' });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to add staff', details: err.message });
+  }
+});
+
+app.delete('/api/staff/delete/:id', requireAuth, async (req, res) => {
+  try {
+    if (req.user.role !== 'client_admin') {
+      return res.status(403).json({ error: 'Access Denied', message: 'Only Client Admins can delete staff.' });
+    }
+    const staffId = req.params.id;
+    
+    // Ensure we only delete staff from our own tenant
+    const staffMember = await dbGet('SELECT id FROM users WHERE id = ? AND tenant_id = ? AND role = "staff"', [staffId, req.tenantId]);
+    if (!staffMember) {
+      return res.status(404).json({ error: 'Staff member not found.' });
+    }
+    
+    await dbRun('DELETE FROM users WHERE id = ?', [staffId]);
+    res.json({ success: true, message: 'Staff member deleted successfully.' });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to delete staff', details: err.message });
+  }
+});
 
 app.get('/api/tenant/attendance', requireAuth, requireFeature('enable_workforce'), async (req, res) => {
   try {

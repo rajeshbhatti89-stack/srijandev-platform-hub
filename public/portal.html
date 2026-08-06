@@ -245,6 +245,59 @@
           </table>
         </div>
       </div>
+
+      <!-- Client Tab: Staff Management -->
+      <div id="clientTabStaff" class="tab-content">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem; margin-bottom: 2rem;">
+          <!-- Add Staff Card -->
+          <div style="background: var(--bg-card); padding: 1.75rem; border-radius: 14px; border: 1px solid var(--border-color);">
+            <h3>➕ Add Security Staff</h3>
+            <form onsubmit="handleAddStaffSubmit(event)" style="margin-top: 1rem;">
+              <div class="form-group">
+                <label class="form-label">Full Name</label>
+                <input type="text" id="staffName" class="form-input" placeholder="Guard Name" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Email Address (Login ID)</label>
+                <input type="email" id="staffEmail" class="form-input" placeholder="guard@company.com" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Temporary Password</label>
+                <input type="password" id="staffPassword" class="form-input" required>
+              </div>
+              <button type="submit" class="btn btn-primary" style="width: 100%;">Provision Staff Account</button>
+            </form>
+          </div>
+          
+          <!-- Info Card -->
+          <div style="background: var(--bg-card); padding: 1.75rem; border-radius: 14px; border: 1px solid var(--border-color);">
+            <h3>🛡️ Security Staff Access</h3>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.5rem; line-height: 1.6;">
+              Provisioned staff members will use these credentials to log into the <strong>SrijanDev Mobile App</strong>.
+              <br><br>
+              <strong>Instant Revocation:</strong> Deleting a staff member immediately invalidates their mobile session and restricts all API access.
+            </p>
+          </div>
+        </div>
+
+        <h3 style="margin-bottom: 1rem;">Provisioned Staff Directory</h3>
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Login Email</th>
+                <th>Role</th>
+                <th>Created At</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="staffTableBody">
+              <!-- Rendered via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   </main>
 

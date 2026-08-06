@@ -269,4 +269,82 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 5000);
   }
 
+  /* --------------------------------------------------------------------------
+     4. STAFF MANAGEMENT (PORTAL API)
+     -------------------------------------------------------------------------- */
+  
+  // Render Staff Tab if on Portal Page
+  const staffTableBody = document.getElementById('staffTableBody');
+  if (staffTableBody) {
+    // Also show the tab button
+    const tabsContainer = document.getElementById('clientTabsContainer');
+    if (tabsContainer) {
+      tabsContainer.innerHTML += `
+        <button class="tab-btn" id="tabBtnStaff" onclick="document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active')); document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active')); document.getElementById('clientTabStaff').classList.add('active'); this.classList.add('active'); fetchStaff();">👥 Staff Management</button>
+      `;
+    }
+
+    window.fetchStaff = async function() {
+      try {
+        const res = await fetch('/api/staff');
+        if (res.status === 401 || res.status === 403) return;
+        const data = await res.json();
+        if (data.staff) {
+          staffTableBody.innerHTML = data.staff.map(s => `
+            <tr>
+              <td>${s.name}</td>
+              <td>${s.email}</td>
+              <td><span class="badge badge-emerald">${s.role}</span></td>
+              <td>${new Date(s.created_at).toLocaleDateString()}</td>
+              <td><button class="btn btn-secondary btn-sm" style="color: var(--accent-rose); border-color: var(--accent-rose);" onclick="deleteStaff(${s.id})">Delete</button></td>
+            </tr>
+          `).join('');
+        }
+      } catch (e) {
+        console.error('Error fetching staff', e);
+      }
+    };
+
+    window.handleAddStaffSubmit = async function(e) {
+      e.preventDefault();
+      const name = document.getElementById('staffName').value;
+      const email = document.getElementById('staffEmail').value;
+      const password = document.getElementById('staffPassword').value;
+
+      try {
+        const res = await fetch('/api/staff/add', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, email, password })
+        });
+        const data = await res.json();
+        if (data.success) {
+          showToast('Staff member added successfully!');
+          e.target.reset();
+          fetchStaff();
+        } else {
+          alert('Error: ' + data.error + (data.message ? ' - ' + data.message : ''));
+        }
+      } catch (err) {
+        alert('Failed to add staff');
+      }
+    };
+
+    window.deleteStaff = async function(id) {
+      if (!confirm('Are you sure you want to delete this staff member? This will instantly revoke their mobile app access.')) return;
+      try {
+        const res = await fetch('/api/staff/delete/' + id, { method: 'DELETE' });
+        const data = await res.json();
+        if (data.success) {
+          showToast('Staff deleted successfully.');
+          fetchStaff();
+        } else {
+          alert('Error: ' + data.error);
+        }
+      } catch (err) {
+        alert('Failed to delete staff');
+      }
+    };
+  }
+
 });
