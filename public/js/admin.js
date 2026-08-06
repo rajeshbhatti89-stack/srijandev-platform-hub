@@ -1,3 +1,4 @@
+const API_BASE_URL = "https://api.srijandev.in";
 let tenants = [];
 
 async function apiCall(url, method = 'GET', body = null) {
@@ -7,7 +8,8 @@ async function apiCall(url, method = 'GET', body = null) {
   };
   if (body) options.body = JSON.stringify(body);
 
-  const response = await fetch(url, options);
+  const fullUrl = url.startsWith('http') ? url : `${API_BASE_URL}${url}`;
+  const response = await fetch(fullUrl, options);
   const text = await response.text();
   let data = {};
   try {
