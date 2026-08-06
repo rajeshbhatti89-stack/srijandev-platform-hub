@@ -400,7 +400,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try { data = text ? JSON.parse(text) : {}; } catch(e) {}
         
         if (!res.ok) {
-          alert('Error: ' + (data.error || data.message || `Server Error (${res.status})`));
+          showToast('Error: ' + (data.error || data.message || `Server Error (${res.status})`), 'error');
           return;
         }
 
@@ -409,10 +409,10 @@ document.addEventListener('DOMContentLoaded', () => {
           e.target.reset();
           fetchStaff();
         } else {
-          alert('Error: ' + data.error + (data.message ? ' - ' + data.message : ''));
+          showToast('Error: ' + data.error + (data.message ? ' - ' + data.message : ''), 'error');
         }
       } catch (err) {
-        alert('Failed to add staff');
+        showToast('Failed to add staff', 'error');
       }
     };
 
@@ -425,7 +425,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try { data = text ? JSON.parse(text) : {}; } catch(e) {}
         
         if (!res.ok) {
-          alert('Error: ' + (data.error || data.message || `Server Error (${res.status})`));
+          showToast('Error: ' + (data.error || data.message || `Server Error (${res.status})`), 'error');
           return;
         }
 
@@ -433,10 +433,10 @@ document.addEventListener('DOMContentLoaded', () => {
           showToast('Staff deleted successfully.');
           fetchStaff();
         } else {
-          alert('Error: ' + data.error);
+          showToast('Error: ' + data.error, 'error');
         }
       } catch (err) {
-        alert('Failed to delete staff');
+        showToast('Failed to delete staff', 'error');
       }
     };
   }

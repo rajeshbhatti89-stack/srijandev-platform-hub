@@ -48,7 +48,7 @@ async function handleLogin(e) {
     document.getElementById('btnLogout').style.display = 'block';
     fetchTenants();
   } catch (err) {
-    alert(err.message);
+    showToast(err.message, 'error');
   }
 }
 
@@ -58,7 +58,7 @@ async function handleLogout() {
     localStorage.clear();
     window.location.reload();
   } catch (err) {
-    alert('Logout failed');
+    showToast('Logout failed: ' + err.message, 'error');
   }
 }
 
@@ -195,7 +195,7 @@ async function handleTenantSubmit(e) {
   try {
     role_menu_config = JSON.parse(document.getElementById('tMenuConfig').value || '{}');
   } catch (e) {
-    alert('Invalid JSON in Menu Relabeling Config');
+    showToast('Invalid JSON in Menu Relabeling Config', 'error');
     return;
   }
 
@@ -228,7 +228,7 @@ async function handleTenantSubmit(e) {
     closeTenantModal();
     fetchTenants();
   } catch (err) {
-    alert('Error: ' + err.message);
+    showToast('Error: ' + err.message, 'error');
   }
 }
 
@@ -243,6 +243,6 @@ async function deleteTenant(id) {
     showToast('Tenant deleted.');
     fetchTenants();
   } catch (err) {
-    alert(err.message);
+    showToast(err.message, 'error');
   }
 }
