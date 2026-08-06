@@ -204,6 +204,7 @@ app.post('/api/leads', async (req, res) => {
 
 // Super-Admin Login
 app.post(['/api/admin/login', '/api/super-admin/login'], async (req, res) => {
+  res.setHeader('Content-Type', 'application/json');
   try {
     const { email, password } = req.body;
 
@@ -460,6 +461,7 @@ app.delete(['/api/admin/tenants/:id', '/api/super-admin/tenants/:id'], requireAu
 
 // Client Login Endpoint
 app.post('/api/auth/login', async (req, res) => {
+  res.setHeader('Content-Type', 'application/json');
   try {
     const { email, password } = req.body;
 
@@ -895,6 +897,18 @@ app.get('/api/tenant/analytics', requireAuth, async (req, res) => {
   } catch (err) {
     res.status(500).json({ error: 'Failed to load analytics', details: err.message });
   }
+});
+
+// Global API Error Handlers
+app.use('/api', (req, res, next) => {
+  res.setHeader('Content-Type', 'application/json');
+  res.status(404).json({ error: 'API Endpoint Not Found' });
+});
+
+app.use('/api', (err, req, res, next) => {
+  console.error('[API Global Error]:', err);
+  res.setHeader('Content-Type', 'application/json');
+  res.status(500).json({ error: 'Internal Server Error', details: err.message });
 });
 
 /* ==========================================================================

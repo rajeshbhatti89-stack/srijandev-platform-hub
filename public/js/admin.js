@@ -8,9 +8,16 @@ async function apiCall(url, method = 'GET', body = null) {
   if (body) options.body = JSON.stringify(body);
 
   const response = await fetch(url, options);
-  const data = await response.json();
+  const text = await response.text();
+  let data = {};
+  try {
+    data = text ? JSON.parse(text) : {};
+  } catch (e) {
+    console.error('Failed to parse JSON response', text);
+  }
+
   if (!response.ok) {
-    throw new Error(data.error || 'API Error');
+    throw new Error(data.error || data.message || `Server Error (${response.status})`);
   }
   return data;
 }

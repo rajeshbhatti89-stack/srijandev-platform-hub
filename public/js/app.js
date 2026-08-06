@@ -10,7 +10,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // Fetch Tenant Config (if on portal)
     if (document.getElementById('tenantPortalView')) {
       fetch('/api/tenant/config')
-        .then(res => res.json())
+        .then(async (res) => {
+          const text = await res.text();
+          try { return text ? JSON.parse(text) : {}; } 
+          catch(e) { return {}; }
+        })
         .then(data => {
           if (data.tenant_id) {
             window.tenantConfig = data;
@@ -360,7 +364,9 @@ document.addEventListener('DOMContentLoaded', () => {
       try {
         const res = await fetch('/api/staff');
         if (res.status === 401 || res.status === 403) return;
-        const data = await res.json();
+        const text = await res.text();
+        let data = {};
+        try { data = text ? JSON.parse(text) : {}; } catch(e) {}
         if (data.staff) {
           staffTableBody.innerHTML = data.staff.map(s => `
             <tr>
@@ -389,7 +395,15 @@ document.addEventListener('DOMContentLoaded', () => {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ name, email, password })
         });
-        const data = await res.json();
+        const text = await res.text();
+        let data = {};
+        try { data = text ? JSON.parse(text) : {}; } catch(e) {}
+        
+        if (!res.ok) {
+          alert('Error: ' + (data.error || data.message || `Server Error (${res.status})`));
+          return;
+        }
+
         if (data.success) {
           showToast('Staff member added successfully!');
           e.target.reset();
@@ -406,7 +420,15 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!confirm('Are you sure you want to delete this staff member? This will instantly revoke their mobile app access.')) return;
       try {
         const res = await fetch('/api/staff/delete/' + id, { method: 'DELETE' });
-        const data = await res.json();
+        const text = await res.text();
+        let data = {};
+        try { data = text ? JSON.parse(text) : {}; } catch(e) {}
+        
+        if (!res.ok) {
+          alert('Error: ' + (data.error || data.message || `Server Error (${res.status})`));
+          return;
+        }
+
         if (data.success) {
           showToast('Staff deleted successfully.');
           fetchStaff();
