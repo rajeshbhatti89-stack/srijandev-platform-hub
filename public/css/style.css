@@ -3,27 +3,12 @@
    ========================================================================== */
 
 :root {
-  --bg-primary: #030508;
-  --bg-secondary: #080d1a;
-  --bg-card: rgba(12, 18, 34, 0.65);
-  --bg-card-hover: rgba(20, 30, 55, 0.85);
-  --bg-input: rgba(6, 10, 20, 0.85);
-  
-  --text-main: #f8fafc;
-  --text-muted: #94a3b8;
-  --text-dim: #64748b;
-  
-  --accent-cyan: #00f2fe;
-  --accent-emerald: #00f5a0;
-  --accent-purple: #7b2cbf;
-  --accent-indigo: #6366f1;
-  --accent-rose: #f43f5e;
-  --accent-amber: #f59e0b;
-  
-  --border-color: rgba(255, 255, 255, 0.12);
-  --border-glow: rgba(0, 242, 254, 0.4);
-  --font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  --transition-smooth: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  --bg-color: #f4f6f9;
+  --text-primary: #1e293b;
+  --text-secondary: #64748b;
+  --accent-green: #00ff66;
+  --hub-dark: #092520;
+  --card-bg: #ffffff;
 }
 
 * {
@@ -37,18 +22,43 @@ html {
 }
 
 body {
-  background-color: var(--bg-primary);
-  background-image: 
-    radial-gradient(circle at 10% 10%, rgba(0, 242, 254, 0.08) 0%, transparent 45%),
-    radial-gradient(circle at 90% 80%, rgba(123, 44, 191, 0.1) 0%, transparent 45%),
-    linear-gradient(to bottom, rgba(3, 5, 8, 0.96), rgba(8, 13, 26, 0.98));
-  color: var(--text-main);
-  font-family: var(--font-family);
-  line-height: 1.6;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  overflow-x: hidden;
+  background-color: var(--bg-color) !important;
+  background-image: radial-gradient(#cbd5e1 1px, transparent 1px) !important;
+  background-size: 30px 30px !important;
+  color: var(--text-primary) !important;
+}
+
+/* Fix for top hero section sticking to dark mode */
+.hero,
+#hero,
+header,
+.dark-bg {
+  background-color: transparent !important;
+}
+
+h1,
+h2,
+h3,
+h4,
+p,
+span {
+  color: #1e293b !important;
+}
+
+.tab-btn,
+.btn,
+.card {
+  background: var(--card-bg) !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05) !important;
+  border-radius: 12px !important;
+  color: var(--text-primary) !important;
+}
+
+.tab-btn.active,
+.btn-primary {
+  border-color: var(--accent-green) !important;
+  box-shadow: 0 0 15px rgba(0, 255, 102, 0.2) !important;
 }
 
 a {
@@ -62,11 +72,25 @@ a:hover {
 }
 
 /* Metallic & Neon Typography Utilities */
-.text-cyan { color: var(--accent-cyan) !important; }
-.text-emerald { color: var(--accent-emerald) !important; }
-.text-purple { color: var(--accent-purple) !important; }
-.text-indigo { color: var(--accent-indigo) !important; }
-.text-amber { color: var(--accent-amber) !important; }
+.text-cyan {
+  color: var(--accent-cyan) !important;
+}
+
+.text-emerald {
+  color: var(--accent-emerald) !important;
+}
+
+.text-purple {
+  color: var(--accent-purple) !important;
+}
+
+.text-indigo {
+  color: var(--accent-indigo) !important;
+}
+
+.text-amber {
+  color: var(--accent-amber) !important;
+}
 
 .text-neon-cyan {
   background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
@@ -82,7 +106,6 @@ a:hover {
 
 /* Header & Navigation Bar */
 header.app-header {
-  background: rgba(3, 5, 8, 0.85);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--border-color);
@@ -230,9 +253,7 @@ header.app-header {
   text-align: center;
   margin: 0 auto;
   padding: 2.5rem 2rem;
-  background: rgba(8, 13, 26, 0.25);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  background: var(--card-bg);
   border-radius: 28px;
   border: 1px solid rgba(0, 242, 254, 0.2);
   box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
@@ -394,10 +415,29 @@ header.app-header {
   margin-bottom: 1.5rem;
 }
 
-.cyan-glow { background: rgba(0, 242, 254, 0.15); color: var(--accent-cyan); border: 1px solid rgba(0, 242, 254, 0.3); }
-.emerald-glow { background: rgba(0, 245, 160, 0.15); color: var(--accent-emerald); border: 1px solid rgba(0, 245, 160, 0.3); }
-.purple-glow { background: rgba(123, 44, 191, 0.15); color: var(--accent-purple); border: 1px solid rgba(123, 44, 191, 0.3); }
-.indigo-glow { background: rgba(99, 102, 241, 0.15); color: var(--accent-indigo); border: 1px solid rgba(99, 102, 241, 0.3); }
+.cyan-glow {
+  background: rgba(0, 242, 254, 0.15);
+  color: var(--accent-cyan);
+  border: 1px solid rgba(0, 242, 254, 0.3);
+}
+
+.emerald-glow {
+  background: rgba(0, 245, 160, 0.15);
+  color: var(--accent-emerald);
+  border: 1px solid rgba(0, 245, 160, 0.3);
+}
+
+.purple-glow {
+  background: rgba(123, 44, 191, 0.15);
+  color: var(--accent-purple);
+  border: 1px solid rgba(123, 44, 191, 0.3);
+}
+
+.indigo-glow {
+  background: rgba(99, 102, 241, 0.15);
+  color: var(--accent-indigo);
+  border: 1px solid rgba(99, 102, 241, 0.3);
+}
 
 .service-card-title {
   font-size: 1.3rem;
@@ -437,9 +477,8 @@ header.app-header {
 }
 
 .tech-card {
-  background: rgba(12, 18, 34, 0.6);
+  background: var(--card-bg);
   border: 1px solid var(--border-color);
-  backdrop-filter: blur(12px);
   border-radius: 16px;
   padding: 1.8rem 1rem;
   text-align: center;
@@ -448,8 +487,8 @@ header.app-header {
 
 .tech-card:hover {
   transform: translateY(-4px);
-  border-color: rgba(255, 255, 255, 0.25);
-  background: rgba(20, 30, 55, 0.8);
+  border-color: var(--accent-green);
+  background: var(--card-bg);
 }
 
 .tech-icon {
@@ -466,8 +505,8 @@ header.app-header {
    SECURITY BANNER
    ========================================================================== */
 .security-banner {
-  background: linear-gradient(135deg, rgba(8, 13, 26, 0.9), rgba(123, 44, 191, 0.2));
-  border: 1px solid rgba(123, 44, 191, 0.4);
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
   border-radius: 24px;
   padding: 3.5rem 2.5rem;
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
@@ -579,7 +618,7 @@ header.app-header {
    FOOTER
    ========================================================================== */
 footer.app-footer {
-  background: rgba(3, 5, 8, 0.95);
+  background: var(--bg-color);
   border-top: 1px solid var(--border-color);
   padding: 4rem 2rem 2rem 2rem;
   margin-top: 4rem;
@@ -650,21 +689,126 @@ footer.app-footer {
 
 /* Animations */
 @keyframes pulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.5; transform: scale(1.2); }
+
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.5;
+    transform: scale(1.2);
+  }
 }
 
 /* Responsive Breakpoints */
 @media (max-width: 900px) {
-  .hero-title { font-size: 2.4rem; }
-  .form-row { grid-template-columns: 1fr; }
-  .footer-container { grid-template-columns: 1fr 1fr; }
+  .hero-title {
+    font-size: 2.4rem;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .footer-container {
+    grid-template-columns: 1fr 1fr;
+  }
 }
 
 @media (max-width: 600px) {
-  .header-nav { display: none; }
-  .mobile-toggle { display: block; }
-  .hero-title { font-size: 2rem; }
-  .footer-container { grid-template-columns: 1fr; }
-  .footer-bottom { flex-direction: column; gap: 0.8rem; text-align: center; }
+  .header-nav {
+    display: none;
+  }
+
+  .mobile-toggle {
+    display: block;
+  }
+
+  .hero-title {
+    font-size: 2rem;
+  }
+
+  .footer-container {
+    grid-template-columns: 1fr;
+  }
+
+  .footer-bottom {
+    flex-direction: column;
+    gap: 0.8rem;
+    text-align: center;
+  }
+}
+
+/* ==========================================
+   FORCE LIGHT THEME & READABILITY OVERRIDES
+   ========================================== */
+body,
+html {
+  background-color: #f4f6f9 !important;
+  color: #1e293b !important;
+  background-image: radial-gradient(#cbd5e1 1px, transparent 1px) !important;
+  background-size: 30px 30px !important;
+}
+
+/* Force all text to be dark and readable */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+span,
+div,
+label,
+li,
+a {
+  color: #1e293b;
+}
+
+/* Override any residual dark backgrounds on sections */
+section,
+header,
+footer,
+.navbar,
+.tab-content {
+  background-color: transparent !important;
+}
+
+/* Clean Cards & Panels */
+.card,
+.panel,
+.box,
+.modal {
+  background-color: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05) !important;
+  color: #1e293b !important;
+}
+
+/* Fix Buttons to ensure contrast */
+.btn,
+button,
+.tab-btn {
+  color: #1e293b !important;
+  background-color: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+}
+
+/* Highlight/Primary Buttons */
+.btn-primary,
+.launch-btn,
+.submit-btn {
+  background-color: #092520 !important;
+  color: #00ff66 !important;
+  border: 1px solid #00ff66 !important;
+  font-weight: bold !important;
+}
+
+/* Make sure links inside the new light theme are visible */
+a {
+  color: #059669 !important;
+  /* Emerald green for links */
 }

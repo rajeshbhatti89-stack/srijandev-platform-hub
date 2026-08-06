@@ -7,16 +7,10 @@ document.addEventListener('DOMContentLoaded', () => {
   /* --------------------------------------------------------------------------
      1. THREE.JS 3D INTERACTIVE CYBER-ROBOT CANVASES
      -------------------------------------------------------------------------- */
-    const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-    const API_BASE_URL = isLocal ? '' : 'https://api.srijandev.in';
+    // Constants moved to helpers.js
     // Fetch Tenant Config (if on portal)
     if (document.getElementById('tenantPortalView')) {
-      fetch(`${API_BASE_URL}/api/tenant/config`)
-        .then(async (res) => {
-          const text = await res.text();
-          try { return text ? JSON.parse(text) : {}; } 
-          catch(e) { return {}; }
-        })
+      apiCall('/api/tenant/config')
         .then(data => {
           if (data.tenant_id) {
             window.tenantConfig = data;
@@ -25,6 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
         })
         .catch(console.error);
     }
+
 
     function applyTenantCustomization(config) {
       // 1. Branding
@@ -98,7 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Logout handling for portal
     window.handleClientLogout = async function() {
       try {
-        await fetch('/api/auth/logout', { method: 'POST' });
+        await apiCall('/api/auth/logout', 'POST');
         localStorage.clear();
         window.location.href = '/';
       } catch (err) {
@@ -106,176 +101,47 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     };
 
-    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-    renderer.setSize(canvasContainer.clientWidth, canvasContainer.clientHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    canvasContainer.appendChild(renderer.domElement);
+    const canvasContainer = document.getElementById('threejs-canvas');
+    if (canvasContainer) {
+      canvasContainer.innerHTML = '';
+      const scene = new THREE.Scene();
+      const aspect = canvasContainer.clientWidth / canvasContainer.clientHeight;
+      const d = 8;
+      const camera = new THREE.OrthographicCamera(-d * aspect, d * aspect, d, -d, 1, 1000);
+      camera.position.set(10, 10, 10);
+      camera.lookAt(scene.position);
 
-    // Add Scene Lighting
-    const pointLight = new THREE.PointLight(0x00f2fe, 2.5, 12);
-    pointLight.position.set(2, 2, 4);
-    scene.add(pointLight);
+      const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+      renderer.setSize(canvasContainer.clientWidth, canvasContainer.clientHeight);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      canvasContainer.appendChild(renderer.domElement);
 
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
-    scene.add(ambientLight);
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+      scene.add(ambientLight);
+      const dirLight = new THREE.DirectionalLight(0xffffff, 1);
+      dirLight.position.set(5, 10, 7);
+      scene.add(dirLight);
 
-    // 2. BUILD 3D CYBER-ROBOT ASSEMBLY GROUP
-    const robotGroup = new THREE.Group();
+      const hubGroup = new THREE.Group();
+      const hubGeo = new THREE.CylinderGeometry(2, 2, 0.8, 32);
+      const hubMat = new THREE.MeshStandardMaterial({ color: 0x092520, metalness: 0.7 });
+      hubGroup.add(new THREE.Mesh(hubGeo, hubMat));
 
-    // A) Robot Head (Angular Cybernetic Helmet)
-    const headGeometry = new THREE.BoxGeometry(1.6, 1.4, 1.4);
-    const headMaterial = new THREE.MeshBasicMaterial({
-      color: 0x00f2fe,
-      wireframe: true,
-      transparent: true,
-      opacity: 0.65
-    });
-    const robotHead = new THREE.Mesh(headGeometry, headMaterial);
-    robotGroup.add(robotHead);
+      const ringGeo = new THREE.TorusGeometry(2.1, 0.08, 16, 64);
+      const ringMat = new THREE.MeshBasicMaterial({ color: 0x00ff66 });
+      const glowingRing = new THREE.Mesh(ringGeo, ringMat);
+      glowingRing.rotation.x = Math.PI / 2;
+      hubGroup.add(glowingRing);
+      scene.add(hubGroup);
 
-    // B) Outer Cyber Helmet Shell (Dodecahedron Shield)
-    const helmetShellGeometry = new THREE.DodecahedronGeometry(1.4, 1);
-    const helmetShellMaterial = new THREE.MeshBasicMaterial({
-      color: 0xa855f7,
-      wireframe: true,
-      transparent: true,
-      opacity: 0.5
-    });
-    const helmetShell = new THREE.Mesh(helmetShellGeometry, helmetShellMaterial);
-    robotGroup.add(helmetShell);
-
-    // C) Robot Glowing Eyes (Emerald Lenses)
-    const eyeGeometry = new THREE.SphereGeometry(0.18, 16, 16);
-    const eyeMaterial = new THREE.MeshBasicMaterial({
-      color: 0x00f5a0,
-      transparent: true,
-      opacity: 0.95
-    });
-
-    const leftEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
-    leftEye.position.set(-0.4, 0.2, 0.72);
-    robotGroup.add(leftEye);
-
-    const rightEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
-    rightEye.position.set(0.4, 0.2, 0.72);
-    robotGroup.add(rightEye);
-
-    // D) Robot Visor Glowing Core Strip
-    const visorGeometry = new THREE.BoxGeometry(1.2, 0.22, 0.1);
-    const visorMaterial = new THREE.MeshBasicMaterial({
-      color: 0x00f2fe,
-      transparent: true,
-      opacity: 0.7
-    });
-    const visor = new THREE.Mesh(visorGeometry, visorMaterial);
-    visor.position.set(0, 0.2, 0.68);
-    robotGroup.add(visor);
-
-    // E) Cyber Neck & Torso Chassis
-    const neckGeometry = new THREE.CylinderGeometry(0.35, 0.45, 0.6, 12);
-    const neckMaterial = new THREE.MeshBasicMaterial({
-      color: 0x64748b,
-      wireframe: true,
-      transparent: true,
-      opacity: 0.5
-    });
-    const neck = new THREE.Mesh(neckGeometry, neckMaterial);
-    neck.position.set(0, -1.0, 0);
-    robotGroup.add(neck);
-
-    // F) Rotating Orbital Tech Rings
-    const ringGeometry1 = new THREE.TorusGeometry(2.1, 0.02, 16, 100);
-    const ringMaterial1 = new THREE.MeshBasicMaterial({
-      color: 0x00f2fe,
-      transparent: true,
-      opacity: 0.5
-    });
-    const orbitalRing1 = new THREE.Mesh(ringGeometry1, ringMaterial1);
-    orbitalRing1.rotation.x = Math.PI / 3;
-    robotGroup.add(orbitalRing1);
-
-    const ringGeometry2 = new THREE.TorusGeometry(2.4, 0.015, 16, 100);
-    const ringMaterial2 = new THREE.MeshBasicMaterial({
-      color: 0x00f5a0,
-      transparent: true,
-      opacity: 0.4
-    });
-    const orbitalRing2 = new THREE.Mesh(ringGeometry2, ringMaterial2);
-    orbitalRing2.rotation.y = Math.PI / 4;
-    robotGroup.add(orbitalRing2);
-
-    scene.add(robotGroup);
-
-    // 3. BACKGROUND CYBER PARTICLE MATRIX
-    const particlesCount = 850;
-    const posArray = new Float32Array(particlesCount * 3);
-
-    for (let i = 0; i < particlesCount * 3; i++) {
-      posArray[i] = (Math.random() - 0.5) * 12;
+      const animate = () => {
+        requestAnimationFrame(animate);
+        hubGroup.position.y = Math.sin(Date.now() * 0.002) * 0.1;
+        hubGroup.rotation.y += 0.005;
+        renderer.render(scene, camera);
+      };
+      animate();
     }
-
-    const particlesGeometry = new THREE.BufferGeometry();
-    particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
-
-    const particlesMaterial = new THREE.PointsMaterial({
-      size: 0.028,
-      color: 0x00f2fe,
-      transparent: true,
-      opacity: 0.6
-    });
-
-    const particleSystem = new THREE.Points(particlesGeometry, particlesMaterial);
-    scene.add(particleSystem);
-
-    // 4. MOUSE PARALLAX CURSOR TRACKING (Robot Looks at User Cursor)
-    let mouseX = 0;
-    let mouseY = 0;
-    let targetX = 0;
-    let targetY = 0;
-
-    const windowHalfX = window.innerWidth / 2;
-    const windowHalfY = window.innerHeight / 2;
-
-    document.addEventListener('mousemove', (e) => {
-      mouseX = (e.clientX - windowHalfX) * 0.0008;
-      mouseY = (e.clientY - windowHalfY) * 0.0008;
-    });
-
-    // 5. HARDWARE ACCELERATED ANIMATION LOOP (60 FPS)
-    const animate = () => {
-      requestAnimationFrame(animate);
-
-      // Smooth Robot Damping & Eye-Tracking Cursor Movement
-      targetX += (mouseX - targetX) * 0.05;
-      targetY += (mouseY - targetY) * 0.05;
-
-      robotGroup.rotation.y = targetX * 1.5;
-      robotGroup.rotation.x = targetY * 1.2;
-
-      // Rotate Tech Rings in Opposite Directions
-      orbitalRing1.rotation.z += 0.008;
-      orbitalRing2.rotation.z -= 0.006;
-      particleSystem.rotation.y += 0.0008;
-
-      // Floating Bobbing Effect for Robot Head
-      robotGroup.position.y = Math.sin(Date.now() * 0.002) * 0.12;
-
-      renderer.render(scene, camera);
-    };
-
-    animate();
-
-    // 6. Window Resize Listener
-    window.addEventListener('resize', () => {
-      if (!canvasContainer) return;
-      const width = canvasContainer.clientWidth;
-      const height = canvasContainer.clientHeight;
-
-      camera.aspect = width / height;
-      camera.updateProjectionMatrix();
-      renderer.setSize(width, height);
-    });
-  }
 
   /* --------------------------------------------------------------------------
      2. FORM SUBMISSION HANDLERS WITH ACCESSIBLE TOASTS
@@ -308,52 +174,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   /* --------------------------------------------------------------------------
      3. TOAST NOTIFICATION UTILITY (ARIA LIVE REGION)
+     -- MOVED TO helpers.js --
      -------------------------------------------------------------------------- */
-  function showToast(message) {
-    const toastContainer = document.getElementById('toastContainer');
-    if (!toastContainer) return;
-
-    const toast = document.createElement('div');
-    toast.className = 'custom-toast';
-    toast.innerHTML = `
-      <div style="display:flex; align-items:center; gap:0.8rem;">
-        <i class="fa-solid fa-robot" style="font-size:1.4rem; color:#00f5a0;"></i>
-        <div>${message}</div>
-      </div>
-    `;
-
-    Object.assign(toast.style, {
-      position: 'fixed',
-      bottom: '2rem',
-      right: '2rem',
-      background: 'rgba(8, 13, 26, 0.95)',
-      backdropFilter: 'blur(16px)',
-      color: '#ffffff',
-      border: '1px solid rgba(0, 245, 160, 0.5)',
-      boxShadow: '0 10px 30px rgba(0, 0, 0, 0.6), 0 0 20px rgba(0, 245, 160, 0.3)',
-      padding: '1rem 1.4rem',
-      borderRadius: '16px',
-      zIndex: '3000',
-      fontSize: '0.9rem',
-      maxWidth: '400px',
-      transform: 'translateY(100px)',
-      opacity: '0',
-      transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)'
-    });
-
-    toastContainer.appendChild(toast);
-
-    setTimeout(() => {
-      toast.style.transform = 'translateY(0)';
-      toast.style.opacity = '1';
-    }, 50);
-
-    setTimeout(() => {
-      toast.style.transform = 'translateY(100px)';
-      toast.style.opacity = '0';
-      setTimeout(() => toast.remove(), 400);
-    }, 5000);
-  }
 
   /* --------------------------------------------------------------------------
      4. STAFF MANAGEMENT (PORTAL API)
@@ -364,12 +186,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (staffTableBody) {
     window.fetchStaff = async function() {
       try {
-        const fullUrl = `/api/staff`.startsWith('http') ? `/api/staff` : `${API_BASE_URL}/api/staff`;
-        const res = await fetch(fullUrl);
-        if (res.status === 401 || res.status === 403) return;
-        const text = await res.text();
-        let data = {};
-        try { data = text ? JSON.parse(text) : {}; } catch(e) {}
+        const data = await apiCall('/api/staff');
         if (data.staff) {
           staffTableBody.innerHTML = data.staff.map(s => `
             <tr>
@@ -382,7 +199,9 @@ document.addEventListener('DOMContentLoaded', () => {
           `).join('');
         }
       } catch (e) {
-        console.error('Error fetching staff', e);
+        if (!e.message.includes('401') && !e.message.includes('403')) {
+          console.error('Error fetching staff', e);
+        }
       }
     };
 
@@ -393,21 +212,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const password = document.getElementById('staffPassword').value;
 
       try {
-        const fullUrl = `/api/staff/add`.startsWith('http') ? `/api/staff/add` : `${API_BASE_URL}/api/staff/add`;
-        const res = await fetch(fullUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name, email, password })
-        });
-        const text = await res.text();
-        let data = {};
-        try { data = text ? JSON.parse(text) : {}; } catch(e) {}
-        
-        if (!res.ok) {
-          showToast('Error: ' + (data.error || data.message || `Server Error (${res.status})`), 'error');
-          return;
-        }
-
+        const data = await apiCall('/api/staff/add', 'POST', { name, email, password });
         if (data.success) {
           showToast('Staff member added successfully!');
           e.target.reset();
@@ -416,24 +221,14 @@ document.addEventListener('DOMContentLoaded', () => {
           showToast('Error: ' + data.error + (data.message ? ' - ' + data.message : ''), 'error');
         }
       } catch (err) {
-        showToast('Failed to add staff', 'error');
+        showToast(err.message || 'Failed to add staff', 'error');
       }
     };
 
     window.deleteStaff = async function(id) {
       if (!confirm('Are you sure you want to delete this staff member? This will instantly revoke their mobile app access.')) return;
       try {
-        const fullUrl = `/api/staff/delete/${id}`.startsWith('http') ? `/api/staff/delete/${id}` : `${API_BASE_URL}/api/staff/delete/${id}`;
-        const res = await fetch(fullUrl, { method: 'DELETE' });
-        const text = await res.text();
-        let data = {};
-        try { data = text ? JSON.parse(text) : {}; } catch(e) {}
-        
-        if (!res.ok) {
-          showToast('Error: ' + (data.error || data.message || `Server Error (${res.status})`), 'error');
-          return;
-        }
-
+        const data = await apiCall(`/api/staff/delete/${id}`, 'DELETE');
         if (data.success) {
           showToast('Staff deleted successfully.');
           fetchStaff();
@@ -441,7 +236,7 @@ document.addEventListener('DOMContentLoaded', () => {
           showToast('Error: ' + data.error, 'error');
         }
       } catch (err) {
-        showToast('Failed to delete staff', 'error');
+        showToast(err.message || 'Failed to delete staff', 'error');
       }
     };
   }
