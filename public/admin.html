@@ -4,14 +4,127 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Super-Admin Panel | SrijanDev Operations</title>
-  <link rel="stylesheet" href="/css/style.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <style>
-    .module-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem; }
-    .module-toggle { background: var(--bg-primary); padding: 1rem; border-radius: 8px; border: 1px solid var(--border-color); display: flex; align-items: center; gap: 10px; cursor: pointer; }
-    .module-toggle input { width: 18px; height: 18px; }
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style type="text/tailwindcss">
+    @layer components {
+      body {
+        @apply bg-slate-900 text-slate-100 font-sans antialiased;
+        font-family: 'Inter', sans-serif;
+      }
+      .app-header {
+        @apply bg-slate-800 border-b border-slate-700 p-4 sticky top-0 z-50;
+      }
+      .header-container {
+        @apply max-w-7xl mx-auto flex justify-between items-center;
+      }
+      .brand-section {
+        @apply flex items-center gap-3;
+      }
+      .brand-logo {
+        @apply w-10 h-10 bg-cyan-600 rounded-lg flex items-center justify-center font-bold text-xl text-white shadow-md shadow-cyan-900/50;
+      }
+      .brand-name {
+        @apply font-bold text-lg tracking-wide text-white;
+      }
+      .brand-subtitle {
+        @apply text-xs text-slate-400 font-medium tracking-wider;
+      }
+      .content-area {
+        @apply max-w-7xl mx-auto p-6 min-h-screen;
+      }
+      .btn {
+        @apply px-4 py-2 rounded-md font-medium transition-colors outline-none;
+      }
+      .btn-primary {
+        @apply bg-cyan-600 hover:bg-cyan-700 text-white shadow-lg shadow-cyan-900/50;
+      }
+      .btn-secondary {
+        @apply bg-slate-700 hover:bg-slate-600 text-white border border-slate-600;
+      }
+      .btn-emerald {
+        @apply bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg shadow-emerald-900/50;
+      }
+      .btn-sm {
+        @apply px-3 py-1.5 text-sm;
+      }
+      .badge {
+        @apply px-2.5 py-0.5 rounded-full text-xs font-semibold tracking-wide uppercase;
+      }
+      .badge-rose {
+        @apply bg-rose-500/20 text-rose-400 border border-rose-500/50;
+      }
+      .badge-emerald {
+        @apply bg-emerald-500/20 text-emerald-400 border border-emerald-500/50;
+      }
+      .form-group {
+        @apply mb-4;
+      }
+      .form-label {
+        @apply block text-sm font-medium text-slate-300 mb-1.5;
+      }
+      .form-input {
+        @apply w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2.5 text-slate-100 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all placeholder-slate-500;
+      }
+      .modal-backdrop {
+        @apply fixed inset-0 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center z-50 p-4;
+      }
+      .modal-box {
+        @apply bg-slate-800 border border-slate-700 rounded-2xl shadow-2xl shadow-black w-full p-6 relative;
+      }
+      .modal-header {
+        @apply flex justify-between items-center mb-6 border-b border-slate-700 pb-4;
+      }
+      .modal-header h3 {
+        @apply text-xl font-bold text-white;
+      }
+      .modal-close {
+        @apply text-slate-400 hover:text-white text-3xl font-light leading-none cursor-pointer;
+      }
+      .data-table {
+        @apply w-full text-left border-collapse whitespace-nowrap;
+      }
+      .data-table th {
+        @apply bg-slate-800 text-slate-400 font-medium text-sm p-4 border-b border-slate-700;
+      }
+      .data-table td {
+        @apply p-4 border-b border-slate-700/50 text-slate-200;
+      }
+      .table-container {
+        @apply bg-slate-900/50 rounded-xl border border-slate-800 overflow-x-auto;
+      }
+      .app-footer {
+        @apply border-t border-slate-800 mt-12 py-6 text-center text-slate-500 text-sm;
+      }
+      .module-toggle { 
+        @apply bg-slate-800 p-4 rounded-xl border border-slate-700 flex items-center gap-3 cursor-pointer hover:border-cyan-500/50 transition-colors; 
+      }
+      .module-toggle input { 
+        @apply w-5 h-5 accent-cyan-500 cursor-pointer; 
+      }
+      
+      .tab-btn {
+        @apply px-4 py-2 text-slate-400 font-medium hover:text-white transition-colors border-b-2 border-transparent;
+      }
+      .tab-btn.active {
+        @apply text-cyan-400 border-cyan-400;
+      }
+      .tabs-container {
+        @apply flex gap-4 border-b border-slate-800 mb-6;
+      }
+      
+      h2 { @apply text-3xl font-bold tracking-tight text-white mb-1; }
+      h3 { @apply text-2xl font-semibold tracking-tight text-white mb-1; }
+      h4 { @apply text-lg font-semibold tracking-tight text-cyan-400; }
+      
+      :root {
+        --accent-cyan: #06b6d4;
+        --accent-emerald: #10b981;
+        --accent-rose: #f43f5e;
+      }
+    }
   </style>
 </head>
 <body>
