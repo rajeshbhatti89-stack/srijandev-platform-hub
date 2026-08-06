@@ -7,9 +7,11 @@ document.addEventListener('DOMContentLoaded', () => {
   /* --------------------------------------------------------------------------
      1. THREE.JS 3D INTERACTIVE CYBER-ROBOT CANVASES
      -------------------------------------------------------------------------- */
+    const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    const API_BASE_URL = isLocal ? '' : 'https://api.srijandev.in';
     // Fetch Tenant Config (if on portal)
     if (document.getElementById('tenantPortalView')) {
-      fetch('/api/tenant/config')
+      fetch(`${API_BASE_URL}/api/tenant/config`)
         .then(async (res) => {
           const text = await res.text();
           try { return text ? JSON.parse(text) : {}; } 
@@ -362,7 +364,8 @@ document.addEventListener('DOMContentLoaded', () => {
   if (staffTableBody) {
     window.fetchStaff = async function() {
       try {
-        const res = await fetch('/api/staff');
+        const fullUrl = `/api/staff`.startsWith('http') ? `/api/staff` : `${API_BASE_URL}/api/staff`;
+        const res = await fetch(fullUrl);
         if (res.status === 401 || res.status === 403) return;
         const text = await res.text();
         let data = {};
@@ -390,7 +393,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const password = document.getElementById('staffPassword').value;
 
       try {
-        const res = await fetch('/api/staff/add', {
+        const fullUrl = `/api/staff/add`.startsWith('http') ? `/api/staff/add` : `${API_BASE_URL}/api/staff/add`;
+        const res = await fetch(fullUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ name, email, password })
@@ -419,7 +423,8 @@ document.addEventListener('DOMContentLoaded', () => {
     window.deleteStaff = async function(id) {
       if (!confirm('Are you sure you want to delete this staff member? This will instantly revoke their mobile app access.')) return;
       try {
-        const res = await fetch('/api/staff/delete/' + id, { method: 'DELETE' });
+        const fullUrl = `/api/staff/delete/${id}`.startsWith('http') ? `/api/staff/delete/${id}` : `${API_BASE_URL}/api/staff/delete/${id}`;
+        const res = await fetch(fullUrl, { method: 'DELETE' });
         const text = await res.text();
         let data = {};
         try { data = text ? JSON.parse(text) : {}; } catch(e) {}

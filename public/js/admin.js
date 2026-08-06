@@ -1,4 +1,5 @@
-const API_BASE_URL = "https://api.srijandev.in";
+const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+const API_BASE_URL = isLocal ? '' : 'https://api.srijandev.in';
 let tenants = [];
 
 async function apiCall(url, method = 'GET', body = null) {
