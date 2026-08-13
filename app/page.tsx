@@ -1,13 +1,18 @@
+'use client';
+
+import { useState } from 'react';
 import Navbar from '@/components/ui/Navbar';
 import HeroSection from '@/components/ui/HeroSection';
 import ServicesSection from '@/components/ui/ServicesSection';
 import ContactSection from '@/components/ui/ContactSection';
 
 export default function HomePage() {
+  const [isPlusMode, setIsPlusMode] = useState(false);
+
   return (
     <main>
-      <Navbar />
-      <HeroSection />
+      <Navbar isPlusMode={isPlusMode} setIsPlusMode={setIsPlusMode} />
+      <HeroSection isPlusMode={isPlusMode} />
       <ServicesSection />
       <ContactSection />
 

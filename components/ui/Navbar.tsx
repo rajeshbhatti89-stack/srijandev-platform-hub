@@ -13,7 +13,12 @@ const navItems: NavItem[] = [
   { label: 'Contact', href: '#contact' },
 ];
 
-export default function Navbar() {
+interface NavbarProps {
+  isPlusMode: boolean;
+  setIsPlusMode: (val: boolean) => void;
+}
+
+export default function Navbar({ isPlusMode, setIsPlusMode }: NavbarProps) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -46,7 +51,7 @@ export default function Navbar() {
           className="flex items-center gap-2 group"
           id="nav-logo"
         >
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-violet-600 flex items-center justify-center shadow-lg shadow-blue-500/30">
+          <div className={`w-8 h-8 rounded-lg flex items-center justify-center shadow-lg transition-colors duration-500 ${isPlusMode ? 'bg-gradient-to-br from-amber-500 to-orange-600 shadow-orange-500/30' : 'bg-gradient-to-br from-blue-500 to-violet-600 shadow-blue-500/30'}`}>
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
               <path d="M8 1L14 4.5V11.5L8 15L2 11.5V4.5L8 1Z" stroke="white" strokeWidth="1.5" fill="none" />
               <path d="M8 5L11 6.75V10.25L8 12L5 10.25V6.75L8 5Z" fill="white" opacity="0.8" />
@@ -67,10 +72,25 @@ export default function Navbar() {
               {item.label}
             </button>
           ))}
+
+          {/* Plus Toggle */}
+          <button
+            onClick={() => setIsPlusMode(!isPlusMode)}
+            className={`relative flex items-center w-12 h-6 rounded-full transition-colors duration-300 ${isPlusMode ? 'bg-orange-500/20 border border-orange-500/50' : 'bg-white/5 border border-white/10'}`}
+          >
+            <span 
+              className={`absolute left-1 w-4 h-4 rounded-full transition-transform duration-300 shadow-sm ${isPlusMode ? 'translate-x-6 bg-orange-400 shadow-orange-500/50' : 'translate-x-0 bg-gray-400'}`}
+            />
+          </button>
+          
           <a
             id="nav-cta"
             href="mailto:Contact@srijandev.in?subject=Project%20Inquiry"
-            className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold transition-all duration-200 shadow-md shadow-blue-500/30 hover:shadow-blue-500/50"
+            className={`px-4 py-2 rounded-lg text-white text-sm font-semibold transition-all duration-300 shadow-md ${
+              isPlusMode 
+                ? 'bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 shadow-orange-500/30 hover:shadow-orange-500/50' 
+                : 'bg-blue-600 hover:bg-blue-500 shadow-blue-500/30 hover:shadow-blue-500/50'
+            }`}
           >
             Contact@srijandev.in
           </a>
@@ -110,10 +130,25 @@ export default function Navbar() {
                   {item.label}
                 </button>
               ))}
+
+              <div className="flex items-center justify-between py-2 border-t border-white/5 mt-2 pt-4">
+                <span className="text-sm font-medium text-gray-300">SrijanDev Plus</span>
+                <button
+                  onClick={() => setIsPlusMode(!isPlusMode)}
+                  className={`relative flex items-center w-12 h-6 rounded-full transition-colors duration-300 ${isPlusMode ? 'bg-orange-500/20 border border-orange-500/50' : 'bg-white/5 border border-white/10'}`}
+                >
+                  <span 
+                    className={`absolute left-1 w-4 h-4 rounded-full transition-transform duration-300 shadow-sm ${isPlusMode ? 'translate-x-6 bg-orange-400 shadow-orange-500/50' : 'translate-x-0 bg-gray-400'}`}
+                  />
+                </button>
+              </div>
+
               <a
                 id="nav-mobile-cta"
                 href="mailto:Contact@srijandev.in?subject=Project%20Inquiry"
-                className="px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-semibold text-center"
+                className={`px-4 py-2 mt-2 rounded-lg text-white text-sm font-semibold text-center ${
+                  isPlusMode ? 'bg-gradient-to-r from-amber-500 to-orange-600' : 'bg-blue-600'
+                }`}
               >
                 Contact@srijandev.in
               </a>
