@@ -9,8 +9,8 @@ export const metadata: Metadata = {
   authors: [{ name: 'SrijanDev' }],
   metadataBase: new URL('https://srijandev.in'),
   icons: {
-    icon: '/logo.png',
-    apple: '/logo.png',
+    icon: '/icon.png',
+    apple: '/icon.png',
   },
   openGraph: {
     type: 'website',
