@@ -24,7 +24,7 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
           <img 
             src="/logo-plus.png" 
             alt="SrijanDev Plus" 
-            className="h-8 w-auto object-contain"
+            className="h-10 w-auto object-contain"
             onError={(e) => {
               e.currentTarget.src = "/logo.png";
               e.currentTarget.style.filter = "drop-shadow(0 0 8px rgba(245, 158, 11, 0.5)) hue-rotate(180deg)";

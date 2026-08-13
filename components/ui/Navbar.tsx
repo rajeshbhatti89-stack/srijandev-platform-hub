@@ -56,7 +56,7 @@ export default function Navbar({ isPlusMode, setIsPlusMode }: NavbarProps) {
           <img 
             src={isPlusMode ? "/logo-plus.png" : "/logo.png"} 
             alt="SrijanDev Logo" 
-            className="h-10 md:h-12 w-auto object-contain transition-all duration-500"
+            className="h-14 md:h-16 w-auto object-contain transition-all duration-500"
             onError={(e) => {
               // Fallback to standard logo if the plus logo is not found
               if (isPlusMode && e.currentTarget.src.includes('logo-plus')) {
