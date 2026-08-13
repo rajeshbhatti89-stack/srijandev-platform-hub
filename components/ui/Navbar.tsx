@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useRouter } from 'next/navigation';
 
 interface NavItem {
   label: string;
@@ -19,6 +20,7 @@ interface NavbarProps {
 }
 
 export default function Navbar({ isPlusMode, setIsPlusMode }: NavbarProps) {
+  const router = useRouter();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -81,7 +83,11 @@ export default function Navbar({ isPlusMode, setIsPlusMode }: NavbarProps) {
 
           {/* Plus Toggle */}
           <button
-            onClick={() => setIsPlusMode(!isPlusMode)}
+            onClick={() => {
+              const newMode = !isPlusMode;
+              setIsPlusMode(newMode);
+              if (newMode) router.push('/plus');
+            }}
             className={`relative flex items-center w-12 h-6 rounded-full transition-colors duration-300 ${isPlusMode ? 'bg-orange-500/20 border border-orange-500/50' : 'bg-white/5 border border-white/10'}`}
           >
             <span 
@@ -140,7 +146,11 @@ export default function Navbar({ isPlusMode, setIsPlusMode }: NavbarProps) {
               <div className="flex items-center justify-between py-2 border-t border-white/5 mt-2 pt-4">
                 <span className="text-sm font-medium text-gray-300">SrijanDev Plus</span>
                 <button
-                  onClick={() => setIsPlusMode(!isPlusMode)}
+                  onClick={() => {
+                    const newMode = !isPlusMode;
+                    setIsPlusMode(newMode);
+                    if (newMode) router.push('/plus');
+                  }}
                   className={`relative flex items-center w-12 h-6 rounded-full transition-colors duration-300 ${isPlusMode ? 'bg-orange-500/20 border border-orange-500/50' : 'bg-white/5 border border-white/10'}`}
                 >
                   <span 

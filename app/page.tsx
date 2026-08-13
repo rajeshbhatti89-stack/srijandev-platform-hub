@@ -1,13 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useEnterpriseStore } from '@/store/useEnterpriseStore';
 import Navbar from '@/components/ui/Navbar';
 import HeroSection from '@/components/ui/HeroSection';
 import ServicesSection from '@/components/ui/ServicesSection';
 import ContactSection from '@/components/ui/ContactSection';
 
 export default function HomePage() {
-  const [isPlusMode, setIsPlusMode] = useState(false);
+  const { isPlusMode, setIsPlusMode } = useEnterpriseStore();
 
   return (
     <main>
