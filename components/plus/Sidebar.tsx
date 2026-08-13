@@ -2,7 +2,7 @@
 
 import { usePathname } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { Truck, Users, Activity, Settings } from 'lucide-react';
+import { Map, Clock, ClipboardList, Wallet, Truck, Settings } from 'lucide-react';
 
 interface SidebarProps {
   activeTab: string;
@@ -11,9 +11,11 @@ interface SidebarProps {
 
 export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
   const menuItems = [
-    { id: 'fleet', label: 'Plant & Fleet', icon: Truck },
-    { id: 'workforce', label: 'Workforce', icon: Users },
-    { id: 'diagnostics', label: 'CBM Diagnostics', icon: Activity },
+    { id: 'live', label: 'Live Operations', icon: Map },
+    { id: 'attendance', label: 'Attendance & Sites', icon: Clock },
+    { id: 'tasks', label: 'Task Dispatch', icon: ClipboardList },
+    { id: 'expenses', label: 'Expense Claims', icon: Wallet },
+    { id: 'plant', label: 'Plant, Fleet & CBM', icon: Truck },
     { id: 'settings', label: 'Settings', icon: Settings },
   ];
 

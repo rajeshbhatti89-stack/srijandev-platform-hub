@@ -3,18 +3,22 @@
 import { useState } from 'react';
 import Sidebar from '@/components/plus/Sidebar';
 import TopBar from '@/components/plus/TopBar';
-import FleetRegistry from '@/components/plus/modules/FleetRegistry';
-import WorkforceManager from '@/components/plus/modules/WorkforceManager';
-import DiagnosticsLogger from '@/components/plus/modules/DiagnosticsLogger';
+import LiveDashboard from '@/components/plus/modules/LiveDashboard';
+import AttendanceManager from '@/components/plus/modules/AttendanceManager';
+import TaskDispatch from '@/components/plus/modules/TaskDispatch';
+import ExpenseManager from '@/components/plus/modules/ExpenseManager';
+import PlantAndFleet from '@/components/plus/modules/PlantAndFleet';
 
 export default function PlusDashboard() {
-  const [activeTab, setActiveTab] = useState('fleet');
+  const [activeTab, setActiveTab] = useState('live');
 
   const renderModule = () => {
     switch (activeTab) {
-      case 'fleet': return <FleetRegistry />;
-      case 'workforce': return <WorkforceManager />;
-      case 'diagnostics': return <DiagnosticsLogger />;
+      case 'live': return <LiveDashboard />;
+      case 'attendance': return <AttendanceManager />;
+      case 'tasks': return <TaskDispatch />;
+      case 'expenses': return <ExpenseManager />;
+      case 'plant': return <PlantAndFleet />;
       case 'settings': return (
         <div className="p-6 max-w-7xl mx-auto text-center text-gray-500 py-20">
           <h2 className="text-2xl font-bold text-white mb-2">System Settings</h2>

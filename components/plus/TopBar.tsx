@@ -27,9 +27,18 @@ export default function TopBar() {
       </div>
 
       <div className="flex items-center gap-4 ml-4">
+        <button className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/20 transition-all text-sm font-medium">
+          <span className="text-lg leading-none">+</span> Quick Check-in
+        </button>
+        <button className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-blue-500/10 text-blue-400 border border-blue-500/30 hover:bg-blue-500/20 transition-all text-sm font-medium">
+          <span className="text-lg leading-none">+</span> Assign Task
+        </button>
+
+        <div className="w-px h-6 bg-white/10 mx-2 hidden md:block" />
+
         <button className="relative p-2 text-gray-400 hover:text-white transition-colors rounded-lg hover:bg-white/5">
           <Bell size={20} />
-          <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-orange-500 border-2 border-gray-950" />
+          <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-red-500 border-2 border-gray-950 animate-pulse" />
         </button>
         
         <div className="w-px h-6 bg-white/10 mx-2" />
