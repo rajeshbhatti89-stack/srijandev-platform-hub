@@ -8,6 +8,10 @@ export const metadata: Metadata = {
   keywords: ['3D web design', 'WebGL', 'Android development', 'enterprise web app', 'workforce management', 'Three.js'],
   authors: [{ name: 'SrijanDev' }],
   metadataBase: new URL('https://srijandev.in'),
+  icons: {
+    icon: '/logo.png',
+    apple: '/logo.png',
+  },
   openGraph: {
     type: 'website',
     url: 'https://srijandev.in',
