@@ -48,16 +48,22 @@ export default function Navbar({ isPlusMode, setIsPlusMode }: NavbarProps) {
         <a
           href="#"
           onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-          className="flex items-center gap-2 group"
+          className="flex items-center group"
           id="nav-logo"
         >
-          <div className={`w-8 h-8 rounded-lg flex items-center justify-center shadow-lg transition-colors duration-500 ${isPlusMode ? 'bg-gradient-to-br from-amber-500 to-orange-600 shadow-orange-500/30' : 'bg-gradient-to-br from-blue-500 to-violet-600 shadow-blue-500/30'}`}>
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <path d="M8 1L14 4.5V11.5L8 15L2 11.5V4.5L8 1Z" stroke="white" strokeWidth="1.5" fill="none" />
-              <path d="M8 5L11 6.75V10.25L8 12L5 10.25V6.75L8 5Z" fill="white" opacity="0.8" />
-            </svg>
-          </div>
-          <span className="font-bold text-white text-lg tracking-tight">Srijan<span className="text-blue-400">Dev</span></span>
+          <img 
+            src={isPlusMode ? "/logo-plus.png" : "/logo.png"} 
+            alt="SrijanDev Logo" 
+            className="h-10 md:h-12 w-auto object-contain transition-all duration-500"
+            onError={(e) => {
+              // Fallback to standard logo if the plus logo is not found
+              if (isPlusMode && e.currentTarget.src.includes('logo-plus')) {
+                e.currentTarget.src = "/logo.png";
+                // Apply a golden filter as a fallback accent if the image itself is missing
+                e.currentTarget.style.filter = "drop-shadow(0 0 8px rgba(245, 158, 11, 0.5)) hue-rotate(180deg)";
+              }
+            }}
+          />
         </a>
 
         {/* Desktop nav */}
