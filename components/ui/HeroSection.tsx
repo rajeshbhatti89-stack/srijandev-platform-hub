@@ -4,7 +4,7 @@ import { useRef, useCallback, lazy, Suspense } from 'react';
 import { motion, type Variants } from 'framer-motion';
 import DotGridBackground from '@/components/canvas/DotGridBackground';
 
-const SplineHero = lazy(() => import('@/components/canvas/SplineHero'));
+const IsometricScene = lazy(() => import('@/components/canvas/IsometricScene'));
 
 const fadeUp: Variants = {
   hidden: { opacity: 0, y: 30 },
@@ -159,7 +159,7 @@ export default function HeroSection({ isPlusMode }: HeroSectionProps) {
               </div>
             }
           >
-            <SplineHero />
+            <IsometricScene mouseRef={mouseRef} />
           </Suspense>
         </motion.div>
       </div>
