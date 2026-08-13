@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "pages:build": "npx @cloudflare/next-on-pages"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.8",
