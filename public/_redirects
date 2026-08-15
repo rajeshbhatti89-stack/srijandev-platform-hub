@@ -1,3 +1,1 @@
-# Cloudflare Pages Redirects
-# Next.js static export generates individual HTML files per route.
-# We do not want an SPA fallback rule here as it breaks static routing.
+
