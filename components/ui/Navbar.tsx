@@ -57,7 +57,7 @@ export default function Navbar() {
             </div>
             
             {/* Plus OS Gateway Button */}
-            <Link
+            <a
               href="/plus"
               onMouseEnter={() => setIsHovered(true)}
               onMouseLeave={() => setIsHovered(false)}
@@ -65,12 +65,12 @@ export default function Navbar() {
             >
               <ShieldCheck size={14} className={isHovered ? 'text-emerald-500 animate-pulse' : 'text-gray-500'} />
               Plus OS Gateway
-            </Link>
+            </a>
           </div>
           
-          <Link href="/plus" className="hidden sm:flex items-center justify-center w-10 h-10 rounded-full border border-white/10 bg-gray-900 text-gray-400 hover:text-white hover:border-white/20 transition-all shadow-lg hover:shadow-emerald-500/10 hover:-translate-y-0.5">
+          <a href="/plus" className="hidden sm:flex items-center justify-center w-10 h-10 rounded-full border border-white/10 bg-gray-900 text-gray-400 hover:text-white hover:border-white/20 transition-all shadow-lg hover:shadow-emerald-500/10 hover:-translate-y-0.5">
             <User size={18} />
-          </Link>
+          </a>
         </div>
 
       </div>

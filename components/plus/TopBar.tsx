@@ -52,9 +52,9 @@ export default function TopBar({ setActiveTab }: TopBarProps) {
 
       {/* Left: Nav + Search */}
       <div className="flex-1 flex items-center gap-3">
-        <Link href="/" className="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white transition-colors text-sm font-medium border border-white/5 whitespace-nowrap shrink-0">
+        <a href="/" className="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white transition-colors text-sm font-medium border border-white/5 whitespace-nowrap shrink-0">
           ← Exit OS
-        </Link>
+        </a>
 
         {/* White-label logo */}
         {tenant && tenant.logoUrl && (
