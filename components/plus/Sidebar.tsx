@@ -1,78 +1,175 @@
 'use client';
 
-import { usePathname } from 'next/navigation';
-import { motion } from 'framer-motion';
-import { Map, Clock, ClipboardList, Wallet, Truck, Settings } from 'lucide-react';
+import { useEnterpriseStore } from '@/store/useEnterpriseStore';
+import { useOperationsStore } from '@/store/useOperationsStore';
+import {
+  ShieldCheck, Users, CalendarDays, ClipboardList, AlertTriangle,
+  Clock, LayoutGrid, KeyRound, Route, Calendar, Radio, Package,
+  BarChart3, Globe, Building2, Siren
+} from 'lucide-react';
+import Image from 'next/image';
 
 interface SidebarProps {
   activeTab: string;
   setActiveTab: (tab: string) => void;
 }
 
+interface NavItemDef {
+  id: string;
+  label: string;
+  desc: string;
+  icon: React.ReactNode;
+  badge?: number | string;
+  badgeColor?: string;
+}
+
 export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
-  const menuItems = [
-    { id: 'live', label: 'Live Operations', icon: Map },
-    { id: 'attendance', label: 'Attendance & Sites', icon: Clock },
-    { id: 'tasks', label: 'Task Dispatch', icon: ClipboardList },
-    { id: 'expenses', label: 'Expense Claims', icon: Wallet },
-    { id: 'plant', label: 'Plant, Fleet & CBM', icon: Truck },
-    { id: 'settings', label: 'Settings', icon: Settings },
+  const { currentUser } = useEnterpriseStore();
+  const { sosAlerts } = useOperationsStore();
+
+  const isSuperAdmin = currentUser?.role === 'SrijanDev Admin';
+  const isHO = currentUser?.role === 'Corporate HO Admin';
+
+  const activeSOS = sosAlerts.filter(a => a.status === 'Active').length;
+
+  const OPERATIONS_NAV: NavItemDef[] = [
+    { id: 'staff',    label: 'Staff Directory',     icon: <Users size={16} />,         desc: '200+ Personnel CRUD'     },
+    { id: 'shifts',   label: 'Shift Scheduler',      icon: <Clock size={16} />,         desc: 'Deployment Board'        },
+    { id: 'leaves',   label: 'Leave Approvals',      icon: <CalendarDays size={16} />,  desc: 'Leave Pipeline'          },
+    { id: 'tasks',    label: 'Task Dispatch',         icon: <ClipboardList size={16} />, desc: 'Patrol & Task Lifecycle' },
+    { id: 'gatepass', label: 'Gate Pass & Incidents', icon: <AlertTriangle size={16} />, desc: 'Incident Logger'        },
   ];
 
+  const PATROL_NAV: NavItemDef[] = [
+    { id: 'patrol',    label: 'Guard Tour Engine',   icon: <Route size={16} />,    desc: 'QR Checkpoint Patrol', badge: activeSOS > 0 ? 'SOS' : undefined, badgeColor: 'bg-red-500 text-white animate-pulse' },
+    { id: 'autoschedule', label: 'Auto-Shift Roster', icon: <Calendar size={16} />, desc: '30-Day Generator'      },
+    { id: 'geofence', label: 'Geofence Manager',     icon: <Radio size={16} />,    desc: 'GPS Boundary Check-in' },
+  ];
+
+  const LOGISTICS_NAV: NavItemDef[] = [
+    { id: 'gatelogistics', label: 'Gate Logistics',    icon: <Package size={16} />,    desc: 'Truck & Visitor Passes' },
+  ];
+
+  const ANALYTICS_NAV: NavItemDef[] = [
+    { id: 'hodashboard', label: 'HO Dashboard',       icon: <BarChart3 size={16} />,   desc: 'Multi-Plant Overview'   },
+  ];
+
+  const ADMIN_NAV: NavItemDef[] = [
+    { id: 'generator', label: 'PSH Provisioning',     icon: <KeyRound size={16} />,    desc: 'Account Manager'        },
+  ];
+
+  const SDADMIN_NAV: NavItemDef[] = [
+    { id: 'tenants',   label: 'Tenant Management',   icon: <Globe size={16} />,      desc: 'Client Onboarding'      },
+  ];
+
+  const NavItem = ({ id, label, icon, desc, badge, badgeColor }: NavItemDef) => (
+    <button
+      onClick={() => setActiveTab(id)}
+      className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all group relative ${
+        activeTab === id
+          ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30 shadow-sm'
+          : 'text-gray-400 hover:bg-white/5 hover:text-white border border-transparent'
+      }`}
+    >
+      <span className={`shrink-0 transition-colors ${activeTab === id ? 'text-blue-400' : 'text-gray-500 group-hover:text-gray-300'}`}>
+        {icon}
+      </span>
+      <div className="text-left min-w-0 flex-1">
+        <p className="leading-tight truncate text-xs">{label}</p>
+        <p className={`text-[10px] font-normal leading-none mt-0.5 truncate ${activeTab === id ? 'text-blue-400/60' : 'text-gray-600 group-hover:text-gray-500'}`}>{desc}</p>
+      </div>
+      {badge && (
+        <span className={`text-[9px] font-black px-1.5 py-0.5 rounded ${badgeColor || 'bg-blue-500 text-white'} shrink-0`}>
+          {badge}
+        </span>
+      )}
+    </button>
+  );
+
+  const SectionLabel = ({ label }: { label: string }) => (
+    <p className="px-3 text-[9px] font-black text-gray-600 uppercase tracking-[0.1em] mb-1 mt-3">{label}</p>
+  );
+
   return (
-    <div className="w-64 h-screen bg-gray-950 border-r border-white/10 flex flex-col hidden md:flex shrink-0 fixed left-0 top-0">
-      <div className="h-16 flex items-center px-6 border-b border-white/10 shrink-0">
-        <div className="flex items-center gap-2 group">
-          <img 
-            src="/logo-plus.png" 
-            alt="SrijanDev Plus" 
-            className="h-10 w-auto object-contain"
-            onError={(e) => {
-              e.currentTarget.src = "/logo.png";
-              e.currentTarget.style.filter = "drop-shadow(0 0 8px rgba(245, 158, 11, 0.5)) hue-rotate(180deg)";
-            }}
-          />
-          <span className="font-bold text-white tracking-tight text-lg">Plus</span>
+    <aside className="w-60 bg-gray-900 border-r border-white/5 flex-col h-full hidden md:flex absolute inset-y-0 left-0 z-20">
+      {/* Logo */}
+      <div className="px-4 py-4 border-b border-white/5">
+        <div className="flex items-center gap-2 mb-2">
+          <Image src="/logo.png" alt="SrijanDev" width={120} height={40} className="h-9 w-auto object-contain drop-shadow-md" />
+        </div>
+        <div className="flex items-center gap-1.5">
+          <ShieldCheck size={11} className="text-emerald-500" />
+          <span className="text-[10px] font-bold text-emerald-500 uppercase tracking-wider">Enterprise Security OS</span>
         </div>
       </div>
 
-      <nav className="flex-1 p-4 flex flex-col gap-2 overflow-y-auto">
-        {menuItems.map((item) => {
-          const Icon = item.icon;
-          const isActive = activeTab === item.id;
-          
-          return (
-            <button
-              key={item.id}
-              onClick={() => setActiveTab(item.id)}
-              className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 text-sm font-medium relative ${
-                isActive ? 'text-amber-500 bg-amber-500/10' : 'text-gray-400 hover:text-white hover:bg-white/5'
-              }`}
-            >
-              <Icon size={18} className={isActive ? 'text-amber-500' : 'text-gray-400'} />
-              {item.label}
-              {isActive && (
-                <motion.div
-                  layoutId="sidebar-active"
-                  className="absolute left-0 top-0 bottom-0 w-1 bg-amber-500 rounded-r-full"
-                  initial={false}
-                  transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                />
-              )}
-            </button>
-          );
-        })}
+      <nav className="flex-1 p-2 space-y-0.5 overflow-y-auto">
+        <SectionLabel label="Operations" />
+        {OPERATIONS_NAV.map(item => <NavItem key={item.id} {...item} />)}
+
+        <SectionLabel label="Patrol & Security" />
+        {PATROL_NAV.map(item => <NavItem key={item.id} {...item} />)}
+
+        <SectionLabel label="Plant Logistics" />
+        {LOGISTICS_NAV.map(item => <NavItem key={item.id} {...item} />)}
+
+        {(isSuperAdmin || isHO) && (
+          <>
+            <SectionLabel label="Analytics" />
+            {ANALYTICS_NAV.map(item => <NavItem key={item.id} {...item} />)}
+          </>
+        )}
+
+        {(isSuperAdmin || isHO) && (
+          <>
+            <div className="my-2 h-px bg-white/5" />
+            <SectionLabel label="Admin" />
+            {ADMIN_NAV.map(item => <NavItem key={item.id} {...item} />)}
+          </>
+        )}
+
+        {isSuperAdmin && (
+          <>
+            <SectionLabel label="SrijanDev Platform" />
+            {SDADMIN_NAV.map(item => <NavItem key={item.id} {...item} />)}
+          </>
+        )}
       </nav>
 
-      <div className="p-4 border-t border-white/10">
-        <div className="px-4 py-3 rounded-xl bg-gradient-to-r from-amber-500/20 to-orange-600/20 border border-amber-500/30">
-          <p className="text-xs font-semibold text-amber-500 mb-1">System Status</p>
-          <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="text-xs text-gray-300">All Operations Nominal</span>
+      {/* Footer */}
+      <div className="p-2 border-t border-white/5 space-y-2">
+        {currentUser && (
+          <div className="bg-gray-950/50 rounded-lg px-3 py-2.5 border border-white/5">
+            <div className="flex items-center gap-2">
+              <div className="w-7 h-7 rounded-full bg-gradient-to-br from-blue-500/30 to-emerald-500/30 border border-white/10 flex items-center justify-center text-white text-xs font-bold shrink-0">
+                {currentUser.name.charAt(0)}
+              </div>
+              <div className="min-w-0">
+                <p className="text-xs font-semibold text-white truncate">{currentUser.name}</p>
+                <p className={`text-[9px] font-mono truncate ${
+                  currentUser.role === 'SrijanDev Admin' ? 'text-blue-400' :
+                  currentUser.role === 'Corporate HO Admin' ? 'text-amber-400' :
+                  'text-emerald-400'
+                }`}>{currentUser.role}</p>
+              </div>
+            </div>
+            {currentUser.assignedSiteId !== 'GLOBAL' && (
+              <p className="text-[9px] font-mono text-gray-600 mt-1 pl-9">{currentUser.assignedSiteId}</p>
+            )}
           </div>
+        )}
+
+        <div className="bg-gray-950 px-3 py-2 rounded-lg border border-white/5 flex items-center gap-2">
+          <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+          <div className="text-[9px] text-gray-500 font-mono">
+            <p>System Live · v4.0.0</p>
+            <p className="text-gray-700">3-Store Persistence</p>
+          </div>
+          {activeSOS > 0 && (
+            <Siren size={12} className="text-red-500 animate-pulse ml-auto" />
+          )}
         </div>
       </div>
-    </div>
+    </aside>
   );
 }

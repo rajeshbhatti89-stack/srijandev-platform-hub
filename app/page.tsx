@@ -7,12 +7,10 @@ import ServicesSection from '@/components/ui/ServicesSection';
 import ContactSection from '@/components/ui/ContactSection';
 
 export default function HomePage() {
-  const { isPlusMode, setIsPlusMode } = useEnterpriseStore();
-
   return (
     <main>
-      <Navbar isPlusMode={isPlusMode} setIsPlusMode={setIsPlusMode} />
-      <HeroSection isPlusMode={isPlusMode} />
+      <Navbar />
+      <HeroSection />
       <ServicesSection />
       <ContactSection />
 

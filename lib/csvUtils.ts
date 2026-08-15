@@ -1,9 +1,15 @@
+import { Guard, AttendanceLog, LeaveRequest, Task } from '@/store/useEnterpriseStore';
+
+// ---------------------------------------------------------
+// Core CSV engine
+// ---------------------------------------------------------
+
 export function exportToCSV(filename: string, rows: object[]) {
   if (!rows || !rows.length) return;
 
   const separator = ',';
   const keys = Object.keys(rows[0]);
-  
+
   const csvContent =
     keys.join(separator) +
     '\n' +
@@ -13,7 +19,7 @@ export function exportToCSV(filename: string, rows: object[]) {
         cell = cell instanceof Date
           ? cell.toLocaleString()
           : cell.toString().replace(/"/g, '""');
-        if (cell.search(/("|,|\n)/g) >= 0) {
+        if (cell.search(/(",|\\n)/g) >= 0) {
           cell = `"${cell}"`;
         }
         return cell;
@@ -43,7 +49,7 @@ export function parseCSV(file: File): Promise<any[]> {
         resolve([]);
         return;
       }
-      const headers = lines[0].split(',').map(h => h.trim());
+      const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g, ''));
       const data = lines.slice(1).map(line => {
         const values = line.split(',');
         const obj: any = {};
@@ -52,7 +58,6 @@ export function parseCSV(file: File): Promise<any[]> {
           if (val.startsWith('"') && val.endsWith('"')) {
             val = val.substring(1, val.length - 1).replace(/""/g, '"');
           }
-          // Basic type conversion
           if (val === 'true') obj[header] = true;
           else if (val === 'false') obj[header] = false;
           else if (!isNaN(Number(val)) && val !== '') obj[header] = Number(val);
@@ -65,4 +70,76 @@ export function parseCSV(file: File): Promise<any[]> {
     reader.onerror = () => reject(reader.error);
     reader.readAsText(file);
   });
+}
+
+// ---------------------------------------------------------
+// Typed export helpers
+// ---------------------------------------------------------
+
+export function exportGuards(guards: Guard[], filename = 'personnel_roster.csv') {
+  const rows = guards.map(g => ({
+    'Personnel ID': g.personnelId,
+    'Guard ID': g.id,
+    'Full Name': g.name,
+    'Phone': g.phone,
+    'Designation': g.designation,
+    'Site ID': g.assignedSiteId,
+    'Assigned Post': g.assignedPost,
+    'Shift': g.shift,
+    'Status': g.status,
+    'Last Check-In': g.lastCheckIn ? new Date(g.lastCheckIn).toLocaleString() : '',
+  }));
+  exportToCSV(filename, rows);
+}
+
+export function exportAttendance(logs: AttendanceLog[], filename = 'attendance_log.csv') {
+  const rows = logs.map(l => ({
+    'Log ID': l.id,
+    'Guard ID': l.guardId,
+    'Guard Name': l.guardName,
+    'Site ID': l.siteId,
+    'Date': l.date,
+    'Shift': l.shift,
+    'Status': l.status,
+    'Logged At': new Date(l.loggedAt).toLocaleString(),
+    'Logged By': l.loggedBy,
+  }));
+  exportToCSV(filename, rows);
+}
+
+export function exportLeaves(leaves: LeaveRequest[], filename = 'leave_history.csv') {
+  const rows = leaves.map(l => ({
+    'Leave ID': l.id,
+    'Guard ID': l.guardId,
+    'Guard Name': l.guardName,
+    'Site ID': l.siteId,
+    'Leave Type': l.leaveType,
+    'From Date': l.fromDate,
+    'To Date': l.toDate,
+    'Reason': l.reason,
+    'Status': l.status,
+    'Applied At': new Date(l.appliedAt).toLocaleString(),
+    'Decided By': l.decidedBy || '',
+    'Decided At': l.decidedAt ? new Date(l.decidedAt).toLocaleString() : '',
+  }));
+  exportToCSV(filename, rows);
+}
+
+export function exportTasks(tasks: Task[], filename = 'task_dispatch_log.csv') {
+  const rows = tasks.map(t => ({
+    'Task ID': t.id,
+    'Site ID': t.siteId,
+    'Title': t.title,
+    'Task Type': t.taskType,
+    'Assigned To': t.assignedToName,
+    'Post': t.post,
+    'Status': t.status,
+    'Created By': t.createdBy,
+    'Created At': new Date(t.createdAt).toLocaleString(),
+    'Started At': t.startedAt ? new Date(t.startedAt).toLocaleString() : '',
+    'Completed At': t.completedAt ? new Date(t.completedAt).toLocaleString() : '',
+    'Verified At': t.verifiedAt ? new Date(t.verifiedAt).toLocaleString() : '',
+    'Completion Note': t.completionNote || '',
+  }));
+  exportToCSV(filename, rows);
 }

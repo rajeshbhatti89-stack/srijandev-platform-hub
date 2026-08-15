@@ -1,10 +1,21 @@
 'use client';
 
-import { useRef, useCallback, lazy, Suspense } from 'react';
+import { useRef, useCallback } from 'react';
 import { motion, type Variants } from 'framer-motion';
+import dynamic from 'next/dynamic';
 import DotGridBackground from '@/components/canvas/DotGridBackground';
 
-const IsometricScene = lazy(() => import('@/components/canvas/IsometricScene'));
+const IsometricScene = dynamic(() => import('@/components/canvas/IsometricScene'), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-full flex flex-col items-center justify-center bg-gray-950/80 backdrop-blur-sm border border-white/5 rounded-2xl">
+      <div className="w-10 h-10 border-2 border-t-transparent rounded-full animate-spin border-blue-500 mb-3" />
+      <span className="text-xs font-mono text-blue-400 tracking-widest uppercase animate-pulse">
+        Initializing 3D Canvas...
+      </span>
+    </div>
+  ),
+});
 
 const fadeUp: Variants = {
   hidden: { opacity: 0, y: 30 },
@@ -15,11 +26,7 @@ const fadeUp: Variants = {
   }),
 };
 
-interface HeroSectionProps {
-  isPlusMode: boolean;
-}
-
-export default function HeroSection({ isPlusMode }: HeroSectionProps) {
+export default function HeroSection() {
   const mouseRef = useRef({ x: 0, y: 0 });
 
   const handleMouseMove = useCallback((e: React.MouseEvent) => {
@@ -47,8 +54,8 @@ export default function HeroSection({ isPlusMode }: HeroSectionProps) {
 
       {/* Radial glow center */}
       <div className="absolute inset-0 pointer-events-none transition-colors duration-1000">
-        <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] rounded-full blur-[120px] transition-colors duration-1000 ${isPlusMode ? 'bg-amber-600/15' : 'bg-blue-600/10'}`} />
-        <div className={`absolute top-1/3 left-1/4 w-[400px] h-[400px] rounded-full blur-[100px] transition-colors duration-1000 ${isPlusMode ? 'bg-orange-600/10' : 'bg-violet-600/8'}`} />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] rounded-full blur-[120px] transition-colors duration-1000 bg-blue-600/10" />
+        <div className="absolute top-1/3 left-1/4 w-[400px] h-[400px] rounded-full blur-[100px] transition-colors duration-1000 bg-violet-600/8" />
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 w-full flex flex-col lg:flex-row items-center gap-12 pt-24 pb-12">
@@ -59,14 +66,10 @@ export default function HeroSection({ isPlusMode }: HeroSectionProps) {
             variants={fadeUp}
             initial="hidden"
             animate="visible"
-            className={`inline-flex items-center gap-2 mb-6 px-3 py-1.5 rounded-full border bg-opacity-5 text-xs font-semibold tracking-widest uppercase transition-colors duration-500 ${
-              isPlusMode 
-                ? 'border-orange-500/30 bg-orange-500/5 text-orange-400' 
-                : 'border-blue-500/30 bg-blue-500/5 text-blue-400'
-            }`}
+            className="inline-flex items-center gap-2 mb-6 px-3 py-1.5 rounded-full border bg-opacity-5 text-xs font-semibold tracking-widest uppercase transition-colors duration-500 border-blue-500/30 bg-blue-500/5 text-blue-400"
           >
-            <span className={`w-1.5 h-1.5 rounded-full animate-pulse ${isPlusMode ? 'bg-orange-400' : 'bg-blue-400'}`} />
-            {isPlusMode ? 'Plus Mode — Unlocked' : 'Systems Online — Ready for Deployment'}
+            <span className="w-1.5 h-1.5 rounded-full animate-pulse bg-blue-400" />
+            Systems Online — Ready for Deployment
           </motion.div>
 
           <motion.h1
@@ -77,9 +80,7 @@ export default function HeroSection({ isPlusMode }: HeroSectionProps) {
             className="text-4xl md:text-5xl xl:text-6xl font-extrabold leading-tight tracking-tight text-white mb-6 transition-all duration-500"
           >
             Architecting{' '}
-            <span className={`bg-clip-text text-transparent bg-gradient-to-r transition-all duration-500 ${
-              isPlusMode ? 'from-amber-400 via-orange-400 to-yellow-300' : 'from-blue-400 via-violet-400 to-cyan-400'
-            }`}>
+            <span className="bg-clip-text text-transparent bg-gradient-to-r transition-all duration-500 from-blue-400 via-violet-400 to-cyan-400">
               High-Performance
             </span>{' '}
             3D Web Experiences, Android Applications,{' '}
@@ -93,9 +94,7 @@ export default function HeroSection({ isPlusMode }: HeroSectionProps) {
             animate="visible"
             className="text-gray-400 text-lg leading-relaxed mb-8 max-w-xl mx-auto lg:mx-0 transition-all duration-500"
           >
-            {isPlusMode 
-              ? 'Premium enterprise engineering and cutting-edge 3D WebGL experiences designed for industry leaders.'
-              : 'From interactive spatial interfaces to scalable enterprise operations platforms — engineered for performance, precision, and impact.'}
+            From interactive spatial interfaces to scalable enterprise operations platforms — engineered for performance, precision, and impact.
           </motion.p>
 
           <motion.div
@@ -108,11 +107,7 @@ export default function HeroSection({ isPlusMode }: HeroSectionProps) {
             <button
               id="hero-get-started"
               onClick={scrollToContact}
-              className={`px-8 py-4 rounded-xl text-white font-bold text-base shadow-xl transition-all duration-300 hover:scale-105 active:scale-95 ${
-                isPlusMode 
-                  ? 'bg-gradient-to-r from-amber-500 to-orange-600 shadow-orange-500/30 hover:shadow-orange-500/50' 
-                  : 'bg-gradient-to-r from-blue-600 to-violet-600 shadow-blue-500/30 hover:shadow-blue-500/50'
-              }`}
+              className="px-8 py-4 rounded-xl text-white font-bold text-base shadow-xl transition-all duration-300 hover:scale-105 active:scale-95 bg-gradient-to-r from-blue-600 to-violet-600 shadow-blue-500/30 hover:shadow-blue-500/50"
             >
               Get Started →
             </button>
@@ -133,7 +128,7 @@ export default function HeroSection({ isPlusMode }: HeroSectionProps) {
             animate="visible"
             className="mt-10 flex flex-wrap gap-3 justify-center lg:justify-start"
           >
-            {['3D Web Design', 'Android Apps', 'Enterprise Systems'].map((badge) => (
+            {['3D Web Design', 'Android Apps', 'Enterprise OS', 'Webmail Client'].map((badge) => (
               <span
                 key={badge}
                 className="px-3 py-1 text-xs font-medium text-gray-400 border border-white/8 rounded-full bg-white/3 backdrop-blur-sm"
@@ -145,22 +140,42 @@ export default function HeroSection({ isPlusMode }: HeroSectionProps) {
           </motion.div>
         </div>
 
-        {/* Right: 3D Canvas */}
+        {/* Right: 3D Canvas Card */}
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 1, delay: 0.4, ease: 'easeOut' }}
-          className="flex-1 w-full h-[380px] lg:h-[520px] rounded-2xl overflow-hidden border border-white/5 bg-white/2 shadow-2xl shadow-black/50 relative"
+          className="flex-1 w-full h-[380px] lg:h-[520px] rounded-2xl overflow-hidden border border-white/10 bg-gradient-to-b from-gray-900/60 to-gray-950/80 shadow-2xl shadow-blue-950/30 relative group"
         >
-          <Suspense
-            fallback={
-              <div className="w-full h-full flex items-center justify-center">
-                <div className={`w-10 h-10 border-2 border-t-transparent rounded-full animate-spin ${isPlusMode ? 'border-orange-500' : 'border-blue-500'}`} />
-              </div>
-            }
-          >
-            <IsometricScene mouseRef={mouseRef} />
-          </Suspense>
+          {/* Top HUD Telemetry Bar */}
+          <div className="absolute top-4 left-4 right-4 z-20 flex items-center justify-between pointer-events-none">
+            <div className="flex items-center gap-2 px-3 py-1 rounded-lg border border-white/10 bg-gray-950/70 backdrop-blur-md">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_#34d399]" />
+              <span className="text-[11px] font-mono text-gray-300 font-semibold tracking-wider">
+                SPATIAL ENGINE v4.2
+              </span>
+            </div>
+            <div className="hidden sm:flex items-center gap-2 px-3 py-1 rounded-lg border border-white/10 bg-gray-950/70 backdrop-blur-md">
+              <span className="text-[10px] font-mono text-blue-400 font-bold uppercase tracking-widest">
+                WebGL 2.0 • 60 FPS
+              </span>
+            </div>
+          </div>
+
+          {/* Bottom HUD Hint */}
+          <div className="absolute bottom-4 left-4 right-4 z-20 flex items-center justify-between pointer-events-none">
+            <div className="flex items-center gap-2 px-3 py-1 rounded-lg border border-white/5 bg-gray-950/60 backdrop-blur-md">
+              <svg className="w-3.5 h-3.5 text-blue-400 animate-bounce" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
+              </svg>
+              <span className="text-[11px] font-mono text-gray-400">
+                Move cursor to rotate 3D matrix
+              </span>
+            </div>
+          </div>
+
+          {/* 3D Canvas */}
+          <IsometricScene mouseRef={mouseRef} />
         </motion.div>
       </div>
 

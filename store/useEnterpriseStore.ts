@@ -5,63 +5,114 @@ import { persist } from 'zustand/middleware';
 // DATA MODELS
 // ---------------------------------------------------------
 
-export interface FleetAsset {
+export type Role = 'SrijanDev Admin' | 'Corporate HO Admin' | 'Plant Security Head';
+
+export interface UserAccount {
   id: string;
   name: string;
-  type: string;
-  status: 'Active' | 'Standby' | 'Under Maintenance' | 'Breakdown';
-  runningHours: number;
-  fuelRate: number;
+  email: string;
+  role: Role;
+  tenantId: string;       // 'GLOBAL' for SrijanDev Admin
+  assignedSiteId: string; // 'GLOBAL' for Admin/HO Admin
+  contactNo: string;
+  isActive: boolean;
 }
 
-export interface Worker {
+export type GuardDesignation =
+  | 'Guard'
+  | 'Armed Guard'
+  | 'Gate Incharge'
+  | 'Patrol Supervisor'
+  | 'Female Guard';
+
+export type GuardStatus = 'On Duty' | 'Standby' | 'On Leave' | 'Relieved';
+export type GuardShift = 'Morning' | 'Evening' | 'Night';
+
+export interface Guard {
   id: string;
+  guardCode: string;    // human-readable e.g. GC-001
+  personnelId: string;  // internal P-001
   name: string;
-  role: 'Operator' | 'Maintenance' | 'Supervision' | 'Technician';
-  shift: 'Morning' | 'Evening' | 'Night';
-  contact: string;
-  isPresent: boolean;
-  currentSiteId?: string;
+  phone: string;
+  designation: GuardDesignation;
+  assignedSiteId: string;
+  assignedPost: string;
+  shift: GuardShift;
+  status: GuardStatus;
   lastCheckIn?: string;
 }
 
-export interface DiagnosticLog {
+export interface SecurityIncident {
   id: string;
-  assetId: string;
+  siteId: string;
+  type: 'Visitor Pass' | 'Material Pass' | 'Security Breach' | 'Patrol Miss';
+  direction?: 'Inward' | 'Outward';
+  vehicleNo?: string;
+  severity: 'Low' | 'Medium' | 'High' | 'Critical';
+  description: string;
+  reportedBy: string;
   timestamp: string;
-  vibrationLevel: number;
-  oilQuality: number;
-  alertTriggered: boolean;
-  notes: string;
+  status: 'Open' | 'Resolved';
 }
 
 export interface Site {
   id: string;
   name: string;
-  status: 'Operational' | 'Delayed' | 'Closed';
-  geofenceRadius: number; // in meters
-  activeWorkers: number;
+  status: 'Active' | 'Inactive';
 }
+
+export interface LeaveRequest {
+  id: string;
+  guardId: string;
+  guardName: string;
+  siteId: string;
+  leaveType: 'Sick' | 'Casual' | 'Emergency';
+  fromDate: string;
+  toDate: string;
+  reason: string;
+  substituteGuardId?: string;
+  substituteGuardName?: string;
+  status: 'Pending' | 'Approved' | 'Rejected';
+  appliedAt: string;
+  decidedBy?: string;
+  decidedAt?: string;
+}
+
+export type TaskCreatorRole =
+  | 'Corporate HO Directive'
+  | 'PSH Operational Task'
+  | 'Supervisor Spot Task'
+  | 'Auto-Scheduled Patrol';
 
 export interface Task {
   id: string;
+  siteId: string;
   title: string;
   description: string;
-  assigneeId: string;
-  siteId: string;
-  status: 'Created' | 'Dispatched' | 'In-Progress' | 'Completed' | 'Verified';
-  priority: 'Low' | 'Medium' | 'High' | 'Critical';
+  creatorRole: TaskCreatorRole;
+  assignedTo: string;
+  assignedToName: string;
+  post: string;
+  taskType: 'Perimeter Inspection' | 'Weighbridge Audit' | 'Night Patrol' | 'CBM Vibration Check' | 'Access Control Check' | 'Custom';
+  status: 'Dispatched' | 'In-Progress' | 'Completed' | 'Verified';
   createdAt: string;
+  startedAt?: string;
+  completedAt?: string;
+  verifiedAt?: string;
+  completionNote?: string;
+  createdBy: string;
 }
 
-export interface Expense {
+export interface AttendanceLog {
   id: string;
-  workerId: string;
-  amount: number;
-  category: 'Fuel' | 'Spares' | 'Travel' | 'Meals' | 'Other';
-  status: 'Pending' | 'Approved' | 'Paid' | 'Rejected';
+  guardId: string;
+  guardName: string;
+  siteId: string;
   date: string;
-  notes: string;
+  shift: GuardShift;
+  status: 'Present' | 'Absent' | 'Late' | 'Relieved';
+  loggedAt: string;
+  loggedBy: string;
 }
 
 // ---------------------------------------------------------
@@ -69,125 +120,251 @@ export interface Expense {
 // ---------------------------------------------------------
 
 const SEED_SITES: Site[] = [
-  { id: 'SITE-A', name: 'Alpha Quarry', status: 'Operational', geofenceRadius: 500, activeWorkers: 12 },
-  { id: 'SITE-B', name: 'Bravo Refinery', status: 'Operational', geofenceRadius: 300, activeWorkers: 8 },
-  { id: 'SITE-C', name: 'Delta Exploration', status: 'Delayed', geofenceRadius: 1000, activeWorkers: 0 },
-  { id: 'SITE-D', name: 'Echo Assembly', status: 'Operational', geofenceRadius: 400, activeWorkers: 15 },
+  { id: 'SITE-01', name: 'Darlaghat Cement Plant', status: 'Active' },
+  { id: 'SITE-02', name: 'Bhatapara Cement Plant', status: 'Active' },
+  { id: 'SITE-03', name: 'Chanda Cement Plant', status: 'Active' },
 ];
 
-const SEED_FLEET: FleetAsset[] = [
-  { id: 'EQ-001', name: 'Excavator Alpha', type: 'Heavy Digger', status: 'Active', runningHours: 4200, fuelRate: 25 },
-  { id: 'EQ-002', name: 'Haul Truck 42', type: 'Transport', status: 'Active', runningHours: 3100, fuelRate: 40 },
-  { id: 'EQ-003', name: 'Drill Rig Beta', type: 'Drill', status: 'Under Maintenance', runningHours: 5600, fuelRate: 35 },
-  { id: 'EQ-004', name: 'Dozer Gamma', type: 'Bulldozer', status: 'Breakdown', runningHours: 8900, fuelRate: 50 },
+const SEED_USERS: UserAccount[] = [
+  {
+    id: 'SADMIN-001',
+    name: 'Rajesh Bhatti',
+    email: 'rajesh@srijandev.in',
+    role: 'SrijanDev Admin',
+    tenantId: 'GLOBAL',
+    assignedSiteId: 'GLOBAL',
+    contactNo: '+91 99999 00000',
+    isActive: true,
+  },
+  {
+    id: 'HO-001',
+    name: 'Anand Mehta',
+    email: 'anand.ho@adani.in',
+    role: 'Corporate HO Admin',
+    tenantId: 'TENANT-001',
+    assignedSiteId: 'GLOBAL',
+    contactNo: '+91 97771 00001',
+    isActive: true,
+  },
+  {
+    id: 'PSH-001',
+    name: 'Vikram Singh',
+    email: 'vikram.psh@srijandev.in',
+    role: 'Plant Security Head',
+    tenantId: 'TENANT-001',
+    assignedSiteId: 'SITE-01',
+    contactNo: '+91 98765 11111',
+    isActive: true,
+  },
+  {
+    id: 'PSH-002',
+    name: 'Amit Patel',
+    email: 'amit.psh@srijandev.in',
+    role: 'Plant Security Head',
+    tenantId: 'TENANT-001',
+    assignedSiteId: 'SITE-02',
+    contactNo: '+91 98765 22222',
+    isActive: true,
+  },
 ];
 
-const SEED_WORKERS: Worker[] = [
-  { id: 'WK-101', name: 'Rajesh Kumar', role: 'Operator', shift: 'Morning', contact: '+91 98765 43210', isPresent: true, currentSiteId: 'SITE-A', lastCheckIn: new Date().toISOString() },
-  { id: 'WK-102', name: 'Priya Sharma', role: 'Supervision', shift: 'Morning', contact: '+91 98765 43211', isPresent: true, currentSiteId: 'SITE-B', lastCheckIn: new Date(Date.now() - 3600000).toISOString() },
-  { id: 'WK-103', name: 'Amit Patel', role: 'Maintenance', shift: 'Evening', contact: '+91 98765 43212', isPresent: false },
-  { id: 'WK-104', name: 'Sneha Reddy', role: 'Technician', shift: 'Morning', contact: '+91 98765 43213', isPresent: true, currentSiteId: 'SITE-A', lastCheckIn: new Date(Date.now() - 7200000).toISOString() },
-  { id: 'WK-105', name: 'Vikram Singh', role: 'Operator', shift: 'Night', contact: '+91 98765 43214', isPresent: false },
+const SEED_GUARDS: Guard[] = [
+  { id: 'GRD-101', guardCode: 'GC-001', personnelId: 'P-001', name: 'Ram Kumar',      phone: '+91 90001 00001', designation: 'Guard',           assignedSiteId: 'SITE-01', assignedPost: 'Main Gate 1',  shift: 'Morning', status: 'On Duty',  lastCheckIn: new Date().toISOString() },
+  { id: 'GRD-102', guardCode: 'GC-002', personnelId: 'P-002', name: 'Suresh Yadav',   phone: '+91 90001 00002', designation: 'Armed Guard',      assignedSiteId: 'SITE-01', assignedPost: 'Weighbridge',  shift: 'Morning', status: 'On Duty',  lastCheckIn: new Date(Date.now() - 3600000).toISOString() },
+  { id: 'GRD-103', guardCode: 'GC-003', personnelId: 'P-003', name: 'Priya Sharma',   phone: '+91 90001 00003', designation: 'Patrol Supervisor',assignedSiteId: 'SITE-01', assignedPost: 'Control Room', shift: 'Morning', status: 'On Duty' },
+  { id: 'GRD-104', guardCode: 'GC-004', personnelId: 'P-004', name: 'Arun Singh',     phone: '+91 90001 00004', designation: 'Guard',           assignedSiteId: 'SITE-02', assignedPost: 'Perimeter',   shift: 'Night',   status: 'On Duty' },
+  { id: 'GRD-105', guardCode: 'GC-005', personnelId: 'P-005', name: 'Manoj Tiwari',   phone: '+91 90001 00005', designation: 'Guard',           assignedSiteId: 'SITE-01', assignedPost: 'Material Gate',shift: 'Evening', status: 'On Leave' },
+  { id: 'GRD-106', guardCode: 'GC-006', personnelId: 'P-006', name: 'Deepak Verma',   phone: '+91 90001 00006', designation: 'Guard',           assignedSiteId: 'SITE-01', assignedPost: 'Admin Block',  shift: 'Night',   status: 'On Duty' },
+  { id: 'GRD-107', guardCode: 'GC-007', personnelId: 'P-007', name: 'Kavita Raje',    phone: '+91 90001 00007', designation: 'Gate Incharge',   assignedSiteId: 'SITE-02', assignedPost: 'Material Gate',shift: 'Morning', status: 'On Duty' },
+  { id: 'GRD-108', guardCode: 'GC-008', personnelId: 'P-008', name: 'Sunita Devi',    phone: '+91 90001 00008', designation: 'Female Guard',     assignedSiteId: 'SITE-01', assignedPost: 'Admin Block',  shift: 'Morning', status: 'Standby' },
+  { id: 'GRD-109', guardCode: 'GC-009', personnelId: 'P-009', name: 'Rajan Mishra',   phone: '+91 90001 00009', designation: 'Guard',           assignedSiteId: 'SITE-01', assignedPost: 'Main Gate 1',  shift: 'Evening', status: 'On Duty' },
+  { id: 'GRD-110', guardCode: 'GC-010', personnelId: 'P-010', name: 'Balveer Thakur', phone: '+91 90001 00010', designation: 'Armed Guard',      assignedSiteId: 'SITE-03', assignedPost: 'Main Gate 1',  shift: 'Morning', status: 'On Duty' },
+];
+
+const SEED_INCIDENTS: SecurityIncident[] = [
+  { id: 'INC-1001', siteId: 'SITE-01', type: 'Visitor Pass', severity: 'Low', description: 'Vendor maintenance team entry for kiln inspection.', reportedBy: 'Priya Sharma', timestamp: new Date(Date.now() - 7200000).toISOString(), status: 'Resolved' },
+  { id: 'INC-1002', siteId: 'SITE-02', type: 'Security Breach', severity: 'High', description: 'Unauthorized vehicle near west perimeter fence.', reportedBy: 'System Geofence', timestamp: new Date().toISOString(), status: 'Open' },
+  { id: 'INC-1003', siteId: 'SITE-01', type: 'Material Pass', direction: 'Outward', vehicleNo: 'MH-04-AK-1234', severity: 'Low', description: 'Scrap material outward movement. Approved by Vikram Singh.', reportedBy: 'Ram Kumar', timestamp: new Date(Date.now() - 3600000).toISOString(), status: 'Resolved' },
+  { id: 'INC-1004', siteId: 'SITE-03', type: 'Patrol Miss', severity: 'Medium', description: 'Scheduled checkpoint at Kiln Area missed — guard did not scan within 20-minute window.', reportedBy: 'Auto-Patrol System', timestamp: new Date(Date.now() - 1800000).toISOString(), status: 'Open' },
+];
+
+const SEED_LEAVES: LeaveRequest[] = [
+  {
+    id: 'LV-001', guardId: 'GRD-105', guardName: 'Manoj Tiwari', siteId: 'SITE-01',
+    leaveType: 'Sick', fromDate: new Date().toISOString().split('T')[0],
+    toDate: new Date(Date.now() + 86400000 * 2).toISOString().split('T')[0],
+    reason: 'High fever and medical rest advised by doctor.',
+    substituteGuardId: 'GRD-108', substituteGuardName: 'Sunita Devi',
+    status: 'Approved', appliedAt: new Date(Date.now() - 86400000).toISOString(),
+    decidedBy: 'Vikram Singh', decidedAt: new Date(Date.now() - 3600000).toISOString(),
+  },
+  {
+    id: 'LV-002', guardId: 'GRD-103', guardName: 'Priya Sharma', siteId: 'SITE-01',
+    leaveType: 'Casual',
+    fromDate: new Date(Date.now() + 86400000 * 3).toISOString().split('T')[0],
+    toDate: new Date(Date.now() + 86400000 * 3).toISOString().split('T')[0],
+    reason: 'Family function.', status: 'Pending',
+    appliedAt: new Date(Date.now() - 1800000).toISOString(),
+  },
 ];
 
 const SEED_TASKS: Task[] = [
-  { id: 'TSK-1001', title: 'Replace Hydraulic Hoses', description: 'EQ-003 needs immediate hose replacement on boom.', assigneeId: 'WK-103', siteId: 'SITE-B', status: 'Created', priority: 'High', createdAt: new Date().toISOString() },
-  { id: 'TSK-1002', title: 'Site A Perimeter Check', description: 'Inspect geofence sensors along northern ridge.', assigneeId: 'WK-104', siteId: 'SITE-A', status: 'In-Progress', priority: 'Medium', createdAt: new Date(Date.now() - 86400000).toISOString() },
-  { id: 'TSK-1003', title: 'Engine Diagnostics', description: 'Run full diagnostics on EQ-004.', assigneeId: 'WK-104', siteId: 'SITE-A', status: 'Dispatched', priority: 'Critical', createdAt: new Date(Date.now() - 4000000).toISOString() },
-  { id: 'TSK-1004', title: 'Daily Report Submission', description: 'Submit shift report for Alpha Quarry.', assigneeId: 'WK-102', siteId: 'SITE-A', status: 'Completed', priority: 'Low', createdAt: new Date(Date.now() - 172800000).toISOString() },
+  {
+    id: 'TSK-001', siteId: 'SITE-01',
+    title: 'North Perimeter Fence Inspection',
+    description: 'Check all fence lines and report any damage or breach points.',
+    creatorRole: 'PSH Operational Task',
+    assignedTo: 'GRD-106', assignedToName: 'Deepak Verma', post: 'Perimeter',
+    taskType: 'Perimeter Inspection', status: 'In-Progress',
+    createdAt: new Date(Date.now() - 7200000).toISOString(),
+    startedAt: new Date(Date.now() - 3600000).toISOString(), createdBy: 'Vikram Singh',
+  },
+  {
+    id: 'TSK-002', siteId: 'SITE-01',
+    title: 'Weighbridge Morning Audit',
+    description: 'Cross-check inward truck weights with GRN records.',
+    creatorRole: 'Corporate HO Directive',
+    assignedTo: 'GRD-102', assignedToName: 'Suresh Yadav', post: 'Weighbridge',
+    taskType: 'Weighbridge Audit', status: 'Dispatched',
+    createdAt: new Date(Date.now() - 1800000).toISOString(), createdBy: 'Anand Mehta',
+  },
+  {
+    id: 'TSK-003', siteId: 'SITE-02',
+    title: 'CBM Pump House Vibration Check',
+    description: 'Inspect P-301 & P-302 pumps for abnormal vibration.',
+    creatorRole: 'PSH Operational Task',
+    assignedTo: 'GRD-104', assignedToName: 'Arun Singh', post: 'Pump House',
+    taskType: 'CBM Vibration Check', status: 'Completed',
+    createdAt: new Date(Date.now() - 14400000).toISOString(),
+    startedAt: new Date(Date.now() - 10800000).toISOString(),
+    completedAt: new Date(Date.now() - 3600000).toISOString(),
+    completionNote: 'Both pumps nominal. No anomalies detected.', createdBy: 'Amit Patel',
+  },
 ];
 
-const SEED_EXPENSES: Expense[] = [
-  { id: 'EXP-501', workerId: 'WK-101', amount: 2500, category: 'Fuel', status: 'Approved', date: new Date(Date.now() - 86400000).toISOString(), notes: 'Diesel for generator' },
-  { id: 'EXP-502', workerId: 'WK-103', amount: 8500, category: 'Spares', status: 'Pending', date: new Date().toISOString(), notes: 'Hydraulic hoses for EQ-003' },
-  { id: 'EXP-503', workerId: 'WK-102', amount: 1200, category: 'Travel', status: 'Paid', date: new Date(Date.now() - 172800000).toISOString(), notes: 'Site visit taxi fare' },
+const SEED_ATTENDANCE: AttendanceLog[] = [
+  { id: 'ATT-001', guardId: 'GRD-101', guardName: 'Ram Kumar',    siteId: 'SITE-01', date: new Date().toISOString().split('T')[0], shift: 'Morning', status: 'Present', loggedAt: new Date().toISOString(), loggedBy: 'Vikram Singh' },
+  { id: 'ATT-002', guardId: 'GRD-102', guardName: 'Suresh Yadav', siteId: 'SITE-01', date: new Date().toISOString().split('T')[0], shift: 'Morning', status: 'Late',    loggedAt: new Date().toISOString(), loggedBy: 'Vikram Singh' },
+  { id: 'ATT-003', guardId: 'GRD-103', guardName: 'Priya Sharma', siteId: 'SITE-01', date: new Date().toISOString().split('T')[0], shift: 'Morning', status: 'Present', loggedAt: new Date().toISOString(), loggedBy: 'Vikram Singh' },
+  { id: 'ATT-004', guardId: 'GRD-105', guardName: 'Manoj Tiwari', siteId: 'SITE-01', date: new Date().toISOString().split('T')[0], shift: 'Evening', status: 'Absent',  loggedAt: new Date().toISOString(), loggedBy: 'Vikram Singh' },
 ];
-
-const SEED_LOGS: DiagnosticLog[] = [
-  { id: 'LOG-001', assetId: 'EQ-001', timestamp: new Date().toISOString(), vibrationLevel: 4.2, oilQuality: 85, alertTriggered: false, notes: 'Normal operation' },
-  { id: 'LOG-002', assetId: 'EQ-004', timestamp: new Date(Date.now() - 3600000).toISOString(), vibrationLevel: 9.8, oilQuality: 35, alertTriggered: true, notes: 'Critical vibration and low oil quality detected!' },
-];
-
 
 // ---------------------------------------------------------
 // STORE DEFINITION
 // ---------------------------------------------------------
 
 interface EnterpriseState {
-  isPlusMode: boolean;
-  setIsPlusMode: (val: boolean) => void;
-  
-  fleet: FleetAsset[];
-  addAsset: (asset: FleetAsset) => void;
-  updateAsset: (id: string, data: Partial<FleetAsset>) => void;
-  deleteAsset: (id: string) => void;
-  
-  workforce: Worker[];
-  addWorker: (worker: Worker) => void;
-  updateWorker: (id: string, data: Partial<Worker>) => void;
-  deleteWorker: (id: string) => void;
-  
-  diagnostics: DiagnosticLog[];
-  addLog: (log: DiagnosticLog) => void;
+  currentUser: UserAccount | null;
+  login: (email: string) => boolean;
+  logout: () => void;
+  setCurrentUser: (user: UserAccount) => void;
 
   sites: Site[];
-  addSite: (site: Site) => void;
-  updateSite: (id: string, data: Partial<Site>) => void;
+
+  users: UserAccount[];
+  addUser: (user: UserAccount) => void;
+  updateUser: (id: string, data: Partial<UserAccount>) => void;
+  deleteUser: (id: string) => void;
+
+  guards: Guard[];
+  addGuard: (guard: Guard) => void;
+  updateGuard: (id: string, data: Partial<Guard>) => void;
+  deleteGuard: (id: string) => void;
+  clearRosterData: (siteId?: string) => void;
+
+  incidents: SecurityIncident[];
+  addIncident: (incident: SecurityIncident) => void;
+  updateIncident: (id: string, data: Partial<SecurityIncident>) => void;
+
+  leaveRequests: LeaveRequest[];
+  addLeaveRequest: (req: LeaveRequest) => void;
+  approveLeave: (id: string, decidedBy: string) => void;
+  rejectLeave: (id: string, decidedBy: string) => void;
 
   tasks: Task[];
   addTask: (task: Task) => void;
+  advanceTask: (id: string, note?: string) => void;
   updateTask: (id: string, data: Partial<Task>) => void;
   deleteTask: (id: string) => void;
 
-  expenses: Expense[];
-  addExpense: (expense: Expense) => void;
-  updateExpense: (id: string, data: Partial<Expense>) => void;
+  attendanceLogs: AttendanceLog[];
+  logAttendance: (log: AttendanceLog) => void;
+  updateAttendance: (id: string, data: Partial<AttendanceLog>) => void;
 }
 
 export const useEnterpriseStore = create<EnterpriseState>()(
   persist(
-    (set) => ({
-      isPlusMode: false,
-      setIsPlusMode: (val) => set({ isPlusMode: val }),
-      
-      fleet: SEED_FLEET,
-      addAsset: (asset) => set((state) => ({ fleet: [asset, ...state.fleet] })),
-      updateAsset: (id, data) => set((state) => ({
-        fleet: state.fleet.map(a => a.id === id ? { ...a, ...data } : a)
-      })),
-      deleteAsset: (id) => set((state) => ({ fleet: state.fleet.filter(a => a.id !== id) })),
-      
-      workforce: SEED_WORKERS,
-      addWorker: (worker) => set((state) => ({ workforce: [worker, ...state.workforce] })),
-      updateWorker: (id, data) => set((state) => ({
-        workforce: state.workforce.map(w => w.id === id ? { ...w, ...data } : w)
-      })),
-      deleteWorker: (id) => set((state) => ({ workforce: state.workforce.filter(w => w.id !== id) })),
-      
-      diagnostics: SEED_LOGS,
-      addLog: (log) => set((state) => ({ diagnostics: [log, ...state.diagnostics] })),
+    (set, get) => ({
+      currentUser: null,
+
+      login: (email) => {
+        const user = get().users.find(u => u.email === email && u.isActive);
+        if (user) { set({ currentUser: user }); return true; }
+        return false;
+      },
+      logout: () => set({ currentUser: null }),
+      setCurrentUser: (user) => set({ currentUser: user }),
 
       sites: SEED_SITES,
-      addSite: (site) => set((state) => ({ sites: [site, ...state.sites] })),
-      updateSite: (id, data) => set((state) => ({
-        sites: state.sites.map(s => s.id === id ? { ...s, ...data } : s)
+
+      users: SEED_USERS,
+      addUser: (user) => set(s => ({ users: [user, ...s.users] })),
+      updateUser: (id, data) => set(s => ({ users: s.users.map(u => u.id === id ? { ...u, ...data } : u) })),
+      deleteUser: (id) => set(s => ({ users: s.users.filter(u => u.id !== id) })),
+
+      guards: SEED_GUARDS,
+      addGuard: (guard) => set(s => ({ guards: [guard, ...s.guards] })),
+      updateGuard: (id, data) => set(s => ({ guards: s.guards.map(g => g.id === id ? { ...g, ...data } : g) })),
+      deleteGuard: (id) => set(s => ({ guards: s.guards.filter(g => g.id !== id) })),
+      clearRosterData: (siteId) => set(s => ({
+        guards: siteId && siteId !== 'GLOBAL' ? s.guards.filter(g => g.assignedSiteId !== siteId) : [],
+      })),
+
+      incidents: SEED_INCIDENTS,
+      addIncident: (incident) => set(s => ({ incidents: [incident, ...s.incidents] })),
+      updateIncident: (id, data) => set(s => ({ incidents: s.incidents.map(i => i.id === id ? { ...i, ...data } : i) })),
+
+      leaveRequests: SEED_LEAVES,
+      addLeaveRequest: (req) => set(s => ({ leaveRequests: [req, ...s.leaveRequests] })),
+      approveLeave: (id, decidedBy) => set(s => {
+        const req = s.leaveRequests.find(l => l.id === id);
+        if (!req) return {};
+        return {
+          leaveRequests: s.leaveRequests.map(l =>
+            l.id === id ? { ...l, status: 'Approved' as const, decidedBy, decidedAt: new Date().toISOString() } : l
+          ),
+          guards: s.guards.map(g => g.id === req.guardId ? { ...g, status: 'On Leave' as const } : g),
+        };
+      }),
+      rejectLeave: (id, decidedBy) => set(s => ({
+        leaveRequests: s.leaveRequests.map(l =>
+          l.id === id ? { ...l, status: 'Rejected' as const, decidedBy, decidedAt: new Date().toISOString() } : l
+        ),
       })),
 
       tasks: SEED_TASKS,
-      addTask: (task) => set((state) => ({ tasks: [task, ...state.tasks] })),
-      updateTask: (id, data) => set((state) => ({
-        tasks: state.tasks.map(t => t.id === id ? { ...t, ...data } : t)
+      addTask: (task) => set(s => ({ tasks: [task, ...s.tasks] })),
+      advanceTask: (id, note) => set(s => ({
+        tasks: s.tasks.map(t => {
+          if (t.id !== id) return t;
+          const now = new Date().toISOString();
+          switch (t.status) {
+            case 'Dispatched':  return { ...t, status: 'In-Progress' as const, startedAt: now };
+            case 'In-Progress': return { ...t, status: 'Completed' as const, completedAt: now, completionNote: note || '' };
+            case 'Completed':   return { ...t, status: 'Verified' as const, verifiedAt: now };
+            default: return t;
+          }
+        }),
       })),
-      deleteTask: (id) => set((state) => ({ tasks: state.tasks.filter(t => t.id !== id) })),
+      updateTask: (id, data) => set(s => ({ tasks: s.tasks.map(t => t.id === id ? { ...t, ...data } : t) })),
+      deleteTask: (id) => set(s => ({ tasks: s.tasks.filter(t => t.id !== id) })),
 
-      expenses: SEED_EXPENSES,
-      addExpense: (expense) => set((state) => ({ expenses: [expense, ...state.expenses] })),
-      updateExpense: (id, data) => set((state) => ({
-        expenses: state.expenses.map(e => e.id === id ? { ...e, ...data } : e)
-      }))
+      attendanceLogs: SEED_ATTENDANCE,
+      logAttendance: (log) => set(s => ({ attendanceLogs: [log, ...s.attendanceLogs] })),
+      updateAttendance: (id, data) => set(s => ({
+        attendanceLogs: s.attendanceLogs.map(a => a.id === id ? { ...a, ...data } : a),
+      })),
     }),
-    {
-      name: 'srijandev-enterprise-storage-v2', // bumped version to clear old cache automatically
-    }
+    { name: 'srijandev-security-os-v4' }
   )
 );

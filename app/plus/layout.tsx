@@ -1,9 +1,4 @@
-import type { Metadata } from 'next';
-
-export const metadata: Metadata = {
-  title: 'SrijanDev Plus - Enterprise OS',
-  description: 'Enterprise Workforce & Plant Operating System',
-};
+'use client';
 
 export default function PlusLayout({
   children,
