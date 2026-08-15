@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { ShieldCheck, User } from 'lucide-react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
+import Link from 'next/link';
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -56,20 +57,20 @@ export default function Navbar() {
             </div>
             
             {/* Plus OS Gateway Button */}
-            <button
-              onClick={() => router.push('/plus')}
+            <Link
+              href="/plus"
               onMouseEnter={() => setIsHovered(true)}
               onMouseLeave={() => setIsHovered(false)}
               className="relative z-10 px-4 py-1.5 rounded-full text-sm font-semibold transition-colors flex items-center gap-2 text-gray-400 hover:text-emerald-400"
             >
               <ShieldCheck size={14} className={isHovered ? 'text-emerald-500 animate-pulse' : 'text-gray-500'} />
               Plus OS Gateway
-            </button>
+            </Link>
           </div>
           
-          <button onClick={() => router.push('/plus')} className="hidden sm:flex items-center justify-center w-10 h-10 rounded-full border border-white/10 bg-gray-900 text-gray-400 hover:text-white hover:border-white/20 transition-all shadow-lg hover:shadow-emerald-500/10 hover:-translate-y-0.5">
+          <Link href="/plus" className="hidden sm:flex items-center justify-center w-10 h-10 rounded-full border border-white/10 bg-gray-900 text-gray-400 hover:text-white hover:border-white/20 transition-all shadow-lg hover:shadow-emerald-500/10 hover:-translate-y-0.5">
             <User size={18} />
-          </button>
+          </Link>
         </div>
 
       </div>
