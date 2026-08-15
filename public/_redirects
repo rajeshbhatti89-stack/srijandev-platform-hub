@@ -1,3 +1,3 @@
 # Cloudflare Pages Redirects
-# Static export handles routes natively via trailingSlash: true
-/* /index.html 200
+# Next.js static export generates individual HTML files per route.
+# We do not want an SPA fallback rule here as it breaks static routing.
