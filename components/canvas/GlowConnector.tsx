@@ -24,9 +24,11 @@ export default function GlowConnector({ from, to, color = '#3b82f6' }: GlowConne
     return curve.getPoints(50);
   }, [from, to]);
 
-  const geometry = useMemo(() => {
-    return new THREE.BufferGeometry().setFromPoints(points);
-  }, [points]);
+  const lineObject = useMemo(() => {
+    const geom = new THREE.BufferGeometry().setFromPoints(points);
+    const mat = new THREE.LineBasicMaterial({ color, opacity: 0.4, transparent: true });
+    return new THREE.Line(geom, mat);
+  }, [points, color]);
 
   useFrame((_, delta) => {
     progressRef.current = (progressRef.current + delta * 0.35) % 1;
@@ -43,9 +45,7 @@ export default function GlowConnector({ from, to, color = '#3b82f6' }: GlowConne
   return (
     <group>
       {/* Curved Glowing Connector Line */}
-      <line geometry={geometry}>
-        <lineBasicMaterial color={color} linewidth={2} opacity={0.4} transparent />
-      </line>
+      <primitive object={lineObject} />
 
       {/* Traveling Data Pulse Orb */}
       <mesh ref={pulseRef} position={[points[0].x, points[0].y, points[0].z]}>
