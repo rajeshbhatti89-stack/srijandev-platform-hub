@@ -1,2 +1,3 @@
 # Cloudflare Pages Redirects
 # Static export handles routes natively via trailingSlash: true
+/* /index.html 200
