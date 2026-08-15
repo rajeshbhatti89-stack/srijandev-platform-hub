@@ -61,8 +61,12 @@ export default function LoginPortal() {
     setError('');
     setTimeout(() => {
       const success = login(email);
-      if (!success) setError('No active account found for this email address.');
-      setLoading(false);
+      if (!success) {
+        setError('No active account found for this email address.');
+        setLoading(false);
+      } else {
+        window.location.href = '/plus';
+      }
     }, 600);
   };
 
@@ -71,7 +75,7 @@ export default function LoginPortal() {
     setError('');
     setTimeout(() => {
       login(email);
-      setLoading(false);
+      window.location.href = '/plus';
     }, 400);
   };
 

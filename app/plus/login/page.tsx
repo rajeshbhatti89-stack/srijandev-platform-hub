@@ -16,9 +16,9 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (isClient && currentUser) {
-      router.push('/plus');
+      window.location.href = '/plus';
     }
-  }, [isClient, currentUser, router]);
+  }, [isClient, currentUser]);
 
   if (!isClient) return null;
 
