@@ -11,6 +11,7 @@ export interface UserAccount {
   id: string;
   name: string;
   email: string;
+  password?: string;
   role: Role;
   tenantId: string;       // 'GLOBAL' for SrijanDev Admin
   assignedSiteId: string; // 'GLOBAL' for Admin/HO Admin
@@ -121,42 +122,13 @@ const SEED_SITES: Site[] = [];
 const SEED_USERS: UserAccount[] = [
   {
     id: 'SADMIN-001',
-    name: 'Rajesh Bhatti',
-    email: 'rajesh@srijandev.in',
+    name: 'Admin',
+    email: 'admin@srijandev.in',
+    password: 'Jaishreeram@123',
     role: 'SrijanDev Admin',
     tenantId: 'GLOBAL',
     assignedSiteId: 'GLOBAL',
     contactNo: '+91 99999 00000',
-    isActive: true,
-  },
-  {
-    id: 'HO-001',
-    name: 'Corporate Manager',
-    email: 'ho@srijandev.in',
-    role: 'Corporate HO Admin',
-    tenantId: 'GLOBAL',
-    assignedSiteId: 'GLOBAL',
-    contactNo: '+91 98888 00000',
-    isActive: true,
-  },
-  {
-    id: 'PSH-001',
-    name: 'Plant Security Head',
-    email: 'psh@srijandev.in',
-    role: 'Plant Security Head',
-    tenantId: 'GLOBAL',
-    assignedSiteId: 'SITE-01',
-    contactNo: '+91 97777 00000',
-    isActive: true,
-  },
-  {
-    id: 'SUP-001',
-    name: 'Site Supervisor',
-    email: 'supervisor@srijandev.in',
-    role: 'Supervisor',
-    tenantId: 'GLOBAL',
-    assignedSiteId: 'SITE-01',
-    contactNo: '+91 96666 00000',
     isActive: true,
   },
 ];
@@ -177,7 +149,7 @@ const SEED_ATTENDANCE: AttendanceLog[] = [];
 
 interface EnterpriseState {
   currentUser: UserAccount | null;
-  login: (email: string) => boolean;
+  login: (email: string, password?: string) => boolean;
   logout: () => void;
   setCurrentUser: (user: UserAccount) => void;
 
@@ -219,8 +191,8 @@ export const useEnterpriseStore = create<EnterpriseState>()(
     (set, get) => ({
       currentUser: null,
 
-      login: (email) => {
-        const user = get().users.find(u => u.email === email && u.isActive);
+      login: (email, password) => {
+        const user = get().users.find(u => u.email === email && u.isActive && u.password === password);
         if (user) { set({ currentUser: user }); return true; }
         return false;
       },

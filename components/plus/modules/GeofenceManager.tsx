@@ -24,6 +24,8 @@ export default function GeofenceManager() {
   const [editingRadius, setEditingRadius] = useState<string | null>(null);
   const [newPostName, setNewPostName] = useState('');
   const [newPostRadius, setNewPostRadius] = useState(75);
+  const [newPostLat, setNewPostLat] = useState<number | ''>('');
+  const [newPostLng, setNewPostLng] = useState<number | ''>('');
 
   const isSuperAdmin = currentUser?.role === 'SrijanDev Admin';
   const isHO = currentUser?.role === 'Corporate HO Admin';
@@ -73,17 +75,19 @@ export default function GeofenceManager() {
 
   const handleAddPost = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newPostName) return;
+    if (!newPostName || newPostLat === '' || newPostLng === '') return;
     addGeofencePost({
       id: `GF-${Date.now()}`,
       siteId: isSuperAdmin || isHO ? 'SITE-01' : (currentUser?.assignedSiteId || 'SITE-01'),
       postName: newPostName,
       radiusMeters: newPostRadius,
-      centerLat: 31.52 + (Math.random() - 0.5) * 0.05,
-      centerLng: 76.92 + (Math.random() - 0.5) * 0.05,
+      centerLat: Number(newPostLat),
+      centerLng: Number(newPostLng),
     });
     setNewPostName('');
     setNewPostRadius(75);
+    setNewPostLat('');
+    setNewPostLng('');
     setShowAddPost(false);
   };
 
@@ -189,6 +193,16 @@ export default function GeofenceManager() {
               <div>
                 <label className="block text-xs font-medium text-gray-400 mb-1.5">Post Name</label>
                 <input type="text" value={newPostName} onChange={e => setNewPostName(e.target.value)} placeholder="e.g. Main Gate 3" className="w-full bg-gray-950 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none" required />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-medium text-gray-400 mb-1.5">Latitude</label>
+                  <input type="number" step="any" value={newPostLat} onChange={e => setNewPostLat(e.target.value === '' ? '' : Number(e.target.value))} placeholder="e.g. 28.6139" className="w-full bg-gray-950 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none" required />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-gray-400 mb-1.5">Longitude</label>
+                  <input type="number" step="any" value={newPostLng} onChange={e => setNewPostLng(e.target.value === '' ? '' : Number(e.target.value))} placeholder="e.g. 77.2090" className="w-full bg-gray-950 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none" required />
+                </div>
               </div>
               <div>
                 <label className="block text-xs font-medium text-gray-400 mb-1.5">

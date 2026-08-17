@@ -9,6 +9,7 @@ import { ShieldCheck, LogIn, Eye, EyeOff, Building2, Users, Shield } from 'lucid
 export default function LoginPortal() {
   const { login } = useEnterpriseStore();
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [showPass, setShowPass] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -18,9 +19,9 @@ export default function LoginPortal() {
     setLoading(true);
     setError('');
     setTimeout(() => {
-      const success = login(email);
+      const success = login(email, password);
       if (!success) {
-        setError('No active account found for this email address.');
+        setError('Invalid email or password.');
         setLoading(false);
       } else {
         window.location.href = '/plus';
@@ -73,8 +74,11 @@ export default function LoginPortal() {
               <div className="relative">
                 <input
                   type={showPass ? 'text' : 'password'}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
                   className="w-full bg-gray-950 border border-white/10 rounded-lg px-4 py-3 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-blue-500/50 transition-colors pr-10"
+                  required
                 />
                 <button type="button" onClick={() => setShowPass(!showPass)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300">
@@ -103,15 +107,6 @@ export default function LoginPortal() {
           </form>
         </div>
 
-        <div className="mt-6 bg-gray-900 border border-white/10 rounded-2xl p-4">
-          <p className="text-xs text-gray-400 text-center mb-3">Simulation / Demo Logins</p>
-          <div className="grid grid-cols-2 gap-2">
-            <button onClick={() => { setEmail('rajesh@srijandev.in'); }} type="button" className="py-2 text-xs font-medium bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 rounded-lg transition-colors border border-blue-500/20">Root Admin</button>
-            <button onClick={() => { setEmail('ho@srijandev.in'); }} type="button" className="py-2 text-xs font-medium bg-amber-500/10 text-amber-400 hover:bg-amber-500/20 rounded-lg transition-colors border border-amber-500/20">HO Manager</button>
-            <button onClick={() => { setEmail('psh@srijandev.in'); }} type="button" className="py-2 text-xs font-medium bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 rounded-lg transition-colors border border-emerald-500/20">Plant Security Head</button>
-            <button onClick={() => { setEmail('supervisor@srijandev.in'); }} type="button" className="py-2 text-xs font-medium bg-purple-500/10 text-purple-400 hover:bg-purple-500/20 rounded-lg transition-colors border border-purple-500/20">Supervisor</button>
-          </div>
-        </div>
 
         <p className="text-center text-xs text-gray-700 mt-4">
           SrijanDev Enterprise OS v4.0 · Unolo + TechnoPurple Architecture
