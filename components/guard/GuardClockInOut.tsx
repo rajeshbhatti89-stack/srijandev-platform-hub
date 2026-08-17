@@ -145,7 +145,7 @@ export default function GuardClockInOut({ guardId, guardName, siteId, post, shif
 
     // Update Guard Status
     updateGuard(guardId, {
-      status: isClockingIn ? 'On Duty' : 'Off Duty',
+      status: isClockingIn ? 'On Duty' : 'Relieved',
       lastCheckIn: isClockingIn ? new Date().toISOString() : undefined
     });
 
