@@ -9,11 +9,16 @@ import {
   RefreshCw, CheckCircle2, Users, LayoutGrid, Trash2
 } from 'lucide-react';
 
-const SHIFTS: GuardShift[] = ['Morning', 'Evening', 'Night'];
+const SHIFTS: GuardShift[] = ['Morning', 'Evening', 'Night', 'A Shift', 'B Shift', 'C Shift', 'G Shift', 'General Shift'];
 const SHIFT_COLORS: Record<GuardShift, { bg: string; text: string; border: string }> = {
   Morning: { bg: 'bg-amber-500/10',  text: 'text-amber-400',  border: 'border-amber-500/20'  },
   Evening: { bg: 'bg-blue-500/10',   text: 'text-blue-400',   border: 'border-blue-500/20'   },
   Night:   { bg: 'bg-purple-500/10', text: 'text-purple-400', border: 'border-purple-500/20' },
+  'A Shift': { bg: 'bg-emerald-500/10', text: 'text-emerald-400', border: 'border-emerald-500/20' },
+  'B Shift': { bg: 'bg-orange-500/10', text: 'text-orange-400', border: 'border-orange-500/20' },
+  'C Shift': { bg: 'bg-indigo-500/10', text: 'text-indigo-400', border: 'border-indigo-500/20' },
+  'G Shift': { bg: 'bg-pink-500/10', text: 'text-pink-400', border: 'border-pink-500/20' },
+  'General Shift': { bg: 'bg-teal-500/10', text: 'text-teal-400', border: 'border-teal-500/20' },
 };
 
 function generateRoster(guards: Guard[], siteId: string, days: number = 30): RosterSlot[] {

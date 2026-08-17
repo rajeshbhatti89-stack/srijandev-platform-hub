@@ -9,12 +9,17 @@ import {
 } from 'lucide-react';
 
 const POSTS = ['Main Gate 1', 'Main Gate 2', 'Weighbridge', 'Admin Block', 'Material Gate', 'Control Room', 'Perimeter', 'Pump House', 'Material Yard', 'Cash Room'];
-const SHIFTS: Guard['shift'][] = ['Morning', 'Evening', 'Night'];
+const SHIFTS: Guard['shift'][] = ['Morning', 'Evening', 'Night', 'A Shift', 'B Shift', 'C Shift', 'G Shift', 'General Shift'];
 
 const SHIFT_TIMES: Record<Guard['shift'], string> = {
   Morning: '06:00 – 14:00',
   Evening: '14:00 – 22:00',
   Night:   '22:00 – 06:00',
+  'A Shift': '06:00 – 14:00',
+  'B Shift': '14:00 – 22:00',
+  'C Shift': '22:00 – 06:00',
+  'G Shift': '08:30 – 17:30',
+  'General Shift': '09:00 – 18:00',
 };
 
 type AttStatus = AttendanceLog['status'];
@@ -30,6 +35,11 @@ const shiftColors: Record<Guard['shift'], string> = {
   Morning: 'text-yellow-400 bg-yellow-500/10 border-yellow-500/20',
   Evening: 'text-orange-400 bg-orange-500/10 border-orange-500/20',
   Night:   'text-indigo-400 bg-indigo-500/10 border-indigo-500/20',
+  'A Shift': 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20',
+  'B Shift': 'text-orange-400 bg-orange-500/10 border-orange-500/20',
+  'C Shift': 'text-indigo-400 bg-indigo-500/10 border-indigo-500/20',
+  'G Shift': 'text-pink-400 bg-pink-500/10 border-pink-500/20',
+  'General Shift': 'text-teal-400 bg-teal-500/10 border-teal-500/20',
 };
 
 export default function ShiftScheduler() {

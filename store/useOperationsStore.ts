@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { GuardShift } from './useEnterpriseStore';
 
 // ---------------------------------------------------------
 // DATA MODELS
@@ -61,7 +62,7 @@ export interface RosterSlot {
   id: string;
   date: string; // YYYY-MM-DD
   post: string;
-  shift: 'Morning' | 'Evening' | 'Night';
+  shift: GuardShift;
   guardId: string;
   guardName: string;
   siteId: string;
