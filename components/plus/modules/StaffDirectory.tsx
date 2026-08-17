@@ -353,7 +353,7 @@ export default function StaffDirectory() {
           const sc = statusConfig[s];
           return (
             <div key={s} className="bg-gray-900 border border-white/10 rounded-xl p-4 flex items-center gap-3">
-              <span className={`w-2.5 h-2.5 rounded-full ${sc.dot}`} />
+              <span className={`w-2.5 h-2.5 rounded-full ${sc?.dot || 'bg-gray-500'}`} />
               <div>
                 <p className="text-xl font-bold text-white">{count}</p>
                 <p className="text-xs text-gray-500">{s}</p>
