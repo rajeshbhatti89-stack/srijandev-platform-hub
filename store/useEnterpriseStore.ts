@@ -5,7 +5,7 @@ import { persist } from 'zustand/middleware';
 // DATA MODELS
 // ---------------------------------------------------------
 
-export type Role = 'SrijanDev Admin' | 'Corporate HO Admin' | 'Plant Security Head';
+export type Role = 'SrijanDev Admin' | 'Corporate HO Admin' | 'Plant Security Head' | 'Supervisor';
 
 export interface UserAccount {
   id: string;
@@ -18,15 +18,10 @@ export interface UserAccount {
   isActive: boolean;
 }
 
-export type GuardDesignation =
-  | 'Guard'
-  | 'Armed Guard'
-  | 'Gate Incharge'
-  | 'Patrol Supervisor'
-  | 'Female Guard';
+export type GuardDesignation = string;
 
 export type GuardStatus = 'On Duty' | 'Standby' | 'On Leave' | 'Relieved';
-export type GuardShift = 'Morning' | 'Evening' | 'Night';
+export type GuardShift = 'Morning' | 'Evening' | 'Night' | 'A Shift' | 'B Shift' | 'C Shift' | 'G Shift' | 'General Shift';
 
 export interface Guard {
   id: string;
@@ -34,6 +29,8 @@ export interface Guard {
   personnelId: string;  // internal P-001
   name: string;
   phone: string;
+  department?: string;
+  company?: string;
   designation: GuardDesignation;
   assignedSiteId: string;
   assignedPost: string;
@@ -119,11 +116,7 @@ export interface AttendanceLog {
 // SEED DATA
 // ---------------------------------------------------------
 
-const SEED_SITES: Site[] = [
-  { id: 'SITE-01', name: 'Darlaghat Cement Plant', status: 'Active' },
-  { id: 'SITE-02', name: 'Bhatapara Cement Plant', status: 'Active' },
-  { id: 'SITE-03', name: 'Chanda Cement Plant', status: 'Active' },
-];
+const SEED_SITES: Site[] = [];
 
 const SEED_USERS: UserAccount[] = [
   {
@@ -138,116 +131,45 @@ const SEED_USERS: UserAccount[] = [
   },
   {
     id: 'HO-001',
-    name: 'Anand Mehta',
-    email: 'anand.ho@adani.in',
+    name: 'Corporate Manager',
+    email: 'ho@srijandev.in',
     role: 'Corporate HO Admin',
-    tenantId: 'TENANT-001',
+    tenantId: 'GLOBAL',
     assignedSiteId: 'GLOBAL',
-    contactNo: '+91 97771 00001',
+    contactNo: '+91 98888 00000',
     isActive: true,
   },
   {
     id: 'PSH-001',
-    name: 'Vikram Singh',
-    email: 'vikram.psh@srijandev.in',
+    name: 'Plant Security Head',
+    email: 'psh@srijandev.in',
     role: 'Plant Security Head',
-    tenantId: 'TENANT-001',
+    tenantId: 'GLOBAL',
     assignedSiteId: 'SITE-01',
-    contactNo: '+91 98765 11111',
+    contactNo: '+91 97777 00000',
     isActive: true,
   },
   {
-    id: 'PSH-002',
-    name: 'Amit Patel',
-    email: 'amit.psh@srijandev.in',
-    role: 'Plant Security Head',
-    tenantId: 'TENANT-001',
-    assignedSiteId: 'SITE-02',
-    contactNo: '+91 98765 22222',
+    id: 'SUP-001',
+    name: 'Site Supervisor',
+    email: 'supervisor@srijandev.in',
+    role: 'Supervisor',
+    tenantId: 'GLOBAL',
+    assignedSiteId: 'SITE-01',
+    contactNo: '+91 96666 00000',
     isActive: true,
   },
 ];
 
-const SEED_GUARDS: Guard[] = [
-  { id: 'GRD-101', guardCode: 'GC-001', personnelId: 'P-001', name: 'Ram Kumar',      phone: '+91 90001 00001', designation: 'Guard',           assignedSiteId: 'SITE-01', assignedPost: 'Main Gate 1',  shift: 'Morning', status: 'On Duty',  lastCheckIn: new Date().toISOString() },
-  { id: 'GRD-102', guardCode: 'GC-002', personnelId: 'P-002', name: 'Suresh Yadav',   phone: '+91 90001 00002', designation: 'Armed Guard',      assignedSiteId: 'SITE-01', assignedPost: 'Weighbridge',  shift: 'Morning', status: 'On Duty',  lastCheckIn: new Date(Date.now() - 3600000).toISOString() },
-  { id: 'GRD-103', guardCode: 'GC-003', personnelId: 'P-003', name: 'Priya Sharma',   phone: '+91 90001 00003', designation: 'Patrol Supervisor',assignedSiteId: 'SITE-01', assignedPost: 'Control Room', shift: 'Morning', status: 'On Duty' },
-  { id: 'GRD-104', guardCode: 'GC-004', personnelId: 'P-004', name: 'Arun Singh',     phone: '+91 90001 00004', designation: 'Guard',           assignedSiteId: 'SITE-02', assignedPost: 'Perimeter',   shift: 'Night',   status: 'On Duty' },
-  { id: 'GRD-105', guardCode: 'GC-005', personnelId: 'P-005', name: 'Manoj Tiwari',   phone: '+91 90001 00005', designation: 'Guard',           assignedSiteId: 'SITE-01', assignedPost: 'Material Gate',shift: 'Evening', status: 'On Leave' },
-  { id: 'GRD-106', guardCode: 'GC-006', personnelId: 'P-006', name: 'Deepak Verma',   phone: '+91 90001 00006', designation: 'Guard',           assignedSiteId: 'SITE-01', assignedPost: 'Admin Block',  shift: 'Night',   status: 'On Duty' },
-  { id: 'GRD-107', guardCode: 'GC-007', personnelId: 'P-007', name: 'Kavita Raje',    phone: '+91 90001 00007', designation: 'Gate Incharge',   assignedSiteId: 'SITE-02', assignedPost: 'Material Gate',shift: 'Morning', status: 'On Duty' },
-  { id: 'GRD-108', guardCode: 'GC-008', personnelId: 'P-008', name: 'Sunita Devi',    phone: '+91 90001 00008', designation: 'Female Guard',     assignedSiteId: 'SITE-01', assignedPost: 'Admin Block',  shift: 'Morning', status: 'Standby' },
-  { id: 'GRD-109', guardCode: 'GC-009', personnelId: 'P-009', name: 'Rajan Mishra',   phone: '+91 90001 00009', designation: 'Guard',           assignedSiteId: 'SITE-01', assignedPost: 'Main Gate 1',  shift: 'Evening', status: 'On Duty' },
-  { id: 'GRD-110', guardCode: 'GC-010', personnelId: 'P-010', name: 'Balveer Thakur', phone: '+91 90001 00010', designation: 'Armed Guard',      assignedSiteId: 'SITE-03', assignedPost: 'Main Gate 1',  shift: 'Morning', status: 'On Duty' },
-];
+const SEED_GUARDS: Guard[] = [];
 
-const SEED_INCIDENTS: SecurityIncident[] = [
-  { id: 'INC-1001', siteId: 'SITE-01', type: 'Visitor Pass', severity: 'Low', description: 'Vendor maintenance team entry for kiln inspection.', reportedBy: 'Priya Sharma', timestamp: new Date(Date.now() - 7200000).toISOString(), status: 'Resolved' },
-  { id: 'INC-1002', siteId: 'SITE-02', type: 'Security Breach', severity: 'High', description: 'Unauthorized vehicle near west perimeter fence.', reportedBy: 'System Geofence', timestamp: new Date().toISOString(), status: 'Open' },
-  { id: 'INC-1003', siteId: 'SITE-01', type: 'Material Pass', direction: 'Outward', vehicleNo: 'MH-04-AK-1234', severity: 'Low', description: 'Scrap material outward movement. Approved by Vikram Singh.', reportedBy: 'Ram Kumar', timestamp: new Date(Date.now() - 3600000).toISOString(), status: 'Resolved' },
-  { id: 'INC-1004', siteId: 'SITE-03', type: 'Patrol Miss', severity: 'Medium', description: 'Scheduled checkpoint at Kiln Area missed — guard did not scan within 20-minute window.', reportedBy: 'Auto-Patrol System', timestamp: new Date(Date.now() - 1800000).toISOString(), status: 'Open' },
-];
+const SEED_INCIDENTS: SecurityIncident[] = [];
 
-const SEED_LEAVES: LeaveRequest[] = [
-  {
-    id: 'LV-001', guardId: 'GRD-105', guardName: 'Manoj Tiwari', siteId: 'SITE-01',
-    leaveType: 'Sick', fromDate: new Date().toISOString().split('T')[0],
-    toDate: new Date(Date.now() + 86400000 * 2).toISOString().split('T')[0],
-    reason: 'High fever and medical rest advised by doctor.',
-    substituteGuardId: 'GRD-108', substituteGuardName: 'Sunita Devi',
-    status: 'Approved', appliedAt: new Date(Date.now() - 86400000).toISOString(),
-    decidedBy: 'Vikram Singh', decidedAt: new Date(Date.now() - 3600000).toISOString(),
-  },
-  {
-    id: 'LV-002', guardId: 'GRD-103', guardName: 'Priya Sharma', siteId: 'SITE-01',
-    leaveType: 'Casual',
-    fromDate: new Date(Date.now() + 86400000 * 3).toISOString().split('T')[0],
-    toDate: new Date(Date.now() + 86400000 * 3).toISOString().split('T')[0],
-    reason: 'Family function.', status: 'Pending',
-    appliedAt: new Date(Date.now() - 1800000).toISOString(),
-  },
-];
+const SEED_LEAVES: LeaveRequest[] = [];
 
-const SEED_TASKS: Task[] = [
-  {
-    id: 'TSK-001', siteId: 'SITE-01',
-    title: 'North Perimeter Fence Inspection',
-    description: 'Check all fence lines and report any damage or breach points.',
-    creatorRole: 'PSH Operational Task',
-    assignedTo: 'GRD-106', assignedToName: 'Deepak Verma', post: 'Perimeter',
-    taskType: 'Perimeter Inspection', status: 'In-Progress',
-    createdAt: new Date(Date.now() - 7200000).toISOString(),
-    startedAt: new Date(Date.now() - 3600000).toISOString(), createdBy: 'Vikram Singh',
-  },
-  {
-    id: 'TSK-002', siteId: 'SITE-01',
-    title: 'Weighbridge Morning Audit',
-    description: 'Cross-check inward truck weights with GRN records.',
-    creatorRole: 'Corporate HO Directive',
-    assignedTo: 'GRD-102', assignedToName: 'Suresh Yadav', post: 'Weighbridge',
-    taskType: 'Weighbridge Audit', status: 'Dispatched',
-    createdAt: new Date(Date.now() - 1800000).toISOString(), createdBy: 'Anand Mehta',
-  },
-  {
-    id: 'TSK-003', siteId: 'SITE-02',
-    title: 'CBM Pump House Vibration Check',
-    description: 'Inspect P-301 & P-302 pumps for abnormal vibration.',
-    creatorRole: 'PSH Operational Task',
-    assignedTo: 'GRD-104', assignedToName: 'Arun Singh', post: 'Pump House',
-    taskType: 'CBM Vibration Check', status: 'Completed',
-    createdAt: new Date(Date.now() - 14400000).toISOString(),
-    startedAt: new Date(Date.now() - 10800000).toISOString(),
-    completedAt: new Date(Date.now() - 3600000).toISOString(),
-    completionNote: 'Both pumps nominal. No anomalies detected.', createdBy: 'Amit Patel',
-  },
-];
+const SEED_TASKS: Task[] = [];
 
-const SEED_ATTENDANCE: AttendanceLog[] = [
-  { id: 'ATT-001', guardId: 'GRD-101', guardName: 'Ram Kumar',    siteId: 'SITE-01', date: new Date().toISOString().split('T')[0], shift: 'Morning', status: 'Present', loggedAt: new Date().toISOString(), loggedBy: 'Vikram Singh' },
-  { id: 'ATT-002', guardId: 'GRD-102', guardName: 'Suresh Yadav', siteId: 'SITE-01', date: new Date().toISOString().split('T')[0], shift: 'Morning', status: 'Late',    loggedAt: new Date().toISOString(), loggedBy: 'Vikram Singh' },
-  { id: 'ATT-003', guardId: 'GRD-103', guardName: 'Priya Sharma', siteId: 'SITE-01', date: new Date().toISOString().split('T')[0], shift: 'Morning', status: 'Present', loggedAt: new Date().toISOString(), loggedBy: 'Vikram Singh' },
-  { id: 'ATT-004', guardId: 'GRD-105', guardName: 'Manoj Tiwari', siteId: 'SITE-01', date: new Date().toISOString().split('T')[0], shift: 'Evening', status: 'Absent',  loggedAt: new Date().toISOString(), loggedBy: 'Vikram Singh' },
-];
+const SEED_ATTENDANCE: AttendanceLog[] = [];
 
 // ---------------------------------------------------------
 // STORE DEFINITION

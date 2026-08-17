@@ -17,12 +17,13 @@ import IncidentLogger    from '@/components/plus/modules/IncidentLogger';
 import PatrolTourEngine    from '@/components/plus/modules/PatrolTourEngine';
 import AutoShiftScheduler  from '@/components/plus/modules/AutoShiftScheduler';
 import GeofenceManager     from '@/components/plus/modules/GeofenceManager';
+import LiveMapView         from '@/components/plus/modules/LiveMapView';
 import GateLogistics       from '@/components/plus/modules/GateLogistics';
 import HoExecutiveDashboard from '@/components/plus/modules/HoExecutiveDashboard';
 import TenantOnboarding    from '@/components/plus/TenantOnboarding';
 
 // ── Legacy preserved modules ──────────────────────────────
-import PSHGenerator    from '@/components/plus/modules/PSHGenerator';
+import UserManagement  from '@/components/plus/modules/UserManagement';
 import GuardRegistry   from '@/components/plus/modules/GuardRegistry';
 import GateDeployment  from '@/components/plus/modules/GateDeployment';
 
@@ -55,6 +56,7 @@ export default function PlusDashboard() {
       case 'patrol':       return <PatrolTourEngine />;
       case 'autoschedule': return <AutoShiftScheduler />;
       case 'geofence':     return <GeofenceManager />;
+      case 'livemap':      return <LiveMapView />;
 
       // ── Logistics ──
       case 'gatelogistics': return <GateLogistics />;
@@ -63,7 +65,7 @@ export default function PlusDashboard() {
       case 'hodashboard':  return <HoExecutiveDashboard />;
 
       // ── Admin ──
-      case 'generator':    return <PSHGenerator />;
+      case 'usermanagement': return <UserManagement />;
       case 'tenants':      return <TenantOnboarding />;
 
       // ── Legacy ──

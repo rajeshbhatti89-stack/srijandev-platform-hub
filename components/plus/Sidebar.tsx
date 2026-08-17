@@ -29,6 +29,8 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
 
   const isSuperAdmin = currentUser?.role === 'SrijanDev Admin';
   const isHO = currentUser?.role === 'Corporate HO Admin';
+  const isPSH = currentUser?.role === 'Plant Security Head';
+  const isSupervisor = currentUser?.role === 'Supervisor';
 
   const activeSOS = sosAlerts.filter(a => a.status === 'Active').length;
 
@@ -44,6 +46,7 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
     { id: 'patrol',    label: 'Guard Tour Engine',   icon: <Route size={16} />,    desc: 'QR Checkpoint Patrol', badge: activeSOS > 0 ? 'SOS' : undefined, badgeColor: 'bg-red-500 text-white animate-pulse' },
     { id: 'autoschedule', label: 'Auto-Shift Roster', icon: <Calendar size={16} />, desc: '30-Day Generator'      },
     { id: 'geofence', label: 'Geofence Manager',     icon: <Radio size={16} />,    desc: 'GPS Boundary Check-in' },
+    { id: 'livemap',  label: 'Live Map View',        icon: <Globe size={16} />,    desc: 'Real-time Guard Tracking' },
   ];
 
   const LOGISTICS_NAV: NavItemDef[] = [
@@ -55,7 +58,7 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
   ];
 
   const ADMIN_NAV: NavItemDef[] = [
-    { id: 'generator', label: 'PSH Provisioning',     icon: <KeyRound size={16} />,    desc: 'Account Manager'        },
+    { id: 'usermanagement', label: 'User Access Management', icon: <KeyRound size={16} />, desc: 'Provision & Access' },
   ];
 
   const SDADMIN_NAV: NavItemDef[] = [
@@ -120,7 +123,7 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
           </>
         )}
 
-        {(isSuperAdmin || isHO) && (
+        {(isSuperAdmin || isHO || isPSH) && (
           <>
             <div className="my-2 h-px bg-white/5" />
             <SectionLabel label="Admin" />
@@ -149,7 +152,7 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
                 <p className={`text-[9px] font-mono truncate ${
                   currentUser.role === 'SrijanDev Admin' ? 'text-blue-400' :
                   currentUser.role === 'Corporate HO Admin' ? 'text-amber-400' :
-                  'text-emerald-400'
+                  currentUser.role === 'Plant Security Head' ? 'text-emerald-400' : 'text-purple-400'
                 }`}>{currentUser.role}</p>
               </div>
             </div>

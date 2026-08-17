@@ -4,49 +4,7 @@ import { useState } from 'react';
 import { useEnterpriseStore } from '@/store/useEnterpriseStore';
 import { ShieldCheck, LogIn, Eye, EyeOff, Building2, Users, Shield } from 'lucide-react';
 
-interface DemoUser {
-  label: string;
-  email: string;
-  role: string;
-  badge: string;
-  badgeColor: string;
-  icon: React.ReactNode;
-}
 
-const DEMO_USERS: DemoUser[] = [
-  {
-    label: 'SrijanDev Admin',
-    email: 'rajesh@srijandev.in',
-    role: 'Master Platform Access',
-    badge: 'Level 1',
-    badgeColor: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
-    icon: <Shield size={18} className="text-blue-400" />,
-  },
-  {
-    label: 'Corporate HO Admin',
-    email: 'anand.ho@adani.in',
-    role: 'Multi-Plant Group Oversight',
-    badge: 'Level 2',
-    badgeColor: 'bg-amber-500/20 text-amber-400 border-amber-500/30',
-    icon: <Building2 size={18} className="text-amber-400" />,
-  },
-  {
-    label: 'PSH — Darlaghat Plant',
-    email: 'vikram.psh@srijandev.in',
-    role: 'Site-Scoped Operations',
-    badge: 'Level 3',
-    badgeColor: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30',
-    icon: <Users size={18} className="text-emerald-400" />,
-  },
-  {
-    label: 'PSH — Bhatapara Plant',
-    email: 'amit.psh@srijandev.in',
-    role: 'Site-Scoped Operations',
-    badge: 'Level 3',
-    badgeColor: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30',
-    icon: <Users size={18} className="text-emerald-400" />,
-  },
-];
 
 export default function LoginPortal() {
   const { login } = useEnterpriseStore();
@@ -70,14 +28,7 @@ export default function LoginPortal() {
     }, 600);
   };
 
-  const handleDemoLogin = (email: string) => {
-    setLoading(true);
-    setError('');
-    setTimeout(() => {
-      login(email);
-      window.location.href = '/plus';
-    }, 400);
-  };
+
 
   return (
     <div className="min-h-screen bg-gray-950 flex items-center justify-center p-4 relative overflow-hidden">
@@ -101,38 +52,7 @@ export default function LoginPortal() {
           </div>
         </div>
 
-        {/* Demo Login Cards — 3-tier */}
-        <div className="mb-6">
-          <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3 text-center">Quick Demo Access · 3-Tier Hierarchy</p>
-          <div className="space-y-2">
-            {DEMO_USERS.map(u => (
-              <button
-                key={u.email}
-                onClick={() => handleDemoLogin(u.email)}
-                disabled={loading}
-                className="w-full flex items-center gap-3 px-4 py-3 bg-gray-900 border border-white/10 hover:border-white/20 rounded-xl text-left transition-all group hover:bg-white/[0.02] disabled:opacity-60"
-              >
-                <div className="p-2 rounded-lg bg-gray-950 border border-white/5 shrink-0">
-                  {u.icon}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-white group-hover:text-blue-300 transition-colors">{u.label}</p>
-                  <p className="text-xs text-gray-500 truncate">{u.role}</p>
-                </div>
-                <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border shrink-0 ${u.badgeColor}`}>
-                  {u.badge}
-                </span>
-              </button>
-            ))}
-          </div>
-        </div>
 
-        {/* Divider */}
-        <div className="flex items-center gap-3 mb-6">
-          <div className="flex-1 h-px bg-white/10" />
-          <span className="text-xs text-gray-600">or sign in with email</span>
-          <div className="flex-1 h-px bg-white/10" />
-        </div>
 
         {/* Manual Login Form */}
         <div className="bg-gray-900 border border-white/10 rounded-2xl p-6">
@@ -154,7 +74,6 @@ export default function LoginPortal() {
                 <input
                   type={showPass ? 'text' : 'password'}
                   placeholder="••••••••"
-                  defaultValue="demo"
                   className="w-full bg-gray-950 border border-white/10 rounded-lg px-4 py-3 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-blue-500/50 transition-colors pr-10"
                 />
                 <button type="button" onClick={() => setShowPass(!showPass)}
@@ -162,7 +81,6 @@ export default function LoginPortal() {
                   {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </div>
-              <p className="text-[10px] text-gray-600 mt-1">Any password accepted in demo mode</p>
             </div>
 
             {error && (
@@ -183,6 +101,16 @@ export default function LoginPortal() {
               )}
             </button>
           </form>
+        </div>
+
+        <div className="mt-6 bg-gray-900 border border-white/10 rounded-2xl p-4">
+          <p className="text-xs text-gray-400 text-center mb-3">Simulation / Demo Logins</p>
+          <div className="grid grid-cols-2 gap-2">
+            <button onClick={() => { setEmail('rajesh@srijandev.in'); }} type="button" className="py-2 text-xs font-medium bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 rounded-lg transition-colors border border-blue-500/20">Root Admin</button>
+            <button onClick={() => { setEmail('ho@srijandev.in'); }} type="button" className="py-2 text-xs font-medium bg-amber-500/10 text-amber-400 hover:bg-amber-500/20 rounded-lg transition-colors border border-amber-500/20">HO Manager</button>
+            <button onClick={() => { setEmail('psh@srijandev.in'); }} type="button" className="py-2 text-xs font-medium bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 rounded-lg transition-colors border border-emerald-500/20">Plant Security Head</button>
+            <button onClick={() => { setEmail('supervisor@srijandev.in'); }} type="button" className="py-2 text-xs font-medium bg-purple-500/10 text-purple-400 hover:bg-purple-500/20 rounded-lg transition-colors border border-purple-500/20">Supervisor</button>
+          </div>
         </div>
 
         <p className="text-center text-xs text-gray-700 mt-4">

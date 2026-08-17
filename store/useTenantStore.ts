@@ -32,36 +32,7 @@ export interface Tenant {
 // SEED DATA
 // ---------------------------------------------------------
 
-const SEED_TENANTS: Tenant[] = [
-  {
-    id: 'TENANT-001',
-    companyName: 'Adani Cement Ltd.',
-    subdomain: 'adani',
-    logoUrl: '',
-    primaryColor: '#f97316',
-    assignedModules: ['staff', 'patrol', 'shifts', 'leaves', 'tasks', 'gatepass', 'geofence', 'gatelogistics', 'hodashboard'],
-    plantSites: [
-      { id: 'SITE-01', name: 'Darlaghat Cement Plant', location: 'Darlaghat, Himachal Pradesh', guardStrength: 200 },
-      { id: 'SITE-02', name: 'Bhatapara Cement Plant', location: 'Bhatapara, Chhattisgarh', guardStrength: 180 },
-      { id: 'SITE-03', name: 'Chanda Cement Plant', location: 'Chandrapur, Maharashtra', guardStrength: 150 },
-    ],
-    createdAt: new Date(Date.now() - 86400000 * 90).toISOString(),
-    isActive: true,
-  },
-  {
-    id: 'TENANT-002',
-    companyName: 'SrijanDev Demo Corp',
-    subdomain: 'demo',
-    logoUrl: '',
-    primaryColor: '#3b82f6',
-    assignedModules: ['staff', 'patrol', 'shifts', 'leaves', 'tasks', 'gatepass'],
-    plantSites: [
-      { id: 'SITE-01', name: 'Alpha Manufacturing Plant', location: 'Pune, Maharashtra', guardStrength: 100 },
-    ],
-    createdAt: new Date(Date.now() - 86400000 * 10).toISOString(),
-    isActive: true,
-  },
-];
+const SEED_TENANTS: Tenant[] = [];
 
 // ---------------------------------------------------------
 // STORE DEFINITION

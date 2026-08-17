@@ -1,1 +1,2 @@
-
+name = "srijandev-platform-hub"
+pages_build_output_dir = "out"

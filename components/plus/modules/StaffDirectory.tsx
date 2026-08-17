@@ -2,13 +2,13 @@
 
 import { useState, useRef } from 'react';
 import { useEnterpriseStore, Guard } from '@/store/useEnterpriseStore';
+import { useOperationsStore } from '@/store/useOperationsStore';
 import { exportGuards, parseCSV } from '@/lib/csvUtils';
 import {
   Users, Trash2, Edit2, UserPlus, ShieldAlert, AlertTriangle,
   Download, Upload, X, CheckCircle, Phone, MapPin, RotateCcw
 } from 'lucide-react';
 
-const POSTS = ['Main Gate 1', 'Main Gate 2', 'Weighbridge', 'Admin Block', 'Material Gate', 'Control Room', 'Perimeter', 'Pump House', 'Material Yard', 'Cash Room'];
 
 const statusConfig: Record<Guard['status'], { label: string; color: string; dot: string }> = {
   'On Duty':  { label: 'On Duty',   color: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20', dot: 'bg-emerald-400' },
@@ -27,6 +27,8 @@ const desigColors: Record<string, string> = {
 type FormData = {
   name: string;
   phone: string;
+  department?: string;
+  company?: string;
   designation: Guard['designation'];
   assignedPost: string;
   shift: Guard['shift'];
@@ -35,12 +37,13 @@ type FormData = {
 };
 
 const EMPTY_FORM: FormData = {
-  name: '', phone: '', designation: 'Guard',
+  name: '', phone: '', department: '', company: '', designation: 'Guard',
   assignedPost: '', shift: 'Morning', assignedSiteId: 'SITE-01', status: 'On Duty',
 };
 
 export default function StaffDirectory() {
   const { currentUser, guards, sites, deleteGuard, clearRosterData, addGuard, updateGuard } = useEnterpriseStore();
+  const { geofencePosts } = useOperationsStore();
 
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -52,6 +55,13 @@ export default function StaffDirectory() {
   const fileRef = useRef<HTMLInputElement>(null);
 
   const isSuperAdmin = currentUser?.role === 'SrijanDev Admin' || currentUser?.role === 'Corporate HO Admin';
+
+  const POSTS = Array.from(new Set(
+    geofencePosts
+      .filter(p => isSuperAdmin || p.siteId === currentUser?.assignedSiteId)
+      .map(p => p.postName)
+  ));
+  if (POSTS.length === 0) POSTS.push('Main Gate 1', 'Desk Job'); // Fallback if no geofences defined
 
   const visibleGuards = guards.filter(g => {
     const siteOk = isSuperAdmin || g.assignedSiteId === currentUser?.assignedSiteId;
@@ -78,7 +88,7 @@ export default function StaffDirectory() {
   };
 
   const handleEdit = (g: Guard) => {
-    setForm({ name: g.name, phone: g.phone, designation: g.designation, assignedPost: g.assignedPost, shift: g.shift, assignedSiteId: g.assignedSiteId, status: g.status });
+    setForm({ name: g.name, phone: g.phone, department: g.department || '', company: g.company || '', designation: g.designation, assignedPost: g.assignedPost, shift: g.shift, assignedSiteId: g.assignedSiteId, status: g.status });
     setEditingId(g.id);
     setShowForm(true);
   };
@@ -103,17 +113,56 @@ export default function StaffDirectory() {
       const rows = await parseCSV(file);
       let imported = 0;
       rows.forEach((row: any) => {
-        if (!row['Full Name']) return;
+        const name = row['Full Name'] || row['Employee'] || row['Name'] || '';
+        if (!name) return;
+
+        const department = row['Department'] || row['department'] || '';
+        const designation = row['Designation'] || row['designation'] || department || 'Guard';
+        const company = row['Company'] || row['company'] || '';
+        const phone = row['Mobile Number'] || row['Phone'] || row['Mobile'] || '';
+        const personnelId = row['Employee Code'] || row['Personnel ID'] || `P-${Math.floor(Math.random() * 900) + 100}`;
+
+        let assignedPost = row['Assigned Post'] || '';
+        let shiftStr = row['Shift'] || '';
+
+        const desigLower = designation.toLowerCase();
+        const deptLower = department.toLowerCase();
+
+        // Auto assignment logic
+        if (desigLower.includes('operator') || deptLower.includes('operator') || desigLower.includes('computer') || deptLower.includes('computer')) {
+            assignedPost = assignedPost || 'Desk Job';
+            shiftStr = shiftStr || 'G Shift';
+        } else if (desigLower.includes('supervisor') || deptLower.includes('supervisor')) {
+            assignedPost = assignedPost || 'Main Gate';
+            shiftStr = shiftStr || 'A Shift';
+        }
+
+        // Validate shift
+        let shift: Guard['shift'] = 'Morning';
+        const validShifts = ['Morning', 'Evening', 'Night', 'A Shift', 'B Shift', 'C Shift', 'G Shift', 'General Shift'];
+        if (validShifts.includes(shiftStr)) {
+          shift = shiftStr as Guard['shift'];
+        } else {
+           const sl = shiftStr.toLowerCase();
+           if (sl === 'a' || sl.includes('a shift') || sl === 'a-shift') shift = 'A Shift';
+           else if (sl === 'b' || sl.includes('b shift') || sl === 'b-shift') shift = 'B Shift';
+           else if (sl === 'c' || sl.includes('c shift') || sl === 'c-shift') shift = 'C Shift';
+           else if (sl === 'g' || sl.includes('g shift') || sl === 'g-shift') shift = 'G Shift';
+           else if (sl.includes('general')) shift = 'General Shift';
+        }
+
         addGuard({
           id: `GRD-${Math.floor(Math.random() * 9000) + 1000}`,
-          personnelId: row['Personnel ID'] || `P-${Math.floor(Math.random() * 900) + 100}`,
+          personnelId,
           guardCode: `GC-${Math.floor(Math.random() * 900) + 100}`,
-          name: row['Full Name'] || '',
-          phone: row['Phone'] || '',
-          designation: (['Guard', 'Armed Guard', 'Supervisor', 'Patrol Officer'].includes(row['Designation']) ? row['Designation'] : 'Guard') as Guard['designation'],
+          name,
+          phone,
+          department,
+          company,
+          designation,
           assignedSiteId: row['Site ID'] || currentUser?.assignedSiteId || 'SITE-01',
-          assignedPost: row['Assigned Post'] || '',
-          shift: (['Morning', 'Evening', 'Night'].includes(row['Shift']) ? row['Shift'] : 'Morning') as Guard['shift'],
+          assignedPost,
+          shift,
           status: (['On Duty', 'Standby', 'On Leave', 'Relieved'].includes(row['Status']) ? row['Status'] : 'On Duty') as Guard['status'],
         });
         imported++;
@@ -135,7 +184,7 @@ export default function StaffDirectory() {
           <h2 className="text-2xl font-bold text-white">Staff Directory & Personnel Master</h2>
           <p className="text-sm text-gray-400 mt-1">
             {visibleGuards.length} of {guards.length} personnel shown
-            {currentUser?.role === 'Plant Security Head' && ` · ${currentUser.assignedSiteId}`}
+            {(currentUser?.role === 'Plant Security Head' || currentUser?.role === 'Supervisor') && ` · ${currentUser.assignedSiteId}`}
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -197,6 +246,9 @@ export default function StaffDirectory() {
               {[
                 { label: 'Full Name *', key: 'name', type: 'text', placeholder: 'e.g. Rajesh Kumar' },
                 { label: 'Phone Number', key: 'phone', type: 'text', placeholder: '+91 9XXXXXXXXX' },
+                { label: 'Department', key: 'department', type: 'text', placeholder: 'e.g. Security' },
+                { label: 'Company', key: 'company', type: 'text', placeholder: 'e.g. Agency Name' },
+                { label: 'Designation / Role', key: 'designation', type: 'text', placeholder: 'e.g. Guard, Supervisor' },
               ].map(f => (
                 <div key={f.key}>
                   <label className="block text-xs font-medium text-gray-400 mb-1.5">{f.label}</label>
@@ -211,12 +263,6 @@ export default function StaffDirectory() {
                 </div>
               ))}
               <div>
-                <label className="block text-xs font-medium text-gray-400 mb-1.5">Designation</label>
-                <select value={form.designation} onChange={e => setForm(p => ({ ...p, designation: e.target.value as Guard['designation'] }))} className="w-full bg-gray-950 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none">
-                  <option>Guard</option><option>Armed Guard</option><option>Supervisor</option><option>Patrol Officer</option>
-                </select>
-              </div>
-              <div>
                 <label className="block text-xs font-medium text-gray-400 mb-1.5">Assigned Post / Gate *</label>
                 <select value={form.assignedPost} onChange={e => setForm(p => ({ ...p, assignedPost: e.target.value }))} className="w-full bg-gray-950 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none" required>
                   <option value="">Select post...</option>
@@ -228,7 +274,12 @@ export default function StaffDirectory() {
                 <select value={form.shift} onChange={e => setForm(p => ({ ...p, shift: e.target.value as Guard['shift'] }))} className="w-full bg-gray-950 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none">
                   <option value="Morning">Morning (06:00 – 14:00)</option>
                   <option value="Evening">Evening (14:00 – 22:00)</option>
-                  <option value="Night">Night  (22:00 – 06:00)</option>
+                  <option value="Night">Night (22:00 – 06:00)</option>
+                  <option value="A Shift">A Shift (06:00 – 14:00)</option>
+                  <option value="B Shift">B Shift (14:00 – 22:00)</option>
+                  <option value="C Shift">C Shift (22:00 – 06:00)</option>
+                  <option value="G Shift">G Shift (08:30 – 17:30)</option>
+                  <option value="General Shift">General Shift (09:00 – 18:00)</option>
                 </select>
               </div>
               {isSuperAdmin && (

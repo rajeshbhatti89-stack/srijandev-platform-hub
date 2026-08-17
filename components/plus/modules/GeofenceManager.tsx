@@ -6,8 +6,9 @@ import { useOperationsStore, GeofencePost } from '@/store/useOperationsStore';
 import { exportToCSV } from '@/lib/csvUtils';
 import {
   MapPin, Radio, CheckCircle2, AlertTriangle, Sliders,
-  Download, Plus, X, Wifi, WifiOff, Activity
+  Download, Plus, X, Wifi, WifiOff, Activity, Printer
 } from 'lucide-react';
+import { QRCodeSVG } from 'qrcode.react';
 
 export default function GeofenceManager() {
   const { currentUser, guards } = useEnterpriseStore();
@@ -109,9 +110,37 @@ export default function GeofenceManager() {
 
   return (
     <div className="p-6 max-w-7xl mx-auto space-y-6">
+      
+      {/* ── PRINT ONLY VIEW (QR CODES) ── */}
+      <div className="hidden print:block print:w-full bg-white text-black p-8 min-h-screen">
+        <div className="text-center mb-8 border-b-2 border-black pb-4">
+          <h1 className="text-3xl font-black tracking-wider uppercase mb-1">SRIJANDEV PLUS</h1>
+          <p className="text-sm font-bold text-gray-600">Geofence Post QR Code Directory</p>
+          <p className="text-xs text-gray-500 mt-2">Print this document and paste QR codes at their respective locations for Android APK check-ins.</p>
+        </div>
+        
+        <div className="grid grid-cols-2 gap-8 gap-y-12">
+          {scopedPosts.map(post => (
+            <div key={post.id} className="border-2 border-dashed border-gray-300 rounded-2xl p-6 flex flex-col items-center justify-center break-inside-avoid">
+              <QRCodeSVG 
+                value={JSON.stringify({ postId: post.id, siteId: post.siteId })} 
+                size={200}
+                level="H"
+                includeMargin={true}
+              />
+              <div className="mt-4 text-center">
+                <h2 className="text-2xl font-bold text-black">{post.postName}</h2>
+                <p className="text-sm text-gray-500 font-mono mt-1">{post.siteId} — {post.radiusMeters}m radius</p>
+                <p className="text-xs text-gray-400 mt-2 italic">Scan via SrijanDev Guard APK to verify check-in</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
 
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="print:hidden space-y-6">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h2 className="text-2xl font-bold text-white flex items-center gap-2">
             <Radio size={22} className="text-blue-400" /> Geofence Post Manager
@@ -119,6 +148,9 @@ export default function GeofenceManager() {
           <p className="text-sm text-gray-400 mt-1">GPS boundary check-in validation · Verified In-Fence / Breach detection</p>
         </div>
         <div className="flex gap-2">
+          <button onClick={() => window.print()} className="flex items-center gap-2 px-3 py-2 rounded-lg bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-400 text-sm font-medium border border-indigo-500/30 transition-colors">
+            <Printer size={15} /> Print QR PDFs
+          </button>
           <button onClick={() => setShowAddPost(true)} className="flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium transition-colors">
             <Plus size={15} /> Add Post
           </button>
@@ -294,6 +326,7 @@ export default function GeofenceManager() {
             </table>
           </div>
         </div>
+      </div>
       </div>
     </div>
   );

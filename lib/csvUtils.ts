@@ -83,6 +83,8 @@ export function exportGuards(guards: Guard[], filename = 'personnel_roster.csv')
     'Full Name': g.name,
     'Phone': g.phone,
     'Designation': g.designation,
+    'Department': g.department || '',
+    'Company': g.company || '',
     'Site ID': g.assignedSiteId,
     'Assigned Post': g.assignedPost,
     'Shift': g.shift,
