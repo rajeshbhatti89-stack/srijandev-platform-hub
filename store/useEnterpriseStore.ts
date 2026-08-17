@@ -111,6 +111,9 @@ export interface AttendanceLog {
   status: 'Present' | 'Absent' | 'Late' | 'Relieved';
   loggedAt: string;
   loggedBy: string;
+  photoUrl?: string; // base64 image or url
+  lat?: number;
+  lng?: number;
 }
 
 // ---------------------------------------------------------

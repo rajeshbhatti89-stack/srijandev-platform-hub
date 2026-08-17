@@ -7,6 +7,8 @@ import { Shield, ChevronRight, MapPin, Clock } from 'lucide-react';
 import GuardSOSButton from '@/components/guard/GuardSOSButton';
 import GuardPatrolExecution from '@/components/guard/GuardPatrolExecution';
 import GuardLeaveRequest from '@/components/guard/GuardLeaveRequest';
+import GuardClockInOut from '@/components/guard/GuardClockInOut';
+import GuardTaskExecution from '@/components/guard/GuardTaskExecution';
 
 export default function GuardCompanionApp() {
   const activeGuardId = useGuardAppStore(s => s.activeGuardId);
@@ -14,12 +16,19 @@ export default function GuardCompanionApp() {
   const login = useGuardAppStore(s => s.login);
   const guards = useEnterpriseStore(s => s.guards);
   
-  const [selectedGuard, setSelectedGuard] = useState('');
+  const [guardCode, setGuardCode] = useState('');
+  const [phone, setPhone] = useState('');
+  const [loginError, setLoginError] = useState('');
   
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (selectedGuard) {
-      login(selectedGuard);
+    setLoginError('');
+    const foundGuard = guards.find(g => g.guardCode.toUpperCase() === guardCode.toUpperCase() && g.phone === phone);
+    
+    if (foundGuard) {
+      login(foundGuard.id);
+    } else {
+      setLoginError('Invalid Guard Code or Phone Number. Please try again.');
     }
   };
 
@@ -33,24 +42,38 @@ export default function GuardCompanionApp() {
         <p className="text-sm text-gray-400 mb-8">Select your identity to access your shift details and patrol tasks.</p>
         
         <form onSubmit={handleLogin} className="w-full max-w-sm space-y-4">
-          <div className="text-left">
-            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Select Guard Profile</label>
-            <select
-              value={selectedGuard}
-              onChange={(e) => setSelectedGuard(e.target.value)}
-              className="w-full bg-gray-900 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500 transition-colors appearance-none"
-              required
-            >
-              <option value="" disabled>-- Select Guard --</option>
-              {guards.map(g => (
-                <option key={g.id} value={g.id}>{g.guardCode} - {g.name}</option>
-              ))}
-            </select>
+          <div className="text-left space-y-4">
+            <div>
+              <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Guard Code</label>
+              <input
+                type="text"
+                placeholder="e.g. GC-001"
+                value={guardCode}
+                onChange={(e) => setGuardCode(e.target.value)}
+                className="w-full bg-gray-900 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500 transition-colors"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Registered Phone</label>
+              <input
+                type="tel"
+                placeholder="e.g. 9876543210"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                className="w-full bg-gray-900 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500 transition-colors"
+                required
+              />
+            </div>
+            
+            {loginError && (
+              <p className="text-red-400 text-xs font-medium text-center bg-red-500/10 py-2 rounded-lg border border-red-500/20">{loginError}</p>
+            )}
           </div>
           <button 
             type="submit"
-            disabled={!selectedGuard}
-            className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={!guardCode || !phone}
+            className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed mt-4"
           >
             Access Companion App
           </button>
@@ -64,12 +87,7 @@ export default function GuardCompanionApp() {
   // Render based on activeTab
   if (activeTab === 'patrol') return <GuardPatrolExecution guardId={activeGuardId} siteId={activeGuard?.assignedSiteId || ''} />;
   if (activeTab === 'leave') return <GuardLeaveRequest guardId={activeGuardId} guardName={activeGuard?.name || ''} siteId={activeGuard?.assignedSiteId || ''} />;
-  if (activeTab === 'tasks') return (
-    <div className="p-6 text-center">
-      <h3 className="text-lg font-bold text-white mb-2">My Tasks</h3>
-      <p className="text-sm text-gray-400">No special tasks assigned for this shift.</p>
-    </div>
-  );
+  if (activeTab === 'tasks') return <GuardTaskExecution guardId={activeGuardId} />;
 
   // Home Tab
   return (
@@ -106,19 +124,16 @@ export default function GuardCompanionApp() {
           </div>
         </div>
 
-        {/* Geofence Check-in Button */}
-        <button 
-          onClick={() => {
-            useEnterpriseStore.getState().updateGuard(activeGuardId, {
-              status: 'On Duty',
-              lastCheckIn: new Date().toISOString()
-            });
-            alert('Geofence Check-in Successful');
-          }}
-          className="w-full mt-4 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl transition-colors relative z-10 flex items-center justify-center gap-2"
-        >
-          <MapPin size={16} /> Execute Check-in
-        </button>
+        {/* Geofence & Selfie Clock In/Out UI */}
+        <GuardClockInOut
+          guardId={activeGuardId}
+          guardName={activeGuard?.name || ''}
+          siteId={activeGuard?.assignedSiteId || ''}
+          post={activeGuard?.assignedPost || ''}
+          shift={activeGuard?.shift || 'Morning'}
+          status={activeGuard?.status || 'Off Duty'}
+          lastCheckIn={activeGuard?.lastCheckIn}
+        />
       </div>
 
       {/* SOS Quick Action (renders actual SOS functionality) */}

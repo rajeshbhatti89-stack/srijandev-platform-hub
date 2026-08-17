@@ -1,0 +1,17 @@
+{
+  "name": "SrijanDev Guard Companion",
+  "short_name": "Guard App",
+  "description": "SrijanDev Guard Companion and Workforce Management App",
+  "start_url": "/guard",
+  "display": "standalone",
+  "background_color": "#050508",
+  "theme_color": "#050508",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

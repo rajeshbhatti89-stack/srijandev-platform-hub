@@ -12,6 +12,12 @@ export const metadata: Metadata = {
     icon: '/icon.png',
     apple: '/icon.png',
   },
+  manifest: '/manifest.json',
+  appleWebApp: {
+    title: 'Guard App',
+    statusBarStyle: 'black-translucent',
+    capable: true,
+  },
   openGraph: {
     type: 'website',
     url: 'https://srijandev.in',
@@ -31,6 +37,9 @@ export const viewport: Viewport = {
   themeColor: '#050508',
   width: 'device-width',
   initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: 'cover',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
