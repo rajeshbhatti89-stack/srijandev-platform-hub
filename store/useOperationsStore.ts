@@ -24,6 +24,7 @@ export interface CheckpointScan {
 
 export interface PatrolRoute {
   id: string;
+  tenantId: string;
   siteId: string;
   name: string;
   description: string;
@@ -33,6 +34,7 @@ export interface PatrolRoute {
 
 export interface PatrolLog {
   id: string;
+  tenantId: string;
   routeId: string;
   routeName: string;
   siteId: string;
@@ -47,6 +49,7 @@ export interface PatrolLog {
 
 export interface SOSAlert {
   id: string;
+  tenantId: string;
   guardId: string;
   guardName: string;
   siteId: string;
@@ -60,6 +63,7 @@ export interface SOSAlert {
 
 export interface RosterSlot {
   id: string;
+  tenantId: string;
   date: string; // YYYY-MM-DD
   post: string;
   shift: GuardShift;
@@ -70,6 +74,7 @@ export interface RosterSlot {
 
 export interface GeofencePost {
   id: string;
+  tenantId: string;
   siteId: string;
   postName: string;
   radiusMeters: number;
@@ -79,6 +84,7 @@ export interface GeofencePost {
 
 export interface GeofenceCheckIn {
   id: string;
+  tenantId: string;
   postId: string;
   postName: string;
   guardId: string;
@@ -91,6 +97,7 @@ export interface GeofenceCheckIn {
 
 export interface GatePass {
   id: string;
+  tenantId: string;
   siteId: string;
   passType: 'Material' | 'Visitor';
   direction: 'Inward' | 'Outward';

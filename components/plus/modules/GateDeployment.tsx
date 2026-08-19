@@ -6,9 +6,16 @@ import { MapPin, CheckCircle2, Clock, Map, UserMinus, ShieldCheck } from 'lucide
 export default function GateDeployment() {
   const { currentUser, guards, updateGuard } = useEnterpriseStore();
 
-  const visibleGuards = currentUser?.role === 'SrijanDev Admin' || currentUser?.role === 'Corporate HO Admin'
-    ? guards
-    : guards.filter(g => g.assignedSiteId === currentUser?.assignedSiteId);
+  const isGlobalAdmin = currentUser?.role === 'SrijanDev Admin';
+  const isHO = currentUser?.role === 'Corporate HO Admin';
+  const isSuperAdmin = isGlobalAdmin || isHO;
+  const targetTenantId = currentUser?.tenantId || 'GLOBAL';
+
+  const visibleGuards = guards.filter(g => {
+    const tenantOk = isGlobalAdmin || g.tenantId === targetTenantId;
+    const siteOk = isSuperAdmin || g.assignedSiteId === currentUser?.assignedSiteId;
+    return tenantOk && siteOk;
+  });
 
   const simulateCheckIn = (guardId: string) => {
     updateGuard(guardId, { status: 'On Duty', lastCheckIn: new Date().toISOString() });

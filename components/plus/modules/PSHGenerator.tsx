@@ -4,26 +4,33 @@ import { useState } from 'react';
 import { useEnterpriseStore, UserAccount, Site } from '@/store/useEnterpriseStore';
 import { KeyRound, UserPlus, ShieldAlert, CheckCircle2 } from 'lucide-react';
 
+import { useTenantStore } from '@/store/useTenantStore';
+
 export default function PSHGenerator() {
-  const { users, addUser, updateUser, deleteUser, sites } = useEnterpriseStore();
+  const { users, addUser, updateUser, deleteUser } = useEnterpriseStore();
+  const { tenants } = useTenantStore();
   
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [contactNo, setContactNo] = useState('');
+  const [tenantId, setTenantId] = useState('');
   const [assignedSiteId, setAssignedSiteId] = useState('');
 
   const pshAccounts = users.filter(u => u.role === 'Plant Security Head');
+  
+  const selectedTenant = tenants.find(t => t.id === tenantId);
+  const availableSites = selectedTenant ? selectedTenant.plantSites : [];
 
   const handleCreate = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name || !email || !contactNo || !assignedSiteId) return;
+    if (!name || !email || !contactNo || !assignedSiteId || !tenantId) return;
 
     const newPSH: UserAccount = {
       id: `PSH-${Math.floor(Math.random() * 1000)}`,
       name,
       email,
       role: 'Plant Security Head',
-      tenantId: 'TENANT-001', // Default for PSH Generation
+      tenantId,
       assignedSiteId,
       contactNo,
       isActive: true,
@@ -33,6 +40,7 @@ export default function PSHGenerator() {
     setName('');
     setEmail('');
     setContactNo('');
+    setTenantId('');
     setAssignedSiteId('');
   };
 
@@ -67,10 +75,17 @@ export default function PSHGenerator() {
               <input type="text" value={contactNo} onChange={e => setContactNo(e.target.value)} className="w-full bg-gray-950 border border-white/10 rounded-lg px-3 py-2 text-sm text-white" required />
             </div>
             <div>
+              <label className="block text-xs font-medium text-gray-400 mb-1">Assign to Tenant / Client</label>
+              <select value={tenantId} onChange={e => { setTenantId(e.target.value); setAssignedSiteId(''); }} className="w-full bg-gray-950 border border-white/10 rounded-lg px-3 py-2 text-sm text-white" required>
+                <option value="" disabled>Select a tenant...</option>
+                {tenants.map(t => <option key={t.id} value={t.id}>{t.companyName}</option>)}
+              </select>
+            </div>
+            <div>
               <label className="block text-xs font-medium text-gray-400 mb-1">Assign Plant/Site</label>
-              <select value={assignedSiteId} onChange={e => setAssignedSiteId(e.target.value)} className="w-full bg-gray-950 border border-white/10 rounded-lg px-3 py-2 text-sm text-white" required>
+              <select value={assignedSiteId} onChange={e => setAssignedSiteId(e.target.value)} className="w-full bg-gray-950 border border-white/10 rounded-lg px-3 py-2 text-sm text-white" required disabled={!tenantId}>
                 <option value="" disabled>Select a site...</option>
-                {sites.map(s => <option key={s.id} value={s.id}>{s.name} ({s.id})</option>)}
+                {availableSites.map(s => <option key={s.id} value={s.id}>{s.name} ({s.location})</option>)}
               </select>
             </div>
             <button type="submit" className="w-full py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-sm font-medium transition-colors mt-2">
@@ -99,7 +114,8 @@ export default function PSHGenerator() {
               </thead>
               <tbody className="divide-y divide-white/5">
                 {pshAccounts.map(psh => {
-                  const site = sites.find(s => s.id === psh.assignedSiteId);
+                  const t = tenants.find(t => t.id === psh.tenantId);
+                  const site = t?.plantSites.find(s => s.id === psh.assignedSiteId);
                   return (
                     <tr key={psh.id} className="hover:bg-white/5 transition-colors">
                       <td className="px-5 py-4">
@@ -107,6 +123,7 @@ export default function PSHGenerator() {
                         <p className="text-xs text-gray-500">{psh.email}</p>
                       </td>
                       <td className="px-5 py-4">
+                        <p className="text-xs text-gray-400 mb-1">{t?.companyName}</p>
                         <span className="font-mono text-xs text-blue-400 bg-blue-500/10 px-2 py-1 rounded border border-blue-500/20">{psh.assignedSiteId}</span>
                         <p className="text-xs text-gray-500 mt-1">{site?.name}</p>
                       </td>

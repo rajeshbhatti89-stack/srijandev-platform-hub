@@ -35,18 +35,23 @@ export default function LeaveApprovals() {
   const [formTo, setFormTo] = useState('');
   const [formReason, setFormReason] = useState('');
 
-  const isSuperAdmin = currentUser?.role === 'SrijanDev Admin' || currentUser?.role === 'Corporate HO Admin';
+  const isGlobalAdmin = currentUser?.role === 'SrijanDev Admin';
+  const isHO = currentUser?.role === 'Corporate HO Admin';
+  const isSuperAdmin = isGlobalAdmin || isHO;
 
-  const scopedLeaves = leaveRequests.filter(l =>
-    isSuperAdmin || l.siteId === currentUser?.assignedSiteId
-  );
+  const scopedLeaves = leaveRequests.filter(l => {
+    const tenantOk = isGlobalAdmin || l.tenantId === currentUser?.tenantId;
+    const siteOk = isSuperAdmin || l.siteId === currentUser?.assignedSiteId;
+    return tenantOk && siteOk;
+  });
 
   const filteredLeaves = filterTab === 'All'
     ? scopedLeaves
     : scopedLeaves.filter(l => l.status === filterTab);
 
   const availableGuards = guards.filter(g =>
-    isSuperAdmin || g.assignedSiteId === currentUser?.assignedSiteId
+    (isGlobalAdmin || g.tenantId === currentUser?.tenantId) &&
+    (isSuperAdmin || g.assignedSiteId === currentUser?.assignedSiteId)
   );
 
   const countFor = (s: LeaveRequest['status']) => scopedLeaves.filter(l => l.status === s).length;
@@ -60,6 +65,7 @@ export default function LeaveApprovals() {
 
     addLeaveRequest({
       id: `LV-${Date.now()}`,
+      tenantId: currentUser?.tenantId || 'GLOBAL',
       guardId: formGuardId,
       guardName: guard.name,
       siteId: guard.assignedSiteId,

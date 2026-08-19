@@ -51,18 +51,24 @@ export default function TaskDispatch() {
   const [fAssignee, setFAssignee] = useState('');
   const [fPost, setFPost] = useState('');
 
-  const isSuperAdmin = currentUser?.role === 'SrijanDev Admin' || currentUser?.role === 'Corporate HO Admin';
+  const isGlobalAdmin = currentUser?.role === 'SrijanDev Admin';
+  const isHO = currentUser?.role === 'Corporate HO Admin';
+  const isSuperAdmin = isGlobalAdmin || isHO;
 
-  const scopedTasks = tasks.filter(t =>
-    isSuperAdmin || t.siteId === currentUser?.assignedSiteId
-  );
+  const scopedTasks = tasks.filter(t => {
+    const tenantOk = isGlobalAdmin || t.tenantId === currentUser?.tenantId;
+    const siteOk = isSuperAdmin || t.siteId === currentUser?.assignedSiteId;
+    return tenantOk && siteOk;
+  });
 
   const filteredTasks = filterStatus === 'All'
     ? scopedTasks
     : scopedTasks.filter(t => t.status === filterStatus);
 
   const availableGuards = guards.filter(g =>
-    (isSuperAdmin || g.assignedSiteId === currentUser?.assignedSiteId) && g.status === 'On Duty'
+    (isGlobalAdmin || g.tenantId === currentUser?.tenantId) &&
+    (isSuperAdmin || g.assignedSiteId === currentUser?.assignedSiteId) &&
+    g.status === 'On Duty'
   );
 
   const countFor = (s: Task['status']) => scopedTasks.filter(t => t.status === s).length;
@@ -78,6 +84,7 @@ export default function TaskDispatch() {
     const guard = guards.find(g => g.id === fAssignee);
     addTask({
       id: `TSK-${Date.now()}`,
+      tenantId: currentUser?.tenantId || 'GLOBAL',
       siteId: isSuperAdmin ? (guard?.assignedSiteId || 'SITE-01') : (currentUser?.assignedSiteId || 'SITE-01'),
       title: fTitle,
       description: fDesc,

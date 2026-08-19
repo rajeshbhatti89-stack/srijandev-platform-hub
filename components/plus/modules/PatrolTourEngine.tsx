@@ -155,21 +155,35 @@ export default function PatrolTourEngine() {
   const [selectedGuardId, setSelectedGuardId] = useState('');
   const [breachTimer, setBreachTimer] = useState<Record<string, NodeJS.Timeout>>({});
 
-  const isSuperAdmin = currentUser?.role === 'SrijanDev Admin';
+  const isGlobalAdmin = currentUser?.role === 'SrijanDev Admin';
   const isHO = currentUser?.role === 'Corporate HO Admin';
+  const isSuperAdmin = isGlobalAdmin || isHO;
+  const targetTenantId = currentUser?.tenantId || 'GLOBAL';
 
-  const scopedRoutes = patrolRoutes.filter(r =>
-    isSuperAdmin || isHO || r.siteId === currentUser?.assignedSiteId
-  );
-  const scopedLogs = patrolLogs.filter(l =>
-    isSuperAdmin || isHO || l.siteId === currentUser?.assignedSiteId
-  );
+  const scopedRoutes = patrolRoutes.filter(r => {
+    const tenantOk = isGlobalAdmin || r.tenantId === targetTenantId;
+    const siteOk = isSuperAdmin || r.siteId === currentUser?.assignedSiteId;
+    return tenantOk && siteOk;
+  });
+  const scopedLogs = patrolLogs.filter(l => {
+    const tenantOk = isGlobalAdmin || l.tenantId === targetTenantId;
+    const siteOk = isSuperAdmin || l.siteId === currentUser?.assignedSiteId;
+    return tenantOk && siteOk;
+  });
   const activeLog = scopedLogs.find(l => l.status === 'Active');
-  const activeSOSAlert = sosAlerts.find(a => a.status === 'Active');
+  
+  const scopedSOSAlerts = sosAlerts.filter(a => {
+    const tenantOk = isGlobalAdmin || a.tenantId === targetTenantId;
+    const siteOk = isSuperAdmin || a.siteId === currentUser?.assignedSiteId;
+    return tenantOk && siteOk;
+  });
+  const activeSOSAlert = scopedSOSAlerts.find(a => a.status === 'Active');
 
-  const scopedGuards = guards.filter(g =>
-    (isSuperAdmin || isHO || g.assignedSiteId === currentUser?.assignedSiteId) && g.status === 'On Duty'
-  );
+  const scopedGuards = guards.filter(g => {
+    const tenantOk = isGlobalAdmin || g.tenantId === targetTenantId;
+    const siteOk = isSuperAdmin || g.assignedSiteId === currentUser?.assignedSiteId;
+    return tenantOk && siteOk && g.status === 'On Duty';
+  });
 
   const handleStartPatrol = (e: React.FormEvent) => {
     e.preventDefault();
@@ -180,6 +194,7 @@ export default function PatrolTourEngine() {
 
     addPatrolLog({
       id: `LOG-${Date.now()}`,
+      tenantId: targetTenantId,
       routeId: route.id,
       routeName: route.name,
       siteId: route.siteId,
@@ -243,6 +258,7 @@ export default function PatrolTourEngine() {
 
     triggerSOS({
       id: `SOS-${Date.now()}`,
+      tenantId: targetTenantId,
       guardId,
       guardName,
       siteId,
@@ -291,11 +307,11 @@ export default function PatrolTourEngine() {
       </div>
 
       {/* SOS History */}
-      {sosAlerts.filter(a => a.status !== 'Active').slice(0, 3).length > 0 && (
+      {scopedSOSAlerts.filter(a => a.status !== 'Active').slice(0, 3).length > 0 && (
         <div className="bg-red-500/5 border border-red-500/20 rounded-xl p-4">
           <p className="text-xs font-bold text-red-400 uppercase tracking-wider mb-3">Recent SOS History</p>
           <div className="space-y-2">
-            {sosAlerts.filter(a => a.status !== 'Active').slice(0, 3).map(alert => (
+            {scopedSOSAlerts.filter(a => a.status !== 'Active').slice(0, 3).map(alert => (
               <div key={alert.id} className="flex items-center justify-between text-sm">
                 <span className="text-gray-300">{alert.guardName} · {alert.post}</span>
                 <span className="text-xs text-gray-500">{new Date(alert.timestamp).toLocaleString()}</span>

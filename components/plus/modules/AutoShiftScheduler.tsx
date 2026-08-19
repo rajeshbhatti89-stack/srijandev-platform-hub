@@ -21,7 +21,7 @@ const SHIFT_COLORS: Record<GuardShift, { bg: string; text: string; border: strin
   'General Shift': { bg: 'bg-teal-500/10', text: 'text-teal-400', border: 'border-teal-500/20' },
 };
 
-function generateRoster(guards: Guard[], siteId: string, days: number = 30): RosterSlot[] {
+function generateRoster(guards: Guard[], tenantId: string, siteId: string, days: number = 30): RosterSlot[] {
   const siteGuards = guards.filter(g => g.assignedSiteId === siteId && g.status !== 'On Leave');
   if (siteGuards.length === 0) return [];
 
@@ -55,6 +55,7 @@ function generateRoster(guards: Guard[], siteId: string, days: number = 30): Ros
 
         slots.push({
           id: `RS-${dateStr}-${post.replace(/\s+/g, '')}-${shift}`,
+          tenantId,
           date: dateStr,
           post,
           shift,
@@ -77,13 +78,23 @@ export default function AutoShiftScheduler() {
   const [generatedDays, setGeneratedDays] = useState(30);
   const [editingSlot, setEditingSlot] = useState<string | null>(null);
 
-  const isSuperAdmin = currentUser?.role === 'SrijanDev Admin';
+  const isGlobalAdmin = currentUser?.role === 'SrijanDev Admin';
   const isHO = currentUser?.role === 'Corporate HO Admin';
+  const isSuperAdmin = isGlobalAdmin || isHO;
 
-  const targetSiteId = (!isSuperAdmin && !isHO) ? (currentUser?.assignedSiteId || 'SITE-01') : 'SITE-01';
+  const targetSiteId = (!isSuperAdmin) ? (currentUser?.assignedSiteId || 'SITE-01') : 'SITE-01';
+  const targetTenantId = currentUser?.tenantId || 'GLOBAL';
 
-  const scopedSlots = rosterSlots.filter(s => isSuperAdmin || isHO || s.siteId === currentUser?.assignedSiteId);
-  const scopedGuards = guards.filter(g => g.assignedSiteId === targetSiteId);
+  const scopedSlots = rosterSlots.filter(s => {
+    const tenantOk = isGlobalAdmin || s.tenantId === targetTenantId;
+    const siteOk = isSuperAdmin || s.siteId === currentUser?.assignedSiteId;
+    return tenantOk && siteOk;
+  });
+  const scopedGuards = guards.filter(g => {
+    const tenantOk = isGlobalAdmin || g.tenantId === targetTenantId;
+    const siteOk = isSuperAdmin || g.assignedSiteId === currentUser?.assignedSiteId;
+    return tenantOk && siteOk;
+  });
 
   // 7-day view window
   const today = new Date();
@@ -101,7 +112,7 @@ export default function AutoShiftScheduler() {
   const handleGenerate = () => {
     setGenerating(true);
     setTimeout(() => {
-      const newSlots = generateRoster(guards, targetSiteId, generatedDays);
+      const newSlots = generateRoster(guards, targetTenantId, targetSiteId, generatedDays);
       // Keep slots for other sites
       const otherSlots = rosterSlots.filter(s => s.siteId !== targetSiteId);
       setRosterSlots([...otherSlots, ...newSlots]);

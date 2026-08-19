@@ -27,18 +27,26 @@ export default function GeofenceManager() {
   const [newPostLat, setNewPostLat] = useState<number | ''>('');
   const [newPostLng, setNewPostLng] = useState<number | ''>('');
 
-  const isSuperAdmin = currentUser?.role === 'SrijanDev Admin';
+  const isGlobalAdmin = currentUser?.role === 'SrijanDev Admin';
   const isHO = currentUser?.role === 'Corporate HO Admin';
+  const isSuperAdmin = isGlobalAdmin || isHO;
+  const targetTenantId = currentUser?.tenantId || 'GLOBAL';
 
-  const scopedPosts = geofencePosts.filter(p =>
-    isSuperAdmin || isHO || p.siteId === currentUser?.assignedSiteId
-  );
-  const scopedCheckins = geofenceCheckIns.filter(c =>
-    isSuperAdmin || isHO || c.siteId === currentUser?.assignedSiteId
-  );
-  const scopedGuards = guards.filter(g =>
-    (isSuperAdmin || isHO || g.assignedSiteId === currentUser?.assignedSiteId) && g.status === 'On Duty'
-  );
+  const scopedPosts = geofencePosts.filter(p => {
+    const tenantOk = isGlobalAdmin || p.tenantId === targetTenantId;
+    const siteOk = isSuperAdmin || p.siteId === currentUser?.assignedSiteId;
+    return tenantOk && siteOk;
+  });
+  const scopedCheckins = geofenceCheckIns.filter(c => {
+    const tenantOk = isGlobalAdmin || c.tenantId === targetTenantId;
+    const siteOk = isSuperAdmin || c.siteId === currentUser?.assignedSiteId;
+    return tenantOk && siteOk;
+  });
+  const scopedGuards = guards.filter(g => {
+    const tenantOk = isGlobalAdmin || g.tenantId === targetTenantId;
+    const siteOk = isSuperAdmin || g.assignedSiteId === currentUser?.assignedSiteId;
+    return tenantOk && siteOk && g.status === 'On Duty';
+  });
 
   const selectedPost = scopedPosts.find(p => p.id === selectedPostId);
 
@@ -60,6 +68,7 @@ export default function GeofenceManager() {
 
     logGeofenceCheckIn({
       id: `GCI-${Date.now()}`,
+      tenantId: targetTenantId,
       postId: selectedPostId,
       postName: post.postName,
       guardId: guard.id,
@@ -78,7 +87,8 @@ export default function GeofenceManager() {
     if (!newPostName || newPostLat === '' || newPostLng === '') return;
     addGeofencePost({
       id: `GF-${Date.now()}`,
-      siteId: isSuperAdmin || isHO ? 'SITE-01' : (currentUser?.assignedSiteId || 'SITE-01'),
+      tenantId: targetTenantId,
+      siteId: isSuperAdmin ? 'SITE-01' : (currentUser?.assignedSiteId || 'SITE-01'),
       postName: newPostName,
       radiusMeters: newPostRadius,
       centerLat: Number(newPostLat),

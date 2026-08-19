@@ -38,12 +38,15 @@ export default function GateLogistics() {
   const [vPurpose, setVPurpose] = useState('');
   const [vDirection] = useState<'Inward' | 'Outward'>('Inward');
 
-  const isSuperAdmin = currentUser?.role === 'SrijanDev Admin';
+  const isGlobalAdmin = currentUser?.role === 'SrijanDev Admin';
   const isHO = currentUser?.role === 'Corporate HO Admin';
+  const isSuperAdmin = isGlobalAdmin || isHO;
 
-  const scopedPasses = gatePasses.filter(p =>
-    isSuperAdmin || isHO || p.siteId === currentUser?.assignedSiteId
-  );
+  const scopedPasses = gatePasses.filter(p => {
+    const tenantOk = isGlobalAdmin || p.tenantId === currentUser?.tenantId;
+    const siteOk = isSuperAdmin || p.siteId === currentUser?.assignedSiteId;
+    return tenantOk && siteOk;
+  });
 
   const filteredPasses = scopedPasses
     .filter(p => p.passType === tab)
@@ -64,7 +67,8 @@ export default function GateLogistics() {
     e.preventDefault();
     addGatePass({
       id: `GP-${Date.now()}`,
-      siteId: isSuperAdmin || isHO ? 'SITE-01' : (currentUser?.assignedSiteId || 'SITE-01'),
+      tenantId: currentUser?.tenantId || 'GLOBAL',
+      siteId: isSuperAdmin ? 'SITE-01' : (currentUser?.assignedSiteId || 'SITE-01'),
       passType: 'Material',
       direction: mDirection,
       vehicleNo: mVehicleNo.toUpperCase(),
@@ -85,7 +89,8 @@ export default function GateLogistics() {
     e.preventDefault();
     addGatePass({
       id: `GP-${Date.now()}`,
-      siteId: isSuperAdmin || isHO ? 'SITE-01' : (currentUser?.assignedSiteId || 'SITE-01'),
+      tenantId: currentUser?.tenantId || 'GLOBAL',
+      siteId: isSuperAdmin ? 'SITE-01' : (currentUser?.assignedSiteId || 'SITE-01'),
       passType: 'Visitor',
       direction: 'Inward',
       visitorName: vName,

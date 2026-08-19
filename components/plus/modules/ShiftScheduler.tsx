@@ -50,17 +50,22 @@ export default function ShiftScheduler() {
   const [newShift, setNewShift] = useState<Guard['shift']>('Morning');
 
   const today = new Date().toISOString().split('T')[0];
-  const isSuperAdmin = currentUser?.role === 'SrijanDev Admin' || currentUser?.role === 'Corporate HO Admin';
+  const isGlobalAdmin = currentUser?.role === 'SrijanDev Admin';
+  const isHO = currentUser?.role === 'Corporate HO Admin';
+  const isSuperAdmin = isGlobalAdmin || isHO;
 
-  const scopedGuards = isSuperAdmin
-    ? guards
-    : guards.filter(g => g.assignedSiteId === currentUser?.assignedSiteId);
+  const scopedGuards = guards.filter(g => {
+    const tenantOk = isGlobalAdmin || g.tenantId === currentUser?.tenantId;
+    const siteOk = isSuperAdmin || g.assignedSiteId === currentUser?.assignedSiteId;
+    return tenantOk && siteOk;
+  });
 
   const shiftGuards = scopedGuards.filter(g => g.shift === activeShift);
 
   const todayLogs = attendanceLogs.filter(l => {
+    const tenantOk = isGlobalAdmin || l.tenantId === currentUser?.tenantId;
     const siteOk = isSuperAdmin || l.siteId === currentUser?.assignedSiteId;
-    return l.date === today && siteOk;
+    return l.date === today && tenantOk && siteOk;
   });
 
   const getTodayLog = (guardId: string): AttendanceLog | undefined =>
@@ -79,6 +84,7 @@ export default function ShiftScheduler() {
     }
     logAttendance({
       id: `ATT-${Date.now()}`,
+      tenantId: currentUser?.tenantId || 'GLOBAL',
       guardId: guard.id,
       guardName: guard.name,
       siteId: guard.assignedSiteId,

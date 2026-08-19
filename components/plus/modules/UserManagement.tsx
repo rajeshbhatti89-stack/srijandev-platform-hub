@@ -16,6 +16,7 @@ export default function UserManagement() {
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const isSuperAdmin = currentUser?.role === 'SrijanDev Admin';
   const isHO = currentUser?.role === 'Corporate HO Admin';
   const isPSH = currentUser?.role === 'Plant Security Head';
@@ -50,12 +51,13 @@ export default function UserManagement() {
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
     if (editingId) {
-      updateUser(editingId, { name, email, role: role as any, tenantId, assignedSiteId, contactNo });
+      updateUser(editingId, { name, email, password: password || undefined, role: role as any, tenantId, assignedSiteId, contactNo });
     } else {
       addUser({
         id: `USER-${Date.now()}`,
         name,
         email,
+        password,
         role: role as any,
         tenantId,
         assignedSiteId,
@@ -71,6 +73,7 @@ export default function UserManagement() {
     setEditingId(null);
     setName('');
     setEmail('');
+    setPassword('');
     setRole(allowedRoles[0]);
     setTenantId(isPSH ? (currentUser?.tenantId || 'GLOBAL') : 'GLOBAL');
     setAssignedSiteId(isPSH ? (currentUser?.assignedSiteId || 'GLOBAL') : 'GLOBAL');
@@ -81,6 +84,7 @@ export default function UserManagement() {
     setEditingId(user.id);
     setName(user.name);
     setEmail(user.email);
+    setPassword(user.password || '');
     setRole(user.role);
     setTenantId(user.tenantId);
     setAssignedSiteId(user.assignedSiteId);
@@ -129,14 +133,21 @@ export default function UserManagement() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-medium text-gray-400 mb-1.5">Role</label>
-                  <select value={role} onChange={e => setRole(e.target.value)} className="w-full bg-gray-950 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none">
-                    {allowedRoles.map(r => <option key={r} value={r}>{r}</option>)}
-                  </select>
+                  <label className="block text-xs font-medium text-gray-400 mb-1.5">Password</label>
+                  <input type="text" value={password} onChange={e => setPassword(e.target.value)} required={!editingId} placeholder={editingId ? "Leave blank to keep current" : ""} className="w-full bg-gray-950 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none" />
                 </div>
                 <div>
                   <label className="block text-xs font-medium text-gray-400 mb-1.5">Contact No</label>
                   <input type="text" value={contactNo} onChange={e => setContactNo(e.target.value)} className="w-full bg-gray-950 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none" />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-medium text-gray-400 mb-1.5">Role</label>
+                  <select value={role} onChange={e => setRole(e.target.value)} className="w-full bg-gray-950 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none">
+                    {allowedRoles.map(r => <option key={r} value={r}>{r}</option>)}
+                  </select>
                 </div>
               </div>
 

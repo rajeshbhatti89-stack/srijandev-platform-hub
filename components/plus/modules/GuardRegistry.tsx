@@ -16,10 +16,16 @@ export default function GuardRegistry() {
   const [assignedPost, setAssignedPost] = useState('');
   const [shift, setShift] = useState<Guard['shift']>('Morning');
 
+  const isGlobalAdmin = currentUser?.role === 'SrijanDev Admin';
+  const isHO = currentUser?.role === 'Corporate HO Admin';
+  const isSuperAdmin = isGlobalAdmin || isHO;
+
   // Filter guards by the current user's site, unless it's Super Admin
-  const visibleGuards = currentUser?.role === 'SrijanDev Admin' || currentUser?.role === 'Corporate HO Admin'
-    ? guards 
-    : guards.filter(g => g.assignedSiteId === currentUser?.assignedSiteId);
+  const visibleGuards = guards.filter(g => {
+    const tenantOk = isGlobalAdmin || g.tenantId === currentUser?.tenantId;
+    const siteOk = isSuperAdmin || g.assignedSiteId === currentUser?.assignedSiteId;
+    return tenantOk && siteOk;
+  });
 
   const handleClearAll = () => {
     if (confirm('CRITICAL WARNING: Are you sure you want to nuke the entire roster? This cannot be undone.')) {
@@ -50,7 +56,8 @@ export default function GuardRegistry() {
         name,
         phone: '',
         designation,
-        assignedSiteId: currentUser?.role === 'SrijanDev Admin' || currentUser?.role === 'Corporate HO Admin' ? 'SITE-01' : (currentUser?.assignedSiteId || 'SITE-01'),
+        tenantId: currentUser?.tenantId || 'GLOBAL',
+        assignedSiteId: isSuperAdmin ? 'SITE-01' : (currentUser?.assignedSiteId || 'SITE-01'),
         assignedPost,
         shift,
         status: 'On Duty'

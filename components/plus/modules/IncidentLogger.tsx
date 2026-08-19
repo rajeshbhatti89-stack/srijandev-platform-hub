@@ -27,13 +27,16 @@ export default function IncidentLogger() {
   const [filterType, setFilterType] = useState('');
   const [filterSeverity, setFilterSeverity] = useState('');
 
-  const isSuperAdmin = currentUser?.role === 'SrijanDev Admin' || currentUser?.role === 'Corporate HO Admin';
+  const isGlobalAdmin = currentUser?.role === 'SrijanDev Admin';
+  const isHO = currentUser?.role === 'Corporate HO Admin';
+  const isSuperAdmin = isGlobalAdmin || isHO;
 
   const visibleIncidents = incidents.filter(i => {
+    const tenantOk = isGlobalAdmin || i.tenantId === currentUser?.tenantId;
     const siteOk = isSuperAdmin || i.siteId === currentUser?.assignedSiteId;
     const typeOk = !filterType || i.type === filterType;
     const sevOk = !filterSeverity || i.severity === filterSeverity;
-    return siteOk && typeOk && sevOk;
+    return tenantOk && siteOk && typeOk && sevOk;
   });
 
   const handleCreate = (e: React.FormEvent) => {
@@ -42,6 +45,7 @@ export default function IncidentLogger() {
 
     addIncident({
       id: `INC-${Math.floor(Math.random() * 90000) + 10000}`,
+      tenantId: currentUser?.tenantId || 'GLOBAL',
       siteId: isSuperAdmin ? 'SITE-01' : (currentUser?.assignedSiteId || 'SITE-01'),
       type,
       direction: type === 'Material Pass' ? direction : undefined,

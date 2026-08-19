@@ -17,16 +17,22 @@ export default function LiveMapView() {
   const { currentUser, guards } = useEnterpriseStore();
   const { geofencePosts } = useOperationsStore();
 
-  const isSuperAdmin = currentUser?.role === 'SrijanDev Admin';
+  const isGlobalAdmin = currentUser?.role === 'SrijanDev Admin';
   const isHO = currentUser?.role === 'Corporate HO Admin';
+  const isSuperAdmin = isGlobalAdmin || isHO;
+  const targetTenantId = currentUser?.tenantId || 'GLOBAL';
 
-  const scopedPosts = geofencePosts.filter(p =>
-    isSuperAdmin || isHO || p.siteId === currentUser?.assignedSiteId
-  );
+  const scopedPosts = geofencePosts.filter(p => {
+    const tenantOk = isGlobalAdmin || p.tenantId === targetTenantId;
+    const siteOk = isSuperAdmin || p.siteId === currentUser?.assignedSiteId;
+    return tenantOk && siteOk;
+  });
   
-  const scopedGuards = guards.filter(g =>
-    (isSuperAdmin || isHO || g.assignedSiteId === currentUser?.assignedSiteId) && g.status === 'On Duty'
-  );
+  const scopedGuards = guards.filter(g => {
+    const tenantOk = isGlobalAdmin || g.tenantId === targetTenantId;
+    const siteOk = isSuperAdmin || g.assignedSiteId === currentUser?.assignedSiteId;
+    return tenantOk && siteOk && g.status === 'On Duty';
+  });
 
   // We will assign random live coordinates to guards near their assigned posts to simulate live tracking
   const [liveGuards, setLiveGuards] = useState<{ id: string, name: string, lat: number, lng: number, postName: string, isBreaching: boolean }[]>([]);

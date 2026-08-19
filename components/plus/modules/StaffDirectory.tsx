@@ -54,7 +54,9 @@ export default function StaffDirectory() {
   const [importMsg, setImportMsg] = useState('');
   const fileRef = useRef<HTMLInputElement>(null);
 
-  const isSuperAdmin = currentUser?.role === 'SrijanDev Admin' || currentUser?.role === 'Corporate HO Admin';
+  const isGlobalAdmin = currentUser?.role === 'SrijanDev Admin';
+  const isHO = currentUser?.role === 'Corporate HO Admin';
+  const isSuperAdmin = isGlobalAdmin || isHO;
 
   const POSTS = Array.from(new Set(
     geofencePosts
@@ -64,11 +66,12 @@ export default function StaffDirectory() {
   if (POSTS.length === 0) POSTS.push('Main Gate 1', 'Desk Job'); // Fallback if no geofences defined
 
   const visibleGuards = guards.filter(g => {
-    const siteOk = isSuperAdmin || g.assignedSiteId === currentUser?.assignedSiteId;
+    const tenantOk = isGlobalAdmin || g.tenantId === currentUser?.tenantId;
+    const siteOk = isGlobalAdmin || isHO || g.assignedSiteId === currentUser?.assignedSiteId;
     const searchOk = !searchQ || g.name.toLowerCase().includes(searchQ.toLowerCase()) || g.personnelId.toLowerCase().includes(searchQ.toLowerCase()) || g.assignedPost.toLowerCase().includes(searchQ.toLowerCase());
     const desigOk = !filterDesig || g.designation === filterDesig;
     const statusOk = !filterStatus || g.status === filterStatus;
-    return siteOk && searchOk && desigOk && statusOk;
+    return tenantOk && siteOk && searchOk && desigOk && statusOk;
   });
 
   const resetForm = () => { setForm(EMPTY_FORM); setShowForm(false); setEditingId(null); };
@@ -82,7 +85,7 @@ export default function StaffDirectory() {
       const newId = `GRD-${Math.floor(Math.random() * 9000) + 1000}`;
       const newPId = `P-${Math.floor(Math.random() * 900) + 100}`;
       const newGCode = `GC-${Math.floor(Math.random() * 900) + 100}`;
-      addGuard({ id: newId, personnelId: newPId, guardCode: newGCode, ...form, lastCheckIn: undefined });
+      addGuard({ id: newId, personnelId: newPId, guardCode: newGCode, tenantId: currentUser?.tenantId || 'GLOBAL', ...form, lastCheckIn: undefined });
     }
     resetForm();
   };
@@ -160,6 +163,7 @@ export default function StaffDirectory() {
           department,
           company,
           designation,
+          tenantId: currentUser?.tenantId || 'GLOBAL',
           assignedSiteId: row['Site ID'] || currentUser?.assignedSiteId || 'SITE-01',
           assignedPost,
           shift,

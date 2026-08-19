@@ -23,11 +23,12 @@ interface PlantCard {
 export default function HoExecutiveDashboard() {
   const { currentUser, guards, sites, incidents, tasks } = useEnterpriseStore();
   const { patrolLogs, gatePasses, geofenceCheckIns } = useOperationsStore();
-  const { getActiveTenant } = useTenantStore();
+  const { getActiveTenant, tenants } = useTenantStore();
 
-  const tenant = getActiveTenant();
   const isSuperAdmin = currentUser?.role === 'SrijanDev Admin';
   const isHO = currentUser?.role === 'Corporate HO Admin';
+
+  const tenant = isSuperAdmin ? getActiveTenant() : tenants.find(t => t.id === currentUser?.tenantId);
 
   if (!isSuperAdmin && !isHO) {
     return (
@@ -59,24 +60,27 @@ export default function HoExecutiveDashboard() {
     };
   });
 
+  const tenantGuards = guards.filter(g => isSuperAdmin || g.tenantId === currentUser?.tenantId);
+  const tenantIncidents = incidents.filter(i => isSuperAdmin || i.tenantId === currentUser?.tenantId);
+
   // Consolidated stats
-  const totalGuards = guards.length;
-  const totalOnDuty = guards.filter(g => g.status === 'On Duty').length;
-  const totalOnLeave = guards.filter(g => g.status === 'On Leave').length;
-  const totalOpenIncidents = incidents.filter(i => i.status === 'Open').length;
-  const totalCritical = incidents.filter(i => i.status === 'Open' && i.severity === 'Critical').length;
-  const totalPatrols = patrolLogs.length;
+  const totalGuards = tenantGuards.length;
+  const totalOnDuty = tenantGuards.filter(g => g.status === 'On Duty').length;
+  const totalOnLeave = tenantGuards.filter(g => g.status === 'On Leave').length;
+  const totalOpenIncidents = tenantIncidents.filter(i => i.status === 'Open').length;
+  const totalCritical = tenantIncidents.filter(i => i.status === 'Open' && i.severity === 'Critical').length;
+  const totalPatrols = patrolLogs.length; // Can be filtered by tenantId if patrolLogs has it
   const completedPatrols = patrolLogs.filter(l => l.status === 'Completed').length;
-  const openPasses = gatePasses.filter(p => p.status === 'Open').length;
+  const openPasses = gatePasses.filter(p => p.status === 'Open').length; // Can be filtered if gatePasses has it
 
   // OT Calculator: Guards who checked in > 8 hours ago and are still On Duty
   const eightHoursAgo = Date.now() - 8 * 60 * 60 * 1000;
-  const overtimeGuards = guards.filter(g =>
+  const overtimeGuards = tenantGuards.filter(g =>
     g.status === 'On Duty' && g.lastCheckIn && new Date(g.lastCheckIn).getTime() < eightHoursAgo
   );
 
   // Recent global alerts
-  const recentAlerts = [...incidents]
+  const recentAlerts = [...tenantIncidents]
     .filter(i => i.status === 'Open')
     .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
     .slice(0, 8);
