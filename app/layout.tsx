@@ -43,6 +43,7 @@ export const viewport: Viewport = {
 };
 
 import { GlobalStoreInitializer } from '@/components/GlobalStoreInitializer';
+import MobileAppPopup from '@/components/ui/MobileAppPopup';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -50,6 +51,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="bg-gray-950 text-white antialiased">
         <GlobalStoreInitializer />
         {children}
+        <MobileAppPopup />
       </body>
     </html>
   );
