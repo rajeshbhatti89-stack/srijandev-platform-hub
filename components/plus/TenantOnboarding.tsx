@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTenantStore, Tenant, TenantModule, PlantSite } from '@/store/useTenantStore';
 import { useEnterpriseStore } from '@/store/useEnterpriseStore';
 import {
@@ -32,7 +32,7 @@ const emptyTenant = (): Omit<Tenant, 'id' | 'createdAt'> => ({
 
 export default function TenantOnboarding() {
   const { currentUser } = useEnterpriseStore();
-  const { tenants, addTenant, updateTenant, deleteTenant } = useTenantStore();
+  const { tenants, addTenant, updateTenant, deleteTenant, initTenants, isLoading } = useTenantStore();
 
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -40,6 +40,10 @@ export default function TenantOnboarding() {
   const [newSiteName, setNewSiteName] = useState('');
   const [newSiteLocation, setNewSiteLocation] = useState('');
   const [newSiteStrength, setNewSiteStrength] = useState('100');
+
+  useEffect(() => {
+    initTenants();
+  }, [initTenants]);
 
   if (currentUser?.role !== 'SrijanDev Admin') {
     return (
@@ -219,7 +223,8 @@ export default function TenantOnboarding() {
 
       {/* Tenant List */}
       <div className="space-y-4">
-        {tenants.map(tenant => (
+        {isLoading && <p className="text-gray-400 text-sm text-center py-4">Loading tenants from database...</p>}
+        {!isLoading && tenants.map(tenant => (
           <div key={tenant.id} className={`bg-gray-900 border rounded-xl p-5 ${!tenant.isActive ? 'opacity-60 border-white/5' : 'border-white/10'}`}>
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div className="flex items-center gap-4">

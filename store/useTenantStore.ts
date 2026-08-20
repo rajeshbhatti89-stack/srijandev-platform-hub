@@ -41,33 +41,55 @@ const SEED_TENANTS: Tenant[] = [];
 interface TenantState {
   tenants: Tenant[];
   activeTenantId: string | null;
+  isLoading: boolean;
 
-  addTenant: (tenant: Tenant) => void;
-  updateTenant: (id: string, data: Partial<Tenant>) => void;
-  deleteTenant: (id: string) => void;
+  initTenants: () => Promise<void>;
+  addTenant: (tenant: Tenant) => Promise<void>;
+  updateTenant: (id: string, data: Partial<Tenant>) => Promise<void>;
+  deleteTenant: (id: string) => Promise<void>;
   setActiveTenant: (id: string | null) => void;
   getActiveTenant: () => Tenant | null;
 }
 
-export const useTenantStore = create<TenantState>()(
-  persist(
-    (set, get) => ({
-      tenants: SEED_TENANTS,
-      activeTenantId: 'TENANT-001',
+import { fetchTenants, createTenantAction, updateTenantAction, deleteTenantAction } from '@/app/actions/tenantActions';
 
-      addTenant: (tenant) => set(state => ({ tenants: [tenant, ...state.tenants] })),
-      updateTenant: (id, data) => set(state => ({
-        tenants: state.tenants.map(t => t.id === id ? { ...t, ...data } : t),
-      })),
-      deleteTenant: (id) => set(state => ({
-        tenants: state.tenants.filter(t => t.id !== id),
-      })),
-      setActiveTenant: (id) => set({ activeTenantId: id }),
-      getActiveTenant: () => {
-        const { tenants, activeTenantId } = get();
-        return tenants.find(t => t.id === activeTenantId) ?? null;
-      },
-    }),
-    { name: 'srijandev-tenant-v1' }
-  )
-);
+export const useTenantStore = create<TenantState>((set, get) => ({
+  tenants: [],
+  activeTenantId: 'TENANT-001',
+  isLoading: false,
+
+  initTenants: async () => {
+    set({ isLoading: true });
+    try {
+      const data = await fetchTenants();
+      set({ tenants: data || [], isLoading: false });
+    } catch (e) {
+      set({ isLoading: false });
+    }
+  },
+
+  addTenant: async (tenant) => {
+    set(state => ({ tenants: [tenant, ...state.tenants] }));
+    await createTenantAction(tenant);
+  },
+  
+  updateTenant: async (id, data) => {
+    set(state => ({
+      tenants: state.tenants.map(t => t.id === id ? { ...t, ...data } : t),
+    }));
+    await updateTenantAction(id, data);
+  },
+  
+  deleteTenant: async (id) => {
+    set(state => ({
+      tenants: state.tenants.filter(t => t.id !== id),
+    }));
+    await deleteTenantAction(id);
+  },
+  
+  setActiveTenant: (id) => set({ activeTenantId: id }),
+  getActiveTenant: () => {
+    const { tenants, activeTenantId } = get();
+    return tenants.find(t => t.id === activeTenantId) ?? null;
+  },
+}));

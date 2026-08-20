@@ -1,2 +1,8 @@
 name = "srijandev-platform-hub"
 pages_build_output_dir = "out"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "srijandev-db"
+database_id = "7cecebd8-f255-4647-8e6c-5e4d7764f4d5"
+migrations_dir = "drizzle"
