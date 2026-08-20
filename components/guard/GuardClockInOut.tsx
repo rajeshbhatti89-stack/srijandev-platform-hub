@@ -31,123 +31,144 @@ interface Props {
   lastCheckIn?: string;
 }
 
-export default function GuardClockInOut({ guardId, guardName, siteId, post, shift, status, lastCheckIn }: Props) {
-  const { logAttendance, updateGuard } = useEnterpriseStore();
-  const { geofencePosts } = useOperationsStore();
-  
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [step, setStep] = useState<'camera' | 'location' | 'success' | 'error'>('camera');
-  const [photoBase64, setPhotoBase64] = useState<string | null>(null);
-  const [errorMsg, setErrorMsg] = useState('');
-  
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const streamRef = useRef<MediaStream | null>(null);
-
-  const isCheckedIn = status === 'On Duty';
-
-  const startCamera = async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-      }
-      streamRef.current = stream;
-    } catch (err) {
-      console.error('Camera access denied:', err);
-      setErrorMsg('Camera access is required for attendance.');
-      setStep('error');
-    }
-  };
-
-  const stopCamera = () => {
-    if (streamRef.current) {
-      streamRef.current.getTracks().forEach(track => track.stop());
-    }
-  };
-
-  useEffect(() => {
-    if (isModalOpen && step === 'camera') {
-      startCamera();
-    } else {
-      stopCamera();
-    }
-    return stopCamera;
-  }, [isModalOpen, step]);
-
-  const handleCapture = () => {
-    if (videoRef.current && canvasRef.current) {
-      const context = canvasRef.current.getContext('2d');
-      if (context) {
-        context.drawImage(videoRef.current, 0, 0, 300, 400);
-        const dataUrl = canvasRef.current.toDataURL('image/jpeg', 0.7);
-        setPhotoBase64(dataUrl);
-        setStep('location');
-        verifyLocation(dataUrl);
-      }
-    }
-  };
-
-  const verifyLocation = (photoUrl: string) => {
-    if (!navigator.geolocation) {
-      setErrorMsg('Geolocation is not supported by your device.');
-      setStep('error');
-      return;
-    }
-
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const { latitude, longitude } = position.coords;
-        const targetPost = geofencePosts.find(p => p.postName === post && p.siteId === siteId);
-        
-        if (!targetPost) {
-          setErrorMsg('Assigned post geofence not found in database.');
-          setStep('error');
-          return;
-        }
-
-        const distance = getDistanceInMeters(latitude, longitude, targetPost.centerLat, targetPost.centerLng);
-        
-        if (distance <= targetPost.radiusMeters) {
-          executeClockInOut(photoUrl, latitude, longitude);
-        } else {
-          setErrorMsg(`Geofence validation failed. You are ${Math.round(distance)}m away from your post (Max allowed: ${targetPost.radiusMeters}m).`);
-          setStep('error');
-        }
-      },
-      (error) => {
-        console.error('Location error:', error);
-        setErrorMsg('Failed to get your precise location. Please ensure GPS is enabled.');
-        setStep('error');
-      },
-      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
-    );
-  };
-
-  const executeClockInOut = (photoUrl: string, lat: number, lng: number) => {
-    const isClockingIn = !isCheckedIn;
+  export default function GuardClockInOut({ guardId, guardName, siteId, post, shift, status, lastCheckIn }: Props) {
+    const { logAttendance, updateGuard, users } = useEnterpriseStore();
+    const { geofencePosts, logGeofenceCheckIn } = useOperationsStore();
     
-    // Log Attendance
-    logAttendance({
-      id: `ATT-${Date.now()}`,
-      guardId,
-      guardName,
-      siteId,
-      date: new Date().toISOString().split('T')[0],
-      shift,
-      status: isClockingIn ? 'Present' : 'Relieved',
-      loggedAt: new Date().toISOString(),
-      loggedBy: guardName,
-      photoUrl,
-      lat,
-      lng
-    });
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [step, setStep] = useState<'camera' | 'location' | 'success' | 'error'>('camera');
+    const [photoBase64, setPhotoBase64] = useState<string | null>(null);
+    const [errorMsg, setErrorMsg] = useState('');
+    
+    const videoRef = useRef<HTMLVideoElement>(null);
+    const canvasRef = useRef<HTMLCanvasElement>(null);
+    const streamRef = useRef<MediaStream | null>(null);
+  
+    const isCheckedIn = status === 'On Duty';
+  
+    const startCamera = async () => {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+        }
+        streamRef.current = stream;
+      } catch (err) {
+        console.error('Camera access denied:', err);
+        setErrorMsg('Camera access is required for attendance.');
+        setStep('error');
+      }
+    };
+  
+    const stopCamera = () => {
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach(track => track.stop());
+      }
+    };
+  
+    useEffect(() => {
+      if (isModalOpen && step === 'camera') {
+        startCamera();
+      } else {
+        stopCamera();
+      }
+      return stopCamera;
+    }, [isModalOpen, step]);
+  
+    const handleCapture = () => {
+      if (videoRef.current && canvasRef.current) {
+        const context = canvasRef.current.getContext('2d');
+        if (context) {
+          context.drawImage(videoRef.current, 0, 0, 300, 400);
+          const dataUrl = canvasRef.current.toDataURL('image/jpeg', 0.7);
+          setPhotoBase64(dataUrl);
+          setStep('location');
+          verifyLocation(dataUrl);
+        }
+      }
+    };
+  
+    const verifyLocation = (photoUrl: string) => {
+      if (!navigator.geolocation) {
+        setErrorMsg('Geolocation is not supported by your device.');
+        setStep('error');
+        return;
+      }
+  
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          const targetPost = geofencePosts.find(p => p.postName === post && p.siteId === siteId);
+          
+          if (!targetPost) {
+            setErrorMsg('Assigned post geofence not found in database.');
+            setStep('error');
+            return;
+          }
+  
+          const distance = getDistanceInMeters(latitude, longitude, targetPost.centerLat, targetPost.centerLng);
+          
+          if (distance <= targetPost.radiusMeters) {
+            executeClockInOut(photoUrl, latitude, longitude);
+          } else {
+            setErrorMsg(`Geofence validation failed. You are ${Math.round(distance)}m away from your post (Max allowed: ${targetPost.radiusMeters}m).`);
+            setStep('error');
+          }
+        },
+        (error) => {
+          console.error('Location error:', error);
+          setErrorMsg('Failed to get your precise location. Please ensure GPS is enabled.');
+          setStep('error');
+        },
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+      );
+    };
+  
+    const executeClockInOut = (photoUrl: string, lat: number, lng: number) => {
+      const isClockingIn = !isCheckedIn;
+      const tenantId = users.find(u => u.id === guardId)?.tenantId || 'GLOBAL';
+      // Log Attendance
+      logAttendance({
+        id: `ATT-${Date.now()}`,
+        tenantId,
+        guardId,
+        guardName,
+        siteId,
+        date: new Date().toISOString().split('T')[0],
+        shift,
+        status: isClockingIn ? 'Present' : 'Relieved',
+        loggedAt: new Date().toISOString(),
+        loggedBy: guardName,
+        photoUrl,
+        lat,
+        lng
+      });
+  
+      // Update Guard Status
+      updateGuard(guardId, {
+        status: isClockingIn ? 'On Duty' : 'Relieved',
+        lastCheckIn: isClockingIn ? new Date().toISOString() : undefined
+      });
 
-    // Update Guard Status
-    updateGuard(guardId, {
-      status: isClockingIn ? 'On Duty' : 'Relieved',
-      lastCheckIn: isClockingIn ? new Date().toISOString() : undefined
-    });
+      // Log Geofence Check-in
+      if (isClockingIn) {
+        const targetPost = geofencePosts.find(p => p.postName === post && p.siteId === siteId);
+        if (targetPost) {
+          const distance = getDistanceInMeters(lat, lng, targetPost.centerLat, targetPost.centerLng);
+          logGeofenceCheckIn({
+            id: `GCI-${Date.now()}`,
+            tenantId,
+            postId: targetPost.id,
+            postName: post,
+            guardId,
+            guardName,
+            siteId,
+            timestamp: new Date().toISOString(),
+            status: 'Verified In-Fence',
+            simulatedDistance: Math.round(distance),
+          });
+        }
+      }
 
     setStep('success');
     setTimeout(() => {

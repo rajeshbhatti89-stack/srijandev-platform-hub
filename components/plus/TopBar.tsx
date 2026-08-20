@@ -29,6 +29,7 @@ export default function TopBar({ setActiveTab }: TopBarProps) {
     const siteId = currentUser.assignedSiteId === 'GLOBAL' ? 'SITE-01' : currentUser.assignedSiteId;
     triggerSOS({
       id: `SOS-${Date.now()}`,
+      tenantId: currentUser.tenantId,
       guardId: currentUser.id,
       guardName: currentUser.name,
       siteId,

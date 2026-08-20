@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useOperationsStore, PatrolRoute, PatrolLog } from '@/store/useOperationsStore';
+import { useEnterpriseStore } from '@/store/useEnterpriseStore';
 import { Map, ScanLine, CheckCircle2, Clock } from 'lucide-react';
 
 interface GuardPatrolExecutionProps {
@@ -20,18 +21,25 @@ export default function GuardPatrolExecution({ guardId, siteId }: GuardPatrolExe
   const activeLog = logs[0];
   const [selectedRouteId, setSelectedRouteId] = useState('');
 
+  const users = useEnterpriseStore(s => s.users);
+  const guards = useEnterpriseStore(s => s.guards);
+
   const handleStartPatrol = () => {
     if (!selectedRouteId) return;
     const route = routes.find(r => r.id === selectedRouteId);
     if (!route) return;
 
+    const tenantId = users.find(u => u.id === guardId)?.tenantId || 'GLOBAL';
+    const activeGuard = guards.find(g => g.id === guardId);
+
     addPatrolLog({
       id: `LOG-${Math.random().toString(36).substring(2, 8).toUpperCase()}`,
+      tenantId,
       routeId: route.id,
       routeName: route.name,
       siteId,
       guardId,
-      guardName: 'Self', // Usually populated properly
+      guardName: activeGuard?.name || 'Unknown',
       checkpointScans: [],
       status: 'Active',
       startedAt: new Date().toISOString(),

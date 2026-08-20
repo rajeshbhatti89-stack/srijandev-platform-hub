@@ -52,6 +52,7 @@ export default function StaffDirectory() {
   const [filterDesig, setFilterDesig] = useState('');
   const [filterStatus, setFilterStatus] = useState('');
   const [importMsg, setImportMsg] = useState('');
+  const [bulkSiteId, setBulkSiteId] = useState(currentUser?.assignedSiteId || 'SITE-01');
   const fileRef = useRef<HTMLInputElement>(null);
 
   const isGlobalAdmin = currentUser?.role === 'SrijanDev Admin';
@@ -78,14 +79,21 @@ export default function StaffDirectory() {
 
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.name.trim() || !form.assignedPost.trim()) return;
+    if (!form.name.trim()) {
+      alert('Name is required.');
+      return;
+    }
+    if (!form.assignedPost.trim()) {
+      alert('Assigned Post is required.');
+      return;
+    }
     if (editingId) {
-      updateGuard(editingId, { ...form });
+      updateGuard(editingId, { ...form, assignedSiteId: isSuperAdmin ? form.assignedSiteId : (currentUser?.assignedSiteId || 'SITE-01') });
     } else {
       const newId = `GRD-${Math.floor(Math.random() * 9000) + 1000}`;
       const newPId = `P-${Math.floor(Math.random() * 900) + 100}`;
       const newGCode = `GC-${Math.floor(Math.random() * 900) + 100}`;
-      addGuard({ id: newId, personnelId: newPId, guardCode: newGCode, tenantId: currentUser?.tenantId || 'GLOBAL', ...form, lastCheckIn: undefined });
+      addGuard({ id: newId, personnelId: newPId, guardCode: newGCode, tenantId: currentUser?.tenantId || 'GLOBAL', ...form, assignedSiteId: isSuperAdmin ? form.assignedSiteId : (currentUser?.assignedSiteId || 'SITE-01'), lastCheckIn: undefined });
     }
     resetForm();
   };
@@ -116,17 +124,22 @@ export default function StaffDirectory() {
       const rows = await parseCSV(file);
       let imported = 0;
       rows.forEach((row: any) => {
-        const name = row['Full Name'] || row['Employee'] || row['Name'] || '';
+        const getVal = (search: string[]) => {
+          const key = Object.keys(row).find(k => search.some(s => k.toLowerCase().includes(s.toLowerCase())));
+          return key ? row[key] : '';
+        };
+
+        const name = getVal(['name', 'employee', 'full name']);
         if (!name) return;
 
-        const department = row['Department'] || row['department'] || '';
-        const designation = row['Designation'] || row['designation'] || department || 'Guard';
-        const company = row['Company'] || row['company'] || '';
-        const phone = row['Mobile Number'] || row['Phone'] || row['Mobile'] || '';
-        const personnelId = row['Employee Code'] || row['Personnel ID'] || `P-${Math.floor(Math.random() * 900) + 100}`;
+        const department = getVal(['department', 'dept']);
+        const designation = getVal(['designation', 'role']) || department || 'Guard';
+        const company = getVal(['company', 'agency']);
+        const phone = getVal(['phone', 'mobile', 'contact']);
+        const personnelId = getVal(['employee code', 'personnel id', 'emp id', 'id']) || `P-${Math.floor(Math.random() * 900) + 100}`;
 
-        let assignedPost = row['Assigned Post'] || '';
-        let shiftStr = row['Shift'] || '';
+        let assignedPost = getVal(['assigned post', 'post', 'gate']) || '';
+        let shiftStr = getVal(['shift', 'timing']) || '';
 
         const desigLower = designation.toLowerCase();
         const deptLower = department.toLowerCase();
@@ -164,7 +177,7 @@ export default function StaffDirectory() {
           company,
           designation,
           tenantId: currentUser?.tenantId || 'GLOBAL',
-          assignedSiteId: row['Site ID'] || currentUser?.assignedSiteId || 'SITE-01',
+          assignedSiteId: isSuperAdmin ? bulkSiteId : (currentUser?.assignedSiteId || 'SITE-01'),
           assignedPost,
           shift,
           status: (['On Duty', 'Standby', 'On Leave', 'Relieved'].includes(row['Status']) ? row['Status'] : 'On Duty') as Guard['status'],
@@ -191,8 +204,13 @@ export default function StaffDirectory() {
             {(currentUser?.role === 'Plant Security Head' || currentUser?.role === 'Supervisor') && ` · ${currentUser.assignedSiteId}`}
           </p>
         </div>
-        <div className="flex flex-wrap gap-2">
-          <button onClick={() => { setShowForm(true); setEditingId(null); setForm(EMPTY_FORM); }} className="flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium transition-colors shadow-lg shadow-blue-500/20">
+        <div className="flex flex-wrap items-center gap-2">
+          {isSuperAdmin && (
+            <select value={bulkSiteId} onChange={e => setBulkSiteId(e.target.value)} className="bg-gray-900 border border-white/10 rounded-lg px-2 py-2 text-xs text-gray-300 focus:outline-none" title="Select Site for Bulk Import">
+              {sites.map(s => <option key={s.id} value={s.id}>{s.name} Import</option>)}
+            </select>
+          )}
+          <button onClick={() => { setShowForm(true); setEditingId(null); setForm({...EMPTY_FORM, assignedSiteId: currentUser?.assignedSiteId || 'SITE-01', assignedPost: POSTS[0] || 'Main Gate 1'}); }} className="flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium transition-colors shadow-lg shadow-blue-500/20">
             <UserPlus size={15} /> Add Personnel
           </button>
           <button onClick={() => exportGuards(visibleGuards)} className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white/5 hover:bg-white/10 text-gray-300 text-sm border border-white/10 transition-colors">
@@ -340,7 +358,8 @@ export default function StaffDirectory() {
                         <div>
                           <p className="font-semibold text-white">{guard.name}</p>
                           <div className="flex items-center gap-2 mt-0.5">
-                            <span className="font-mono text-[10px] text-blue-400">{guard.personnelId}</span>
+                            <span className="font-mono text-[10px] text-blue-400" title="Personnel ID">{guard.personnelId}</span>
+                            <span className="font-mono text-[10px] text-emerald-400" title="Guard Code (Login ID)">{guard.guardCode}</span>
                             {guard.phone && (
                               <span className="flex items-center gap-1 text-[10px] text-gray-500">
                                 <Phone size={9} />{guard.phone}

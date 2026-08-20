@@ -14,16 +14,30 @@ export default function GuardCompanionApp() {
   const activeGuardId = useGuardAppStore(s => s.activeGuardId);
   const activeTab = useGuardAppStore(s => s.activeTab);
   const login = useGuardAppStore(s => s.login);
+  const logout = useGuardAppStore(s => s.logout);
   const guards = useEnterpriseStore(s => s.guards);
   
+  const activeGuard = guards.find(g => g.id === activeGuardId);
+
   const [guardCode, setGuardCode] = useState('');
   const [phone, setPhone] = useState('');
   const [loginError, setLoginError] = useState('');
+
+  useEffect(() => {
+    if (activeGuardId && !activeGuard) {
+      logout();
+    }
+  }, [activeGuardId, activeGuard, logout]);
   
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     setLoginError('');
-    const foundGuard = guards.find(g => g.guardCode.toUpperCase() === guardCode.toUpperCase() && g.phone === phone);
+    
+    const cleanPhoneInput = phone.replace(/\D/g, '');
+    const foundGuard = guards.find(g => 
+      g.guardCode.toUpperCase().trim() === guardCode.toUpperCase().trim() && 
+      g.phone.replace(/\D/g, '') === cleanPhoneInput
+    );
     
     if (foundGuard) {
       login(foundGuard.id);
@@ -81,8 +95,6 @@ export default function GuardCompanionApp() {
       </div>
     );
   }
-
-  const activeGuard = guards.find(g => g.id === activeGuardId);
   
   // Render based on activeTab
   if (activeTab === 'patrol') return <GuardPatrolExecution guardId={activeGuardId} siteId={activeGuard?.assignedSiteId || ''} />;
@@ -137,7 +149,7 @@ export default function GuardCompanionApp() {
       </div>
 
       {/* SOS Quick Action (renders actual SOS functionality) */}
-      <GuardSOSButton siteId={activeGuard?.assignedSiteId || ''} reporter={activeGuard?.name || ''} />
+      <GuardSOSButton siteId={activeGuard?.assignedSiteId || ''} reporter={activeGuard?.name || ''} guardId={activeGuardId} />
 
     </div>
   );

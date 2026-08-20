@@ -2,15 +2,18 @@
 
 import { useState, useEffect } from 'react';
 import { useEnterpriseStore } from '@/store/useEnterpriseStore';
+import { useOperationsStore } from '@/store/useOperationsStore';
 import { ShieldAlert, Info } from 'lucide-react';
 
 interface GuardSOSButtonProps {
   siteId: string;
   reporter: string;
+  guardId: string;
 }
 
-export default function GuardSOSButton({ siteId, reporter }: GuardSOSButtonProps) {
-  const addIncident = useEnterpriseStore(s => s.addIncident);
+export default function GuardSOSButton({ siteId, reporter, guardId }: GuardSOSButtonProps) {
+  const { addIncident, users } = useEnterpriseStore();
+  const { triggerSOS } = useOperationsStore();
   const [countdown, setCountdown] = useState<number | null>(null);
 
   useEffect(() => {
@@ -33,8 +36,10 @@ export default function GuardSOSButton({ siteId, reporter }: GuardSOSButtonProps
     } else {
       // Trigger actual SOS
       const incidentId = `SOS-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
+      const tenantId = users.find(u => u.id === guardId)?.tenantId || 'GLOBAL';
       addIncident({
         id: incidentId,
+        tenantId,
         siteId,
         type: 'Security Breach',
         severity: 'Critical',
@@ -42,6 +47,17 @@ export default function GuardSOSButton({ siteId, reporter }: GuardSOSButtonProps
         reportedBy: reporter,
         timestamp: new Date().toISOString(),
         status: 'Open',
+      });
+      triggerSOS({
+        id: `SOS-${Date.now()}`,
+        tenantId,
+        guardId,
+        guardName: reporter,
+        siteId,
+        post: 'Companion App',
+        coordinates: 'Unknown',
+        timestamp: new Date().toISOString(),
+        status: 'Active',
       });
       alert('SOS ALERT TRANSMITTED TO HQ!');
       setCountdown(null);

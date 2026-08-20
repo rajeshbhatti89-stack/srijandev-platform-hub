@@ -13,6 +13,7 @@ interface GuardLeaveRequestProps {
 export default function GuardLeaveRequest({ guardId, guardName, siteId }: GuardLeaveRequestProps) {
   const addLeaveRequest = useEnterpriseStore(s => s.addLeaveRequest);
   const myLeaves = useEnterpriseStore(s => s.leaveRequests.filter(l => l.guardId === guardId));
+  const users = useEnterpriseStore(s => s.users);
 
   const [leaveType, setLeaveType] = useState<'Sick' | 'Casual' | 'Emergency'>('Casual');
   const [fromDate, setFromDate] = useState('');
@@ -23,8 +24,10 @@ export default function GuardLeaveRequest({ guardId, guardName, siteId }: GuardL
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const reqId = `LR-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
+    const tenantId = users.find(u => u.id === guardId)?.tenantId || 'GLOBAL';
     addLeaveRequest({
       id: reqId,
+      tenantId,
       guardId,
       guardName,
       siteId,
