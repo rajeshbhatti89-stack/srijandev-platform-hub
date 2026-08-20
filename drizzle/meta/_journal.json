@@ -8,6 +8,13 @@
       "when": 1787208299424,
       "tag": "0000_far_maestro",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1787208947212,
+      "tag": "0001_lively_secret_warriors",
+      "breakpoints": true
     }
   ]
 }

@@ -42,10 +42,13 @@ export const viewport: Viewport = {
   viewportFit: 'cover',
 };
 
+import { GlobalStoreInitializer } from '@/components/GlobalStoreInitializer';
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <body className="bg-gray-950 text-white antialiased">
+        <GlobalStoreInitializer />
         {children}
       </body>
     </html>
