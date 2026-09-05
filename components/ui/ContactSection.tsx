@@ -85,8 +85,8 @@ export default function ContactSection() {
         setToast({ message: 'Message sent! We\'ll get back to you within 24 hours.', type: 'success' });
         setForm({ fullName: '', email: '', service: '', budget: '', message: '' });
       } else {
-        const data = await res.json().catch(() => ({}));
-        setToast({ message: data.error || 'Something went wrong. Please try again or email us directly.', type: 'error' });
+        const data = (await res.json().catch(() => ({}))) as any;
+        setToast({ message: data?.error || 'Something went wrong. Please try again or email us directly.', type: 'error' });
       }
     } catch {
       setToast({ message: 'Network error. Please check your connection or email us directly.', type: 'error' });

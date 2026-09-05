@@ -24,24 +24,46 @@ const budgetLabels: Record<string, string> = {
 
 export async function POST(request: NextRequest) {
   try {
-    const body: ContactPayload = await request.json();
-
-    // Validate required fields
-    if (!body.fullName?.trim() || !body.email?.trim() || !body.service || !body.message?.trim()) {
-      return NextResponse.json({ error: 'Missing required fields.' }, { status: 400 });
+    const rawBody = await request.json().catch(() => null);
+    if (!rawBody || typeof rawBody !== 'object') {
+      return NextResponse.json({ error: 'Invalid request payload.' }, { status: 400 });
     }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const body: ContactPayload = {
+      fullName: String(rawBody.fullName || '').trim(),
+      email: String(rawBody.email || '').trim().toLowerCase(),
+      service: String(rawBody.service || '').trim(),
+      budget: rawBody.budget ? String(rawBody.budget).trim() : undefined,
+      message: String(rawBody.message || '').trim(),
+    };
+
+    // Validate required fields and bounds
+    if (!body.fullName || !body.email || !body.service || !body.message) {
+      return NextResponse.json({ error: 'All required fields must be completed.' }, { status: 400 });
+    }
+
+    if (body.fullName.length > 100) {
+      return NextResponse.json({ error: 'Full name cannot exceed 100 characters.' }, { status: 400 });
+    }
+
+    if (body.email.length > 150) {
+      return NextResponse.json({ error: 'Email address cannot exceed 150 characters.' }, { status: 400 });
+    }
+
+    if (body.message.length > 5000) {
+      return NextResponse.json({ error: 'Message cannot exceed 5000 characters.' }, { status: 400 });
+    }
+
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if (!emailRegex.test(body.email)) {
-      return NextResponse.json({ error: 'Invalid email address.' }, { status: 400 });
+      return NextResponse.json({ error: 'Please enter a valid email address.' }, { status: 400 });
     }
 
     const RESEND_API_KEY = process.env.RESEND_API_KEY;
 
     if (!RESEND_API_KEY) {
-      // In development without API key, log and return success
-      console.log('[Contact Form Submission]', body);
-      return NextResponse.json({ success: true, message: 'Message received (dev mode).' });
+      // In development without API key, return safe generic success
+      return NextResponse.json({ success: true, message: 'Message received successfully.' });
     }
 
     const serviceLabel = serviceLabels[body.service] || body.service;

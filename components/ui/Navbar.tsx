@@ -47,28 +47,40 @@ export default function Navbar() {
           </div>
         </div>
 
-        {/* PLUS TOGGLE */}
-        <div className="flex items-center gap-4">
+        {/* NAVIGATION SHORTCUTS */}
+        <div className="flex items-center gap-3">
           <div className="relative p-1 bg-gray-900 border border-white/10 rounded-full flex items-center">
-            
-            {/* Standard Mode - Active */}
-            <div className="relative z-10 px-4 py-1.5 rounded-full text-sm font-semibold transition-colors text-white bg-white/10 shadow-sm border border-white/5">
-              Standard
+            {/* Standard Mode */}
+            <div className="relative z-10 px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-colors text-white bg-white/10 shadow-sm border border-white/5">
+              Hub
             </div>
             
+            {/* SrijanDev HR Portal Link */}
+            <Link
+              href="/hr"
+              className="relative z-10 px-3 sm:px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-colors flex items-center gap-1.5 text-amber-400 hover:text-amber-300 hover:bg-amber-500/10"
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+              HR Portal
+            </Link>
+
             {/* Plus OS Gateway Button */}
             <Link
               href="/plus"
               onMouseEnter={() => setIsHovered(true)}
               onMouseLeave={() => setIsHovered(false)}
-              className="relative z-10 px-4 py-1.5 rounded-full text-sm font-semibold transition-colors flex items-center gap-2 text-gray-400 hover:text-emerald-400"
+              className="relative z-10 px-3 sm:px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-colors flex items-center gap-1.5 text-gray-400 hover:text-indigo-400 hover:bg-indigo-500/10"
             >
-              <ShieldCheck size={14} className={isHovered ? 'text-emerald-500 animate-pulse' : 'text-gray-500'} />
-              Plus OS Gateway
+              <ShieldCheck size={14} className={isHovered ? 'text-indigo-400 animate-pulse' : 'text-gray-500'} />
+              <span className="hidden xs:inline">Plus OS</span>
             </Link>
           </div>
           
-          <Link href="/plus" className="hidden sm:flex items-center justify-center w-10 h-10 rounded-full border border-white/10 bg-gray-900 text-gray-400 hover:text-white hover:border-white/20 transition-all shadow-lg hover:shadow-emerald-500/10 hover:-translate-y-0.5">
+          <Link 
+            href="/hr" 
+            title="SrijanDev HR Portal"
+            className="hidden sm:flex items-center justify-center w-10 h-10 rounded-full border border-amber-500/20 bg-amber-500/10 text-amber-400 hover:text-white hover:bg-amber-500/20 hover:border-amber-500/40 transition-all shadow-lg hover:shadow-amber-500/10 hover:-translate-y-0.5"
+          >
             <User size={18} />
           </Link>
         </div>

@@ -61,13 +61,35 @@ const services = [
     ),
     color: '#06b6d4',
     glow: 'rgba(6,182,212,0.25)',
-    badge: 'ACTIVE',
+    badge: 'ENTERPRISE',
     badgeColor: 'bg-cyan-500/20 text-cyan-400 border-cyan-500/30',
-    title: 'Enterprise Web Applications',
-    subtitle: 'Operations & Workforce Management',
+    title: 'Enterprise Security & Plus OS',
+    subtitle: 'Operations & Workforce',
     description:
       'Real-time workforce tracking, custom admin dashboards, automated operational workflows, and field force management systems — built to scale.',
     features: ['Real-Time Tracking', 'Custom Dashboards', 'Workflow Automation', 'Field Force Management'],
+    linkUrl: '/plus',
+  },
+  {
+    id: 'service-hr',
+    icon: (
+      <svg viewBox="0 0 32 32" fill="none" className="w-8 h-8">
+        <path d="M16 6C18.2091 6 20 7.79086 20 10C20 12.2091 18.2091 14 16 14C13.7909 14 12 12.2091 12 10C12 7.79086 13.7909 6 16 6Z" stroke="#f59e0b" strokeWidth="1.5" />
+        <path d="M8 26C8 21.5817 11.5817 18 16 18C20.4183 18 24 21.5817 24 26" stroke="#f59e0b" strokeWidth="1.5" strokeLinecap="round" />
+        <path d="M22 10C23.6569 10 25 11.3431 25 13C25 14.6569 23.6569 16 22 16" stroke="#f59e0b" strokeWidth="1.2" opacity="0.6" />
+        <path d="M25 24C26.1046 24 27 23.1046 27 22C27 20.3431 25.6569 19 24 19" stroke="#f59e0b" strokeWidth="1.2" opacity="0.6" />
+      </svg>
+    ),
+    color: '#f59e0b',
+    glow: 'rgba(245,158,11,0.25)',
+    badge: 'NEW PLATFORM',
+    badgeColor: 'bg-amber-500/20 text-amber-400 border-amber-500/30',
+    title: 'SrijanDev HR Management',
+    subtitle: 'Complete HRMS & ESS Portal',
+    description:
+      'Digital employee database, org chart tree, LMS leave balance tracker, GPS & web punch attendance, OKRs, talent matrix, and automated payslip generation.',
+    features: ['14 HR Modules', 'Visual Org Hierarchy', 'Live Payslip Engine', 'Role-Based Access'],
+    linkUrl: '/hr',
   },
 ];
 
@@ -95,18 +117,18 @@ export default function ServicesSection() {
           className="text-center mb-16"
         >
           <span className="inline-block mb-4 px-3 py-1 text-xs font-semibold tracking-widest uppercase text-blue-400 border border-blue-500/30 bg-blue-500/5 rounded-full">
-            Core Services
+            Core Ecosystem
           </span>
           <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-4 tracking-tight">
-            What We Build
+            What We Engineer
           </h2>
           <p className="text-gray-400 max-w-xl mx-auto">
-            Three specialized engineering disciplines. One unified vision of precision digital systems.
+            High-performance web apps, spatial 3D interfaces, native mobile solutions, and enterprise workforce platforms.
           </p>
         </motion.div>
 
         {/* Service Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {services.map((svc, i) => (
             <motion.div
               key={svc.id}
@@ -181,6 +203,19 @@ export default function ServicesSection() {
                   </span>
                 ))}
               </div>
+
+              {/* Optional Direct Platform Link */}
+              {svc.linkUrl && (
+                <div className="mt-5 pt-4 border-t border-white/5">
+                  <a
+                    href={svc.linkUrl}
+                    className="inline-flex items-center gap-1.5 text-xs font-bold tracking-wide transition-transform hover:translate-x-1"
+                    style={{ color: svc.color }}
+                  >
+                    Launch Application →
+                  </a>
+                </div>
+              )}
 
               {/* Bottom connector line */}
               <div

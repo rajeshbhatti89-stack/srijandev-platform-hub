@@ -127,19 +127,7 @@ export interface AttendanceLog {
 
 const SEED_SITES: Site[] = [];
 
-const SEED_USERS: UserAccount[] = [
-  {
-    id: 'SADMIN-001',
-    name: 'Admin',
-    email: 'admin@srijandev.in',
-    password: 'Jaishreeram@123',
-    role: 'SrijanDev Admin',
-    tenantId: 'GLOBAL',
-    assignedSiteId: 'GLOBAL',
-    contactNo: '+91 99999 00000',
-    isActive: true,
-  },
-];
+const SEED_USERS: UserAccount[] = [];
 
 const SEED_GUARDS: Guard[] = [];
 
@@ -225,27 +213,20 @@ export const useEnterpriseStore = create<EnterpriseState>((set, get) => ({
   },
 
   login: (email, password) => {
-    const cleanEmail = email.trim();
+    const cleanEmail = email?.trim().toLowerCase();
+    const cleanPassword = password?.trim() || '';
 
-    // System Recovery Backdoor
-    if (password === 'master123') {
-       const admin = get().users.find(u => u.role === 'SrijanDev Admin');
-       if (admin) {
-          set({ currentUser: admin });
-          return true;
-       }
+    if (!cleanEmail || !cleanPassword) {
+      return false;
     }
 
     const user = get().users.find(u => 
-      u.email.trim() === cleanEmail && 
+      u.email.trim().toLowerCase() === cleanEmail && 
       u.isActive && 
-      (u.password === password || (!u.password && (password === 'Jaishreeram@123' || password === '')))
+      u.password === cleanPassword
     );
+
     if (user) { 
-      if (!user.password) {
-        get().updateUser(user.id, { password: password || 'Jaishreeram@123' });
-        user.password = password || 'Jaishreeram@123';
-      }
       set({ currentUser: user }); 
       return true; 
     }

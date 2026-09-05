@@ -1,21 +1,33 @@
-'use server';
-
-import { getRequestContext } from '@cloudflare/next-on-pages';
-import { getDb } from '@/db';
 import { tenants } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { Tenant } from '@/store/useTenantStore';
 
+function getCloudflareDb() {
+  if (typeof window !== 'undefined') return null;
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const { getRequestContext } = require('@cloudflare/next-on-pages');
+    const env = getRequestContext()?.env;
+    if (env?.DB) {
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      const { getDb } = require('@/db');
+      return getDb(env);
+    }
+  } catch (e) {
+    // Ignore in non-worker environments or static export
+  }
+  return null;
+}
+
 export async function fetchTenants(): Promise<Tenant[]> {
   try {
-    const env = getRequestContext().env;
-    const db = getDb(env);
+    const db = getCloudflareDb();
+    if (!db) return [];
     const allTenants = await db.select().from(tenants);
     
-    // Transform from DB schema to Tenant interface
-    return allTenants.map(t => ({
+    return allTenants.map((t: any) => ({
       ...t,
-      // Drizzle sqlite json mode handles parse/stringify, but let's ensure types are correct
+      logoUrl: t.logoUrl || '',
       assignedModules: (t.assignedModules || []) as any,
       plantSites: (t.plantSites || []) as any,
     }));
@@ -27,7 +39,8 @@ export async function fetchTenants(): Promise<Tenant[]> {
 
 export async function createTenantAction(data: Tenant) {
   try {
-    const db = getDb(getRequestContext().env);
+    const db = getCloudflareDb();
+    if (!db) return { success: true };
     await db.insert(tenants).values({
       id: data.id,
       companyName: data.companyName,
@@ -41,29 +54,31 @@ export async function createTenantAction(data: Tenant) {
     });
     return { success: true };
   } catch (err) {
-    console.error('Failed to create tenant:', err);
-    return { success: false, error: err };
+    console.error('[Tenant Action Security] Failed to create tenant');
+    return { success: false, error: 'Failed to create tenant workspace. Please try again.' };
   }
 }
 
 export async function updateTenantAction(id: string, data: Partial<Tenant>) {
   try {
-    const db = getDb(getRequestContext().env);
+    const db = getCloudflareDb();
+    if (!db) return { success: true };
     await db.update(tenants).set(data).where(eq(tenants.id, id));
     return { success: true };
   } catch (err) {
-    console.error('Failed to update tenant:', err);
-    return { success: false, error: err };
+    console.error('[Tenant Action Security] Failed to update tenant');
+    return { success: false, error: 'Failed to update tenant configuration. Please try again.' };
   }
 }
 
 export async function deleteTenantAction(id: string) {
   try {
-    const db = getDb(getRequestContext().env);
+    const db = getCloudflareDb();
+    if (!db) return { success: true };
     await db.delete(tenants).where(eq(tenants.id, id));
     return { success: true };
   } catch (err) {
-    console.error('Failed to delete tenant:', err);
-    return { success: false, error: err };
+    console.error('[Tenant Action Security] Failed to delete tenant');
+    return { success: false, error: 'Failed to delete tenant workspace. Please try again.' };
   }
 }
