@@ -5,6 +5,7 @@ import { useHRStore } from '@/store/useHRStore';
 import HRSidebar from '@/components/hr/HRSidebar';
 import HRTopBar from '@/components/hr/HRTopBar';
 import QuickActionsModal from '@/components/hr/QuickActionsModal';
+import HRChatbotWidget from '@/components/hr/HRChatbotWidget';
 
 // Module Imports
 import EmployeeDirectory from '@/components/hr/modules/EmployeeDirectory';
@@ -121,6 +122,9 @@ export default function HRDashboardPage() {
         isOpen={isQuickActionOpen}
         onClose={() => setIsQuickActionOpen(false)}
       />
+
+      {/* Gemini AI HR Support Chatbot Assistant */}
+      <HRChatbotWidget />
     </div>
   );
 }
