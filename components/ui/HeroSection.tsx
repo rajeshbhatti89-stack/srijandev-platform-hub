@@ -2,22 +2,10 @@
 
 import { useRef, useCallback } from 'react';
 import { motion, type Variants } from 'framer-motion';
-import dynamic from 'next/dynamic';
 import DotGridBackground from '@/components/canvas/DotGridBackground';
 import CredButton from '@/components/ui/CredButton';
+import CredHeroShowcase from '@/components/ui/CredHeroShowcase';
 import { ArrowRight, Mail } from 'lucide-react';
-
-const IsometricScene = dynamic(() => import('@/components/canvas/IsometricScene'), {
-  ssr: false,
-  loading: () => (
-    <div className="w-full h-full flex flex-col items-center justify-center bg-[#0f1015]/90 backdrop-blur-sm border border-white/5 rounded-2xl">
-      <div className="w-10 h-10 border-2 border-t-transparent rounded-full animate-spin border-[#00ff87] mb-3" />
-      <span className="text-xs font-mono text-[#00ff87] tracking-widest uppercase animate-pulse">
-        Initializing Spatial Matrix...
-      </span>
-    </div>
-  ),
-});
 
 const fadeUp: Variants = {
   hidden: { opacity: 0, y: 30 },
@@ -149,42 +137,14 @@ export default function HeroSection() {
           </motion.div>
         </div>
 
-        {/* Right: 3D Canvas Card in CRED Convex Frame */}
+        {/* Right: CRED 3D Holographic Showcase */}
         <motion.div
           initial={{ opacity: 0, scale: 0.92 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 1, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
-          className="flex-1 w-full h-[380px] lg:h-[520px] rounded-2xl overflow-hidden border border-white/[0.09] bg-gradient-to-b from-[#181a24] via-[#12131a] to-[#0a0b0e] shadow-[12px_12px_32px_rgba(0,0,0,0.8),-4px_-4px_16px_rgba(255,255,255,0.03),inset_0_1px_0_rgba(255,255,255,0.15)] relative group"
+          transition={{ duration: 1, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+          className="flex-1 w-full flex items-center justify-center"
         >
-          {/* Top HUD Telemetry Bar */}
-          <div className="absolute top-4 left-4 right-4 z-20 flex items-center justify-between pointer-events-none">
-            <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-white/[0.08] bg-[#0f1015]/80 backdrop-blur-md shadow-[0_4px_12px_rgba(0,0,0,0.5)]">
-              <span className="w-2 h-2 rounded-full bg-[#00ff87] animate-pulse shadow-[0_0_8px_#00ff87]" />
-              <span className="text-[11px] font-mono text-gray-200 font-bold tracking-wider">
-                SPATIAL ENGINE v4.2
-              </span>
-            </div>
-            <div className="hidden sm:flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-white/[0.08] bg-[#0f1015]/80 backdrop-blur-md shadow-[0_4px_12px_rgba(0,0,0,0.5)]">
-              <span className="text-[10px] font-mono text-[#f5d061] font-bold uppercase tracking-widest">
-                WebGL 2.0 • 60 FPS
-              </span>
-            </div>
-          </div>
-
-          {/* Bottom HUD Hint */}
-          <div className="absolute bottom-4 left-4 right-4 z-20 flex items-center justify-between pointer-events-none">
-            <div className="flex items-center gap-2 px-3 py-1 rounded-lg border border-white/[0.06] bg-[#0f1015]/70 backdrop-blur-md">
-              <svg className="w-3.5 h-3.5 text-[#00ff87] animate-bounce" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
-              </svg>
-              <span className="text-[11px] font-mono text-gray-400">
-                Move cursor to rotate 3D matrix
-              </span>
-            </div>
-          </div>
-
-          {/* 3D Canvas */}
-          <IsometricScene mouseRef={mouseRef} />
+          <CredHeroShowcase />
         </motion.div>
       </div>
 
