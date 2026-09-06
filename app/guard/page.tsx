@@ -49,33 +49,33 @@ export default function GuardCompanionApp() {
   if (!activeGuardId) {
     return (
       <div className="flex flex-col items-center justify-center min-h-full p-6 text-center">
-        <div className="w-20 h-20 bg-blue-500/10 rounded-full flex items-center justify-center border border-blue-500/20 mb-6">
-          <Shield size={40} className="text-blue-500" />
+        <div className="w-20 h-20 bg-[#16181f] rounded-2xl flex items-center justify-center border border-white/[0.08] shadow-[inset_0_1px_0_rgba(255,255,255,0.15),0_8px_20px_rgba(0,0,0,0.6)] mb-6">
+          <Shield size={38} className="text-[#00ff87]" />
         </div>
-        <h2 className="text-2xl font-black text-white mb-2">Guard Companion</h2>
-        <p className="text-sm text-gray-400 mb-8">Select your identity to access your shift details and patrol tasks.</p>
+        <h2 className="text-2xl font-black text-white mb-2 tracking-tight">Guard Companion</h2>
+        <p className="text-sm text-[#8e95a5] mb-8 max-w-xs">Select your identity to access your shift details and patrol tasks.</p>
         
-        <form onSubmit={handleLogin} className="w-full max-w-sm space-y-4">
+        <form onSubmit={handleLogin} className="w-full max-w-sm space-y-4 bg-gradient-to-b from-[#181a24] via-[#13141b] to-[#0d0e12] p-6 rounded-2xl border border-white/[0.08] shadow-[10px_10px_28px_rgba(0,0,0,0.7),inset_0_1px_0_rgba(255,255,255,0.12)]">
           <div className="text-left space-y-4">
             <div>
-              <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Guard Code</label>
+              <label className="block text-xs font-bold text-[#8e95a5] uppercase tracking-wider mb-2">Guard Code</label>
               <input
                 type="text"
                 placeholder="e.g. GC-001"
                 value={guardCode}
                 onChange={(e) => setGuardCode(e.target.value)}
-                className="w-full bg-gray-900 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500 transition-colors"
+                className="w-full bg-[#090a0d] border border-white/[0.06] rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#00ff87]/50 focus:shadow-[0_0_15px_rgba(0,255,135,0.15)] shadow-[inset_4px_4px_10px_rgba(0,0,0,0.8),inset_-2px_-2px_6px_rgba(255,255,255,0.03)] transition-all"
                 required
               />
             </div>
             <div>
-              <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Registered Phone</label>
+              <label className="block text-xs font-bold text-[#8e95a5] uppercase tracking-wider mb-2">Registered Phone</label>
               <input
                 type="tel"
                 placeholder="e.g. 9876543210"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
-                className="w-full bg-gray-900 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500 transition-colors"
+                className="w-full bg-[#090a0d] border border-white/[0.06] rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#00ff87]/50 focus:shadow-[0_0_15px_rgba(0,255,135,0.15)] shadow-[inset_4px_4px_10px_rgba(0,0,0,0.8),inset_-2px_-2px_6px_rgba(255,255,255,0.03)] transition-all"
                 required
               />
             </div>
@@ -87,9 +87,10 @@ export default function GuardCompanionApp() {
           <button 
             type="submit"
             disabled={!guardCode || !phone}
-            className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed mt-4"
+            className="relative group overflow-hidden w-full bg-white hover:bg-gray-100 text-[#0a0b0e] font-extrabold text-sm tracking-wider uppercase py-3.5 rounded-full transition-all shadow-[0_10px_25px_rgba(255,255,255,0.18)] hover:scale-[1.01] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed mt-4 cursor-pointer"
           >
-            Access Companion App
+            <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-black/10 to-transparent -translate-x-[150%] group-hover:translate-x-[150%] transition-transform duration-700 ease-out pointer-events-none" />
+            <span>Access Companion App</span>
           </button>
         </form>
       </div>

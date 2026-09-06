@@ -15,30 +15,34 @@ export default function HomePage() {
       <ContactSection />
 
       {/* Footer */}
-      <footer className="border-t border-white/5 bg-gray-950 py-8">
-        <div className="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-md bg-gradient-to-br from-blue-500 to-violet-600 flex items-center justify-center">
-              <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
-                <path d="M8 1L14 4.5V11.5L8 15L2 11.5V4.5L8 1Z" stroke="white" strokeWidth="1.5" fill="none" />
-                <path d="M8 5L11 6.75V10.25L8 12L5 10.25V6.75L8 5Z" fill="white" opacity="0.8" />
+      <footer className="border-t border-white/[0.06] bg-[#0c0d12] py-10 relative overflow-hidden">
+        {/* Top 1px bevel sheen */}
+        <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/15 to-transparent pointer-events-none" />
+
+        <div className="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-6">
+          <div className="flex items-center gap-3">
+            <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-[#1c1e26] to-[#0f1015] border border-white/10 flex items-center justify-center shadow-[inset_0_1px_0_rgba(255,255,255,0.2)]">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                <path d="M8 1L14 4.5V11.5L8 15L2 11.5V4.5L8 1Z" stroke="#00ff87" strokeWidth="1.5" fill="none" />
+                <path d="M8 5L11 6.75V10.25L8 12L5 10.25V6.75L8 5Z" fill="#00ff87" opacity="0.8" />
               </svg>
             </div>
-            <span className="text-gray-400 text-sm font-medium">
-              <span className="text-white font-bold">SrijanDev</span> © {new Date().getFullYear()}
+            <span className="text-[#8e95a5] text-sm font-medium">
+              <span className="text-white font-bold tracking-wide">SrijanDev</span> © {new Date().getFullYear()} • Engineered for Scale
             </span>
           </div>
+
           <div className="flex items-center gap-6">
             <a
               href="mailto:Contact@srijandev.in"
-              className="text-gray-400 hover:text-blue-400 text-sm transition-colors"
+              className="text-[#8e95a5] hover:text-[#00ff87] text-sm font-medium transition-colors"
               id="footer-email"
             >
               Contact@srijandev.in
             </a>
-            <span className="flex items-center gap-1.5 text-xs text-gray-600">
-              <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
-              Systems Online
+            <span className="flex items-center gap-2 text-xs font-mono text-gray-400 px-3 py-1 rounded-full border border-white/[0.06] bg-[#121318]">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#00ff87] animate-pulse shadow-[0_0_8px_#00ff87]" />
+              Core Systems Active
             </span>
           </div>
         </div>

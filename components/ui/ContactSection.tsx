@@ -96,15 +96,17 @@ export default function ContactSection() {
   };
 
   const inputClass = (field: keyof FormErrors) =>
-    `w-full bg-white/4 border rounded-xl px-4 py-3 text-white placeholder-gray-500 text-sm outline-none transition-all duration-200 focus:bg-white/6 focus:border-blue-500/60 focus:ring-2 focus:ring-blue-500/20 ${
-      errors[field] ? 'border-red-500/50 bg-red-500/5' : 'border-white/8 hover:border-white/15'
+    `w-full bg-[#090a0d] border rounded-xl px-4 py-3.5 text-white placeholder-gray-500 text-sm outline-none transition-all duration-200 shadow-[inset_4px_4px_10px_rgba(0,0,0,0.8),inset_-2px_-2px_6px_rgba(255,255,255,0.03)] ${
+      errors[field]
+        ? 'border-red-500/60 bg-red-950/10'
+        : 'border-white/[0.06] hover:border-white/[0.12] focus:border-[#00ff87]/50 focus:shadow-[inset_4px_4px_10px_rgba(0,0,0,0.9),0_0_16px_rgba(0,255,135,0.12)]'
     }`;
 
   return (
-    <section id="contact" ref={ref} className="relative py-24 bg-gray-950 overflow-hidden">
+    <section id="contact" ref={ref} className="relative py-28 bg-[#0f1015] overflow-hidden">
       {/* Glow */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] rounded-full bg-blue-600/8 blur-[100px]" />
+        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] rounded-full bg-[#00ff87]/5 blur-[120px]" />
       </div>
 
       {/* Dot grid */}
@@ -112,7 +114,7 @@ export default function ContactSection() {
         className="absolute inset-0 pointer-events-none opacity-20"
         style={{
           backgroundImage: `radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px)`,
-          backgroundSize: '20px 20px',
+          backgroundSize: '24px 24px',
         }}
       />
 
@@ -121,17 +123,17 @@ export default function ContactSection() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.7 }}
-          className="text-center mb-14"
+          transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+          className="text-center mb-16"
         >
-          <span className="inline-block mb-4 px-3 py-1 text-xs font-semibold tracking-widest uppercase text-blue-400 border border-blue-500/30 bg-blue-500/5 rounded-full">
-            Lead Capture — System Active
+          <span className="inline-block mb-4 px-4 py-1.5 text-xs font-bold tracking-widest uppercase text-[#00ff87] border border-white/[0.08] bg-[#14161d] rounded-full shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_2px_8px_rgba(0,0,0,0.4)]">
+            Lead Capture • System Active
           </span>
-          <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-4 tracking-tight">
+          <h2 className="text-3xl md:text-5xl font-black text-white mb-4 tracking-tight">
             Start Your Project
           </h2>
-          <p className="text-gray-400 max-w-lg mx-auto">
-            Tell us about your vision. Every submission goes directly to our team.
+          <p className="text-[#8e95a5] max-w-lg mx-auto text-base">
+            Tell us about your vision. Every brief is routed directly to our core engineering team.
           </p>
         </motion.div>
 
@@ -140,22 +142,22 @@ export default function ContactSection() {
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             animate={inView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.7, delay: 0.1 }}
+            transition={{ duration: 0.7, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
             className="lg:col-span-2 flex flex-col gap-6"
           >
-            <div className="rounded-2xl border border-white/8 bg-white/2 p-6 backdrop-blur-sm">
+            <div className="rounded-2xl border border-white/[0.08] bg-gradient-to-b from-[#181a24] via-[#13141b] to-[#0d0e12] p-7 shadow-[8px_8px_24px_rgba(0,0,0,0.65),-3px_-3px_12px_rgba(255,255,255,0.025),inset_0_1px_0_rgba(255,255,255,0.12)]">
               <div className="flex items-center gap-2 mb-4">
-                <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" style={{ boxShadow: '0 0 6px #22c55e' }} />
-                <span className="text-xs font-bold tracking-widest text-green-400 uppercase">All Systems Active</span>
+                <span className="w-2 h-2 rounded-full bg-[#00ff87] animate-pulse shadow-[0_0_8px_#00ff87]" />
+                <span className="text-xs font-bold tracking-widest text-[#00ff87] uppercase">All Systems Active</span>
               </div>
               <h3 className="text-white font-bold text-lg mb-1">Direct Contact</h3>
-              <p className="text-gray-400 text-sm mb-5">
-                Prefer to reach out directly? Write to us anytime.
+              <p className="text-[#8e95a5] text-sm mb-6">
+                Prefer to reach out directly? Write to us anytime for instant response.
               </p>
               <a
                 id="contact-mailto-btn"
                 href="mailto:Contact@srijandev.in?subject=Project%20Inquiry%20from%20srijandev.in&body=Hello%20SrijanDev%20Team%2C%0A%0AI%27d%20like%20to%20discuss%20a%20project%3A%0A%0AProject%20Type%3A%20%0ABudget%3A%20%0ATimeline%3A%20%0ADescription%3A%20"
-                className="flex items-center gap-3 w-full px-5 py-3.5 rounded-xl bg-blue-600/15 border border-blue-500/30 text-blue-300 font-semibold text-sm hover:bg-blue-600/25 hover:border-blue-500/50 transition-all duration-200 group"
+                className="flex items-center gap-3 w-full px-5 py-3.5 rounded-full bg-[#121318] border border-white/[0.08] text-[#f1f5f9] font-semibold text-sm hover:border-[#00ff87]/40 hover:text-[#00ff87] shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_4px_12px_rgba(0,0,0,0.5)] transition-all duration-300 group"
               >
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
@@ -169,16 +171,16 @@ export default function ContactSection() {
             </div>
 
             {/* Service status nodes */}
-            <div className="rounded-2xl border border-white/8 bg-white/2 p-6 backdrop-blur-sm">
-              <h4 className="text-gray-400 text-xs font-bold tracking-widest uppercase mb-4">Service Nodes</h4>
-              <div className="flex flex-col gap-3">
+            <div className="rounded-2xl border border-white/[0.08] bg-gradient-to-b from-[#181a24] via-[#13141b] to-[#0d0e12] p-7 shadow-[8px_8px_24px_rgba(0,0,0,0.65),-3px_-3px_12px_rgba(255,255,255,0.025),inset_0_1px_0_rgba(255,255,255,0.12)]">
+              <h4 className="text-[#8e95a5] text-xs font-bold tracking-widest uppercase mb-4">Service Nodes</h4>
+              <div className="flex flex-col gap-3.5">
                 {[
-                  { label: '3D Web Design Module', color: '#3b82f6' },
-                  { label: 'Mobile Engine', color: '#8b5cf6' },
-                  { label: 'Enterprise Suite', color: '#06b6d4' },
+                  { label: '3D Web & Spatial Module', color: '#00e5ff' },
+                  { label: 'Mobile Native Engine', color: '#00ff87' },
+                  { label: 'Enterprise Suite & Plus OS', color: '#f5d061' },
                 ].map((node) => (
                   <div key={node.label} className="flex items-center gap-3">
-                    <span className="w-2 h-2 rounded-full flex-shrink-0 animate-pulse" style={{ backgroundColor: '#22c55e', boxShadow: `0 0 6px #22c55e` }} />
+                    <span className="w-2 h-2 rounded-full flex-shrink-0 animate-pulse" style={{ backgroundColor: node.color, boxShadow: `0 0 8px ${node.color}` }} />
                     <span className="text-gray-300 text-sm font-medium flex-1">{node.label}</span>
                     <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: node.color }} />
                   </div>
@@ -187,20 +189,23 @@ export default function ContactSection() {
             </div>
           </motion.div>
 
-          {/* Form */}
+          {/* Form in CRED Convex Container */}
           <motion.form
             onSubmit={handleSubmit}
             initial={{ opacity: 0, x: 30 }}
             animate={inView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.7, delay: 0.2 }}
-            className="lg:col-span-3 rounded-2xl border border-white/8 bg-white/2 p-8 backdrop-blur-sm"
+            transition={{ duration: 0.7, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+            className="lg:col-span-3 rounded-2xl border border-white/[0.08] bg-gradient-to-b from-[#181a24] via-[#13141b] to-[#0d0e12] p-8 sm:p-10 shadow-[10px_10px_28px_rgba(0,0,0,0.7),-4px_-4px_14px_rgba(255,255,255,0.025),inset_0_1px_0_rgba(255,255,255,0.15)] relative overflow-hidden"
             id="contact-form"
             noValidate
           >
+            {/* Top 1px bevel sheen */}
+            <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none" />
+
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-5">
               {/* Full Name */}
               <div className="sm:col-span-1">
-                <label htmlFor="contact-name" className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
+                <label htmlFor="contact-name" className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
                   Full Name *
                 </label>
                 <input
@@ -218,7 +223,7 @@ export default function ContactSection() {
 
               {/* Email */}
               <div className="sm:col-span-1">
-                <label htmlFor="contact-email" className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
+                <label htmlFor="contact-email" className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
                   Email Address *
                 </label>
                 <input
@@ -236,7 +241,7 @@ export default function ContactSection() {
 
               {/* Service */}
               <div className="sm:col-span-1">
-                <label htmlFor="contact-service" className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
+                <label htmlFor="contact-service" className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
                   Service Category *
                 </label>
                 <select
@@ -248,7 +253,7 @@ export default function ContactSection() {
                   style={{ colorScheme: 'dark' }}
                 >
                   {serviceOptions.map((opt) => (
-                    <option key={opt.value} value={opt.value} disabled={!opt.value} className="bg-gray-900">
+                    <option key={opt.value} value={opt.value} disabled={!opt.value} className="bg-[#0f1015] text-white">
                       {opt.label}
                     </option>
                   ))}
@@ -258,7 +263,7 @@ export default function ContactSection() {
 
               {/* Budget */}
               <div className="sm:col-span-1">
-                <label htmlFor="contact-budget" className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
+                <label htmlFor="contact-budget" className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
                   Project Scope / Budget
                 </label>
                 <select
@@ -266,11 +271,11 @@ export default function ContactSection() {
                   name="budget"
                   value={form.budget}
                   onChange={handleChange}
-                  className="w-full bg-white/4 border border-white/8 rounded-xl px-4 py-3 text-white text-sm outline-none transition-all duration-200 hover:border-white/15 focus:bg-white/6 focus:border-blue-500/60 focus:ring-2 focus:ring-blue-500/20 appearance-none cursor-pointer"
+                  className="w-full bg-[#090a0d] border border-white/[0.06] rounded-xl px-4 py-3.5 text-white text-sm outline-none transition-all duration-200 hover:border-white/[0.12] focus:border-[#00ff87]/50 focus:shadow-[inset_4px_4px_10px_rgba(0,0,0,0.9),0_0_16px_rgba(0,255,135,0.12)] shadow-[inset_4px_4px_10px_rgba(0,0,0,0.8),inset_-2px_-2px_6px_rgba(255,255,255,0.03)] appearance-none cursor-pointer"
                   style={{ colorScheme: 'dark' }}
                 >
                   {budgetOptions.map((opt) => (
-                    <option key={opt.value} value={opt.value} className="bg-gray-900">
+                    <option key={opt.value} value={opt.value} className="bg-[#0f1015] text-white">
                       {opt.label}
                     </option>
                   ))}
@@ -279,8 +284,8 @@ export default function ContactSection() {
             </div>
 
             {/* Message */}
-            <div className="mb-6">
-              <label htmlFor="contact-message" className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
+            <div className="mb-7">
+              <label htmlFor="contact-message" className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
                 Project Message *
               </label>
               <textarea
@@ -295,31 +300,35 @@ export default function ContactSection() {
               {errors.message && <p className="mt-1.5 text-xs text-red-400">{errors.message}</p>}
             </div>
 
-            {/* Submit */}
+            {/* Submit Button (CRED Ultra Smooth High Contrast Pill) */}
             <button
               id="contact-submit"
               type="submit"
               disabled={submitting}
-              className="w-full px-8 py-4 rounded-xl bg-gradient-to-r from-blue-600 to-violet-600 text-white font-bold text-base shadow-xl shadow-blue-500/20 hover:shadow-blue-500/40 hover:scale-[1.01] active:scale-[0.99] transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center gap-3"
+              className="relative group overflow-hidden w-full px-8 py-4 rounded-full bg-white text-[#0a0b0e] font-extrabold text-sm tracking-wider uppercase shadow-[0_10px_30px_rgba(255,255,255,0.18)] hover:shadow-[0_15px_40px_rgba(255,255,255,0.32)] transition-all duration-300 hover:scale-[1.015] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 cursor-pointer"
             >
+              {/* Shimmer sweep */}
+              <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-black/10 to-transparent -translate-x-[150%] group-hover:translate-x-[150%] transition-transform duration-700 ease-out pointer-events-none" />
+
               {submitting ? (
                 <>
                   <svg className="animate-spin w-5 h-5" viewBox="0 0 24 24" fill="none">
                     <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" opacity="0.3" />
                     <path d="M12 2a10 10 0 0110 10" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
                   </svg>
-                  Transmitting...
+                  <span>Transmitting...</span>
                 </>
               ) : (
                 <>
-                  Send Project Brief →
+                  <span>Send Project Brief</span>
+                  <span className="transition-transform duration-200 group-hover:translate-x-1">→</span>
                 </>
               )}
             </button>
 
             <p className="mt-4 text-center text-xs text-gray-500">
               Submissions are routed directly to{' '}
-              <span className="text-blue-400">Contact@srijandev.in</span>
+              <span className="text-[#00ff87]">Contact@srijandev.in</span>
             </p>
           </motion.form>
         </div>

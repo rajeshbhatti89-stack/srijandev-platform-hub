@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { ShieldCheck, User } from 'lucide-react';
+import { ShieldCheck, User, Sparkles } from 'lucide-react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
@@ -24,43 +24,44 @@ export default function Navbar() {
     <motion.nav 
       initial={{ y: -80, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.6, ease: 'easeOut' }}
-      className={`fixed top-0 w-full z-50 transition-all duration-300 ${
+      transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+      className={`fixed top-0 w-full z-50 transition-all duration-400 ${
         scrolled 
-          ? 'bg-gray-950/80 backdrop-blur-md border-b border-white/5 py-4' 
-          : 'bg-transparent py-6'
+          ? 'bg-[#0f1015]/85 backdrop-blur-xl border-b border-white/[0.06] py-3.5 shadow-[0_10px_30px_rgba(0,0,0,0.6)]' 
+          : 'bg-transparent py-5'
       }`}
     >
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
         
         {/* LOGO */}
-        <div className="flex items-center gap-2 relative">
-          <div className="relative group flex items-center h-16 w-[180px]">
+        <Link href="/" className="flex items-center gap-2 relative group cursor-pointer">
+          <div className="relative flex items-center h-14 w-[160px] transition-transform duration-300 group-hover:scale-105">
             <Image 
               src="/logo.png"
               alt="SrijanDev"
               fill
-              className="object-contain transition-opacity duration-300 drop-shadow-[0_0_8px_rgba(59,130,246,0.3)]"
-              sizes="180px"
+              className="object-contain drop-shadow-[0_0_12px_rgba(0,255,135,0.2)]"
+              sizes="160px"
               priority
             />
           </div>
-        </div>
+        </Link>
 
-        {/* NAVIGATION SHORTCUTS */}
+        {/* NAVIGATION SHORTCUTS - CRED Capsule */}
         <div className="flex items-center gap-3">
-          <div className="relative p-1 bg-gray-900 border border-white/10 rounded-full flex items-center">
-            {/* Standard Mode */}
-            <div className="relative z-10 px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-colors text-white bg-white/10 shadow-sm border border-white/5">
+          <div className="relative p-1 bg-[#121318] border border-white/[0.08] shadow-[inset_0_2px_4px_rgba(0,0,0,0.6),0_4px_12px_rgba(0,0,0,0.4)] rounded-full flex items-center">
+            {/* Standard Mode / Hub */}
+            <div className="relative z-10 px-4 py-1.5 rounded-full text-xs sm:text-sm font-bold tracking-wide transition-all text-white bg-gradient-to-b from-[#222530] to-[#161820] shadow-[0_2px_8px_rgba(0,0,0,0.6),inset_0_1px_0_rgba(255,255,255,0.15)] border border-white/10 flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#00ff87] shadow-[0_0_8px_#00ff87]" />
               Hub
             </div>
             
             {/* SrijanDev HR Portal Link */}
             <Link
               href="/hr"
-              className="relative z-10 px-3 sm:px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-colors flex items-center gap-1.5 text-amber-400 hover:text-amber-300 hover:bg-amber-500/10"
+              className="relative z-10 px-3.5 sm:px-4 py-1.5 rounded-full text-xs sm:text-sm font-semibold tracking-wide transition-all flex items-center gap-1.5 text-[#f5d061] hover:text-white hover:bg-[#f5d061]/10"
             >
-              <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+              <span className="w-1.5 h-1.5 rounded-full bg-[#f5d061] animate-pulse" />
               HR Portal
             </Link>
 
@@ -69,19 +70,20 @@ export default function Navbar() {
               href="/plus"
               onMouseEnter={() => setIsHovered(true)}
               onMouseLeave={() => setIsHovered(false)}
-              className="relative z-10 px-3 sm:px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-colors flex items-center gap-1.5 text-gray-400 hover:text-indigo-400 hover:bg-indigo-500/10"
+              className="relative z-10 px-3.5 sm:px-4 py-1.5 rounded-full text-xs sm:text-sm font-semibold tracking-wide transition-all flex items-center gap-1.5 text-gray-400 hover:text-[#00e5ff] hover:bg-[#00e5ff]/10"
             >
-              <ShieldCheck size={14} className={isHovered ? 'text-indigo-400 animate-pulse' : 'text-gray-500'} />
+              <ShieldCheck size={14} className={isHovered ? 'text-[#00e5ff] animate-pulse' : 'text-gray-500'} />
               <span className="hidden xs:inline">Plus OS</span>
             </Link>
           </div>
           
+          {/* User Profile / Quick Access button */}
           <Link 
             href="/hr" 
             title="SrijanDev HR Portal"
-            className="hidden sm:flex items-center justify-center w-10 h-10 rounded-full border border-amber-500/20 bg-amber-500/10 text-amber-400 hover:text-white hover:bg-amber-500/20 hover:border-amber-500/40 transition-all shadow-lg hover:shadow-amber-500/10 hover:-translate-y-0.5"
+            className="hidden sm:flex items-center justify-center w-10 h-10 rounded-full border border-white/[0.08] bg-[#16181f] text-[#f5d061] hover:text-white hover:border-[#f5d061]/50 hover:bg-[#f5d061]/10 transition-all shadow-[4px_4px_10px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.1)] hover:scale-105 active:scale-95"
           >
-            <User size={18} />
+            <User size={17} />
           </Link>
         </div>
 
