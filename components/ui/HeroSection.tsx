@@ -4,7 +4,7 @@ import { useRef, useCallback } from 'react';
 import { motion, type Variants } from 'framer-motion';
 import DotGridBackground from '@/components/canvas/DotGridBackground';
 import CredButton from '@/components/ui/CredButton';
-import CredHeroShowcase from '@/components/ui/CredHeroShowcase';
+import CredAppShowcase from '@/components/ui/CredAppShowcase';
 import { ArrowRight, Mail } from 'lucide-react';
 
 const fadeUp: Variants = {
@@ -137,14 +137,14 @@ export default function HeroSection() {
           </motion.div>
         </div>
 
-        {/* Right: CRED 3D Holographic Showcase */}
+        {/* Right: CRED Live App Showcase Carousel */}
         <motion.div
           initial={{ opacity: 0, scale: 0.92 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 1, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
           className="flex-1 w-full flex items-center justify-center"
         >
-          <CredHeroShowcase />
+          <CredAppShowcase />
         </motion.div>
       </div>
 
