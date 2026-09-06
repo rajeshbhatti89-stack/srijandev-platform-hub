@@ -101,3 +101,8 @@ next-env.d.ts
 .serverless/
 .terraform/
 .turbo/
+
+# --- Standalone Sub-Projects / Local Workspaces ---
+bill generator/
+Inventory web app/
+
