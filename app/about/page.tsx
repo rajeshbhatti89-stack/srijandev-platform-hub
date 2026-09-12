@@ -61,17 +61,25 @@ export default function AboutPage() {
       {
         '@type': 'Organization',
         '@id': 'https://srijandev.in/#organization',
-        name: 'SrijanDev',
-        legalName: 'SrijanDev',
+        name: 'Srijandev Technologies',
+        alternateName: ['SrijanDev', 'SrijanDev Studio'],
+        legalName: 'Srijandev Technologies',
+        identifier: 'UDYAM-HP-11-0048514',
+        taxID: 'UDYAM-HP-11-0048514',
         url: 'https://srijandev.in',
         logo: 'https://srijandev.in/logo.png',
         image: 'https://srijandev.in/logo.png',
         description:
-          'SrijanDev is an advanced digital engineering studio building high-performance 3D Web experiences, native Android applications, Plus OS workforce platforms, and modern enterprise HR software.',
+          'Srijandev Technologies (Trade name: SrijanDev) is an official Govt. of India MSME-registered enterprise (UDYAM-HP-11-0048514) building high-performance 3D Web experiences, native Android applications, Plus OS workforce platforms, and modern enterprise HR software.',
         email: 'Contact@srijandev.in',
         foundingLocation: {
           '@type': 'Country',
           name: 'India',
+        },
+        address: {
+          '@type': 'PostalAddress',
+          addressRegion: 'Himachal Pradesh',
+          addressCountry: 'IN',
         },
         knowsAbout: [
           '3D Web Design & WebGL',
@@ -549,43 +557,60 @@ export default function AboutPage() {
                 <div>
                   <div className="flex items-center gap-3 mb-2">
                     <span className="w-2.5 h-2.5 rounded-full bg-[#00ff87] shadow-[0_0_10px_#00ff87] animate-pulse" />
-                    <span className="text-xs font-mono font-bold tracking-widest text-[#00ff87] uppercase">Verified Knowledge Profile</span>
+                    <span className="text-xs font-mono font-bold tracking-widest text-[#00ff87] uppercase">Govt. of India MSME Registered</span>
                   </div>
                   <h2 className="text-2xl sm:text-3xl font-extrabold text-white">
-                    SrijanDev Organizational Profile
+                    Srijandev Technologies Profile
                   </h2>
                 </div>
 
-                <div className="px-4 py-2 rounded-xl bg-[#14161f] border border-white/[0.08] text-xs font-mono text-gray-300 flex items-center gap-2">
+                <div className="px-4 py-2 rounded-xl bg-[#14161f] border border-[#00ff87]/30 text-xs font-mono text-gray-200 flex items-center gap-2 shadow-[0_0_15px_rgba(0,255,135,0.1)]">
                   <span className="w-2 h-2 rounded-full bg-[#00ff87]" />
-                  Index Status: Active
+                  <span>MSME Reg: <strong className="text-[#00ff87]">UDYAM-HP-11-0048514</strong></span>
                 </div>
               </div>
 
               {/* Factsheet Key-Value Grid */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pt-8">
                 <div>
-                  <div className="text-xs font-mono uppercase text-gray-400 mb-1">Entity Name</div>
-                  <div className="text-sm font-semibold text-white">SrijanDev</div>
+                  <div className="text-xs font-mono uppercase text-gray-400 mb-1">Registered Entity Name</div>
+                  <div className="text-sm font-semibold text-white">Srijandev Technologies</div>
                 </div>
 
                 <div>
-                  <div className="text-xs font-mono uppercase text-gray-400 mb-1">Official Domain</div>
+                  <div className="text-xs font-mono uppercase text-gray-400 mb-1">Brand &amp; Operating Name</div>
+                  <div className="text-sm font-semibold text-[#00ff87]">SrijanDev</div>
+                </div>
+
+                <div>
+                  <div className="text-xs font-mono uppercase text-gray-400 mb-1">Udyam Registration No.</div>
+                  <div className="text-sm font-mono font-bold text-[#00e5ff]">
+                    UDYAM-HP-11-0048514
+                  </div>
+                </div>
+
+                <div>
+                  <div className="text-xs font-mono uppercase text-gray-400 mb-1">Enterprise Classification</div>
+                  <div className="text-sm font-semibold text-white">Micro Enterprise (Ministry of MSME)</div>
+                </div>
+
+                <div>
+                  <div className="text-xs font-mono uppercase text-gray-400 mb-1">State / Jurisdiction</div>
+                  <div className="text-sm font-semibold text-white">Himachal Pradesh, India</div>
+                </div>
+
+                <div>
+                  <div className="text-xs font-mono uppercase text-gray-400 mb-1">Official Web Domain</div>
                   <a href="https://srijandev.in" className="text-sm font-semibold text-[#00e5ff] hover:underline">
                     https://srijandev.in
                   </a>
                 </div>
 
                 <div>
-                  <div className="text-xs font-mono uppercase text-gray-400 mb-1">Official Contact</div>
+                  <div className="text-xs font-mono uppercase text-gray-400 mb-1">Official Contact Email</div>
                   <a href="mailto:Contact@srijandev.in" className="text-sm font-semibold text-[#00ff87] hover:underline">
                     Contact@srijandev.in
                   </a>
-                </div>
-
-                <div>
-                  <div className="text-xs font-mono uppercase text-gray-400 mb-1">Country of Origin</div>
-                  <div className="text-sm font-semibold text-white">India</div>
                 </div>
 
                 <div>
@@ -667,7 +692,7 @@ export default function AboutPage() {
                 </svg>
               </div>
               <span className="text-[#8e95a5] text-sm font-medium">
-                <span className="text-white font-bold tracking-wide">SrijanDev</span> © {new Date().getFullYear()} • Engineered for Scale
+                <span className="text-white font-bold tracking-wide">Srijandev Technologies</span> © {new Date().getFullYear()} • MSME: <span className="text-[#00ff87] font-mono font-semibold">UDYAM-HP-11-0048514</span>
               </span>
             </div>
 

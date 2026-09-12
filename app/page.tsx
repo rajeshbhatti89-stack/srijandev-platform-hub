@@ -30,7 +30,7 @@ export default function HomePage() {
               </svg>
             </div>
             <span className="text-[#8e95a5] text-sm font-medium">
-              <span className="text-white font-bold tracking-wide">SrijanDev</span> © {new Date().getFullYear()} • Engineered for Scale
+              <span className="text-white font-bold tracking-wide">Srijandev Technologies</span> © {new Date().getFullYear()} • MSME: <span className="text-[#00ff87] font-mono font-semibold">UDYAM-HP-11-0048514</span>
             </span>
           </div>
 

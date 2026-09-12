@@ -326,10 +326,17 @@ export default function ContactSection() {
               )}
             </button>
 
-            <p className="mt-4 text-center text-xs text-gray-500">
-              Submissions are routed directly to{' '}
-              <span className="text-[#00ff87]">Contact@srijandev.in</span>
-            </p>
+            <div className="mt-5 flex flex-wrap items-center justify-center gap-2 sm:gap-3 text-xs text-gray-400">
+              <span>
+                Submissions routed directly to{' '}
+                <span className="text-[#00ff87]">Contact@srijandev.in</span>
+              </span>
+              <span className="hidden sm:inline text-white/20">•</span>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-white/[0.08] bg-[#12141c] text-gray-300 font-mono text-[11px] shadow-sm">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#00ff87] animate-pulse" />
+                Srijandev Technologies (MSME: <strong className="text-[#00ff87]">UDYAM-HP-11-0048514</strong>)
+              </span>
+            </div>
           </motion.form>
         </div>
       </div>
