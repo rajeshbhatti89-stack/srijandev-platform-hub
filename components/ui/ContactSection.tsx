@@ -3,6 +3,7 @@
 import { useState, useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import Toast, { ToastType } from './Toast';
+import GoogleReviewBadge from './GoogleReviewBadge';
 
 interface FormData {
   fullName: string;
@@ -169,6 +170,9 @@ export default function ContactSection() {
                 </svg>
               </a>
             </div>
+
+            {/* Google Business Profile Review QR Card */}
+            <GoogleReviewBadge />
 
             {/* Service status nodes */}
             <div className="rounded-2xl border border-white/[0.08] bg-gradient-to-b from-[#181a24] via-[#13141b] to-[#0d0e12] p-7 shadow-[8px_8px_24px_rgba(0,0,0,0.65),-3px_-3px_12px_rgba(255,255,255,0.025),inset_0_1px_0_rgba(255,255,255,0.12)]">

@@ -150,6 +150,14 @@ export default function HomePage() {
             >
               Contact@srijandev.in
             </a>
+            <a
+              href="https://local.google.com/place?placeid=ChIJe1RxSDxvBTkRnAN6IJspM8E&utm_medium=noren&utm_source=gbp&utm_campaign=2026"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[#8e95a5] hover:text-[#4285F4] text-sm font-medium transition-colors flex items-center gap-1.5"
+            >
+              <span className="text-amber-400 font-bold">★</span> Google Reviews
+            </a>
             <span className="flex items-center gap-2 text-xs font-mono text-gray-400 px-3 py-1 rounded-full border border-white/[0.06] bg-[#121318]">
               <span className="w-1.5 h-1.5 rounded-full bg-[#00ff87] animate-pulse shadow-[0_0_8px_#00ff87]" />
               Core Systems Active
