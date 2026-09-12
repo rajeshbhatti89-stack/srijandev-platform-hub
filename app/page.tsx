@@ -7,9 +7,93 @@ import ClientArea from '@/components/ui/ClientArea';
 import ServicesSection from '@/components/ui/ServicesSection';
 import ContactSection from '@/components/ui/ContactSection';
 
+const homeJsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Organization',
+      '@id': 'https://srijandev.in/#organization',
+      name: 'Srijandev Technologies',
+      alternateName: ['SrijanDev', 'SrijanDev Studio', 'srijandev.in'],
+      legalName: 'Srijandev Technologies',
+      identifier: 'UDYAM-HP-11-0048514',
+      taxID: 'UDYAM-HP-11-0048514',
+      url: 'https://srijandev.in',
+      logo: 'https://srijandev.in/logo.png',
+      image: 'https://srijandev.in/logo.png',
+      description:
+        'Srijandev Technologies (SrijanDev, MSME: UDYAM-HP-11-0048514) is an elite digital engineering studio and enterprise software lab in India. Specializing in 3D WebGL experiences, native Android applications, Plus OS workforce platforms, and enterprise portals.',
+      email: 'Contact@srijandev.in',
+      address: {
+        '@type': 'PostalAddress',
+        addressRegion: 'Himachal Pradesh',
+        addressCountry: 'IN',
+      },
+      hasOfferCatalog: {
+        '@type': 'OfferCatalog',
+        name: 'Digital Engineering Services',
+        itemListElement: [
+          {
+            '@type': 'Offer',
+            itemOffered: {
+              '@type': 'Service',
+              name: '3D Web Design & WebGL Experiences',
+              description: 'Custom Three.js environments, GLSL shaders, and interactive spatial 3D web applications.',
+            },
+          },
+          {
+            '@type': 'Offer',
+            itemOffered: {
+              '@type': 'Service',
+              name: 'Native Android Application Development',
+              description: 'High-performance native Android apps built for enterprise field operations and consumer scale.',
+            },
+          },
+          {
+            '@type': 'Offer',
+            itemOffered: {
+              '@type': 'Service',
+              name: 'Enterprise Security & Plus OS',
+              description: 'Real-time workforce operations, GPS guard touring, and multi-tenant plant facility control systems.',
+            },
+          },
+          {
+            '@type': 'Offer',
+            itemOffered: {
+              '@type': 'Service',
+              name: 'Custom Payroll & Corporate Email Portals',
+              description: 'Workforce shift attendance, automated wage computation engines, and corporate email portals.',
+            },
+          },
+        ],
+      },
+      sameAs: [
+        'https://srijandev.in',
+        'https://github.com/rajeshbhatti89-stack/srijandev-platform-hub',
+      ],
+    },
+    {
+      '@type': 'WebSite',
+      '@id': 'https://srijandev.in/#website',
+      url: 'https://srijandev.in',
+      name: 'SrijanDev — Srijandev Technologies',
+      description: '3D Web, Native Android & Enterprise Application Engineering',
+      publisher: {
+        '@id': 'https://srijandev.in/#organization',
+      },
+      inLanguage: 'en-US',
+    },
+  ],
+};
+
 export default function HomePage() {
   return (
     <main>
+      {/* Schema.org Structured Data for Google Rich Snippets & Knowledge Graph */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(homeJsonLd) }}
+      />
       <Navbar />
       <HeroSection />
       <ClientArea />

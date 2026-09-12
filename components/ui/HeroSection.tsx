@@ -59,7 +59,7 @@ export default function HeroSection() {
             className="inline-flex items-center gap-2 mb-6 px-4 py-1.5 rounded-full border border-white/[0.08] bg-[#14161d] text-xs font-semibold tracking-widest uppercase text-[#00ff87] shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_2px_8px_rgba(0,0,0,0.5)]"
           >
             <span className="w-2 h-2 rounded-full animate-pulse bg-[#00ff87] shadow-[0_0_8px_#00ff87]" />
-            Systems Operational • Ready for Deployment
+            Srijandev Technologies • MSME: UDYAM-HP-11-0048514
           </motion.div>
 
           <motion.h1
