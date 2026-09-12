@@ -3,6 +3,7 @@
 import { useEnterpriseStore } from '@/store/useEnterpriseStore';
 import Navbar from '@/components/ui/Navbar';
 import HeroSection from '@/components/ui/HeroSection';
+import ClientArea from '@/components/ui/ClientArea';
 import ServicesSection from '@/components/ui/ServicesSection';
 import ContactSection from '@/components/ui/ContactSection';
 
@@ -11,6 +12,7 @@ export default function HomePage() {
     <main>
       <Navbar />
       <HeroSection />
+      <ClientArea />
       <ServicesSection />
       <ContactSection />
 
@@ -32,7 +34,31 @@ export default function HomePage() {
             </span>
           </div>
 
-          <div className="flex items-center gap-6">
+          <div className="flex flex-wrap items-center gap-5 sm:gap-6">
+            <a
+              href="#clients"
+              className="text-[#8e95a5] hover:text-[#00ff87] text-sm font-medium transition-colors"
+            >
+              Clients
+            </a>
+            <a
+              href="/about"
+              className="text-[#8e95a5] hover:text-[#00e5ff] text-sm font-medium transition-colors"
+            >
+              About
+            </a>
+            <a
+              href="/hr"
+              className="text-[#8e95a5] hover:text-[#f5d061] text-sm font-medium transition-colors"
+            >
+              HR Portal
+            </a>
+            <a
+              href="/plus"
+              className="text-[#8e95a5] hover:text-[#00e5ff] text-sm font-medium transition-colors"
+            >
+              Plus OS
+            </a>
             <a
               href="mailto:Contact@srijandev.in"
               className="text-[#8e95a5] hover:text-[#00ff87] text-sm font-medium transition-colors"
