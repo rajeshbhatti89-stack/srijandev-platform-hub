@@ -3,23 +3,23 @@ import './globals.css';
 
 export const metadata: Metadata = {
   title: {
-    default: 'SrijanDev — 3D Web, Android & Enterprise Engineering | Srijandev Technologies',
-    template: '%s | SrijanDev',
+    default: 'Srijandev Technologies — 3D Web, Android & Enterprise Application Engineering',
+    template: '%s | Srijandev Technologies',
   },
   description:
-    'Srijandev Technologies (SrijanDev, MSME: UDYAM-HP-11-0048514) is an elite digital engineering studio in India. We engineer immersive 3D WebGL experiences, native Android applications, Plus OS workforce systems, and enterprise portals.',
+    'Srijandev Technologies (Govt. of India MSME: UDYAM-HP-11-0048514) is an elite digital engineering studio and enterprise software company in India. We engineer immersive 3D WebGL experiences, native Android applications, Plus OS workforce platforms, and custom enterprise portals.',
   keywords: [
-    'SrijanDev',
     'Srijandev Technologies',
+    'SrijanDev',
     'srijandev.in',
     'UDYAM-HP-11-0048514',
-    'Srijandev Himachal Pradesh',
-    'SrijanDev India',
+    'Srijandev Technologies Himachal Pradesh',
+    'Srijandev Technologies India',
     '3D Web Design India',
     'WebGL Three.js development',
     'Native Android app development company',
     'Plus OS workforce operations',
-    'SrijanDev HR management system',
+    'Srijandev Technologies HR management system',
     'custom payroll portal development',
     'enterprise web application',
     'corporate email setup India',
@@ -38,7 +38,7 @@ export const metadata: Metadata = {
   },
   manifest: '/manifest.json',
   appleWebApp: {
-    title: 'SrijanDev',
+    title: 'Srijandev Technologies',
     statusBarStyle: 'black-translucent',
     capable: true,
   },
@@ -46,24 +46,24 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'en_IN',
     url: 'https://srijandev.in',
-    title: 'SrijanDev — 3D Web, Android & Enterprise Engineering | Srijandev Technologies',
+    title: 'Srijandev Technologies — 3D Web, Android & Enterprise Engineering',
     description:
-      'Srijandev Technologies (SrijanDev, MSME: UDYAM-HP-11-0048514) builds high-performance 3D web experiences, native Android applications, and enterprise platforms.',
+      'Srijandev Technologies (Govt. of India MSME: UDYAM-HP-11-0048514) builds high-performance 3D web experiences, native Android applications, and enterprise platforms.',
     siteName: 'Srijandev Technologies',
     images: [
       {
         url: 'https://srijandev.in/logo.png',
         width: 1200,
         height: 630,
-        alt: 'Srijandev Technologies - SrijanDev Official Brand Emblem',
+        alt: 'Srijandev Technologies Official Emblem',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'SrijanDev — 3D Web, Android & Enterprise Engineering | Srijandev Technologies',
+    title: 'Srijandev Technologies — 3D Web, Android & Enterprise Engineering',
     description:
-      'Srijandev Technologies (MSME: UDYAM-HP-11-0048514) architects high-performance 3D spatial web experiences, native Android apps, and enterprise systems.',
+      'Srijandev Technologies (Govt. of India MSME: UDYAM-HP-11-0048514) architects high-performance 3D spatial web experiences, native Android apps, and enterprise systems.',
     images: ['https://srijandev.in/logo.png'],
   },
   robots: {

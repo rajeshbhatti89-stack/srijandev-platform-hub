@@ -20,19 +20,21 @@ import {
 } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: 'About SrijanDev — 3D Web, Native Android & Enterprise Engineering | srijandev.in',
+  title: 'About Srijandev Technologies — 3D Web, Native Android & Enterprise Engineering | srijandev.in',
   description:
-    'SrijanDev (srijandev.in) is an advanced digital engineering studio and enterprise software lab building high-performance 3D WebGL experiences, native Android applications, Plus OS workforce systems, and enterprise HR management software.',
+    'Srijandev Technologies (srijandev.in, MSME: UDYAM-HP-11-0048514) is an advanced digital engineering studio and enterprise software lab building high-performance 3D WebGL experiences, native Android applications, Plus OS workforce systems, and enterprise HR management software.',
   keywords: [
+    'Srijandev Technologies',
     'SrijanDev',
     'srijandev.in',
-    'About SrijanDev',
-    'SrijanDev software company',
+    'About Srijandev Technologies',
+    'Srijandev Technologies software company',
+    'UDYAM-HP-11-0048514',
     '3D Web Design India',
     'WebGL Three.js development',
     'Native Android app development',
     'Plus OS workforce operations',
-    'SrijanDev HR management system',
+    'Srijandev Technologies HR management system',
     'Enterprise software engineering',
   ],
   alternates: {
@@ -41,16 +43,16 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     url: 'https://srijandev.in/about',
-    title: 'About SrijanDev — High-Performance Digital Engineering',
+    title: 'About Srijandev Technologies — High-Performance Digital Engineering',
     description:
-      'SrijanDev architects immersive 3D spatial web experiences, native mobile applications, and mission-critical enterprise platforms.',
-    siteName: 'SrijanDev',
+      'Srijandev Technologies architects immersive 3D spatial web experiences, native mobile applications, and mission-critical enterprise platforms.',
+    siteName: 'Srijandev Technologies',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'About SrijanDev — High-Performance Digital Engineering',
+    title: 'About Srijandev Technologies — High-Performance Digital Engineering',
     description:
-      'SrijanDev architects immersive 3D spatial web experiences, native mobile applications, and mission-critical enterprise platforms.',
+      'Srijandev Technologies architects immersive 3D spatial web experiences, native mobile applications, and mission-critical enterprise platforms.',
   },
 };
 
@@ -215,11 +217,11 @@ export default function AboutPage() {
                 </h2>
 
                 <p className="text-[#8e95a5] text-base sm:text-lg leading-relaxed">
-                  In Sanskrit, <strong className="text-white">“Srijan”</strong> signifies the act of creation, genesis, and purposeful construction. We founded SrijanDev with an uncompromising belief: digital software should not be sluggish, fragmented, or merely utilitarian. It should be extraordinarily fast, visually mesmerizing, and architecturally indestructible.
+                  In Sanskrit, <strong className="text-white">“Srijan”</strong> signifies the act of creation, genesis, and purposeful construction. We founded Srijandev Technologies with an uncompromising belief: digital software should not be sluggish, fragmented, or merely utilitarian. It should be extraordinarily fast, visually mesmerizing, and architecturally indestructible.
                 </p>
 
                 <p className="text-[#8e95a5] text-base leading-relaxed">
-                  Most organizations are forced to choose between design agencies that produce visually pleasing but fragile websites, or enterprise vendors that build powerful but cumbersome, dated tools. SrijanDev unites both worlds: state-of-the-art WebGL spatial rendering meets bank-grade enterprise workflows.
+                  Most organizations are forced to choose between design agencies that produce visually pleasing but fragile websites, or enterprise vendors that build powerful but cumbersome, dated tools. Srijandev Technologies unites both worlds: state-of-the-art WebGL spatial rendering meets bank-grade enterprise workflows.
                 </p>
 
                 <div className="pt-2 flex flex-col sm:flex-row gap-4">
@@ -243,7 +245,7 @@ export default function AboutPage() {
                     <Terminal size={24} />
                   </div>
 
-                  <h3 className="text-xl font-bold text-white mb-2">The SrijanDev Creed</h3>
+                  <h3 className="text-xl font-bold text-white mb-2">The Srijandev Technologies Creed</h3>
                   <p className="text-[#8e95a5] text-sm leading-relaxed mb-6">
                     “Every pixel rendered must serve clarity. Every line of code written must sustain scale. Precision is not an afterthought; it is the blueprint.”
                   </p>
@@ -456,7 +458,7 @@ export default function AboutPage() {
                 Our Clients &amp; Live Deployments
               </h2>
               <p className="text-[#8e95a5] text-base sm:text-lg">
-                Software engineered by SrijanDev powering real-world organizations across tourism and heavy industrial infrastructure.
+                Software engineered by Srijandev Technologies powering real-world organizations across tourism and heavy industrial infrastructure.
               </p>
             </div>
 
@@ -489,7 +491,7 @@ export default function AboutPage() {
                 </div>
 
                 <p className="text-sm text-[#8e95a5] leading-relaxed mb-6">
-                  SrijanDev designed and developed the official tour & travel website along with full business email configuration and setup for their high-altitude expeditions and pan-India travel operations.
+                  Srijandev Technologies designed and developed the official tour & travel website along with full business email configuration and setup for their high-altitude expeditions and pan-India travel operations.
                 </p>
 
                 <div className="flex flex-wrap gap-2 pt-4 border-t border-white/[0.06]">
@@ -529,7 +531,7 @@ export default function AboutPage() {
                 </div>
 
                 <p className="text-sm text-[#8e95a5] leading-relaxed mb-6">
-                  SrijanDev engineered their complete digital infrastructure: the official industrial company website with 3D WebGL fleet visuals, a dedicated corporate email portal, and a custom enterprise payroll portal for operator shift wages and attendance management.
+                  Srijandev Technologies engineered their complete digital infrastructure: the official industrial company website with 3D WebGL fleet visuals, a dedicated corporate email portal, and a custom enterprise payroll portal for operator shift wages and attendance management.
                 </p>
 
                 <div className="flex flex-wrap gap-2 pt-4 border-t border-white/[0.06]">

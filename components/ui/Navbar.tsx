@@ -44,7 +44,7 @@ export default function Navbar() {
           <div className="relative flex items-center h-14 w-[160px] transition-transform duration-300 group-hover:scale-105">
             <Image 
               src="/logo.png"
-              alt="SrijanDev"
+              alt="Srijandev Technologies"
               fill
               className="object-contain drop-shadow-[0_0_12px_rgba(0,255,135,0.2)]"
               sizes="160px"

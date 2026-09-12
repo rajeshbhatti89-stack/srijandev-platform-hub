@@ -147,7 +147,7 @@ export default function ClientArea() {
           </h2>
 
           <p className="text-base sm:text-lg text-[#8e95a5] leading-relaxed">
-            Real enterprise projects designed, developed, and deployed by SrijanDev — delivering custom websites, corporate email infrastructure, and mission-critical payroll portals.
+            Real enterprise projects designed, developed, and deployed by Srijandev Technologies — delivering custom websites, corporate email infrastructure, and mission-critical payroll portals.
           </p>
         </div>
 
