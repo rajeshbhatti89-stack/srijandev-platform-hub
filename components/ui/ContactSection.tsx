@@ -76,21 +76,41 @@ export default function ContactSection() {
 
     setSubmitting(true);
     try {
-      const res = await fetch('/api/contact', {
+      const selectedService = serviceOptions.find((s) => s.value === form.service)?.label || form.service;
+      const selectedBudget = budgetOptions.find((b) => b.value === form.budget)?.label || form.budget || 'Not specified';
+
+      const res = await fetch('https://formsubmit.co/ajax/contact@srijandev.in', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: JSON.stringify({
+          name: form.fullName,
+          email: form.email,
+          _replyto: form.email,
+          service: selectedService,
+          budget: selectedBudget,
+          message: form.message,
+          _subject: `[New Lead] ${form.fullName} — ${selectedService}`,
+          _template: 'table',
+          _captcha: 'false',
+        }),
       });
 
-      if (res.ok) {
-        setToast({ message: 'Message sent! We\'ll get back to you within 24 hours.', type: 'success' });
+      const data = (await res.json().catch(() => ({}))) as any;
+
+      if (res.ok || data?.success === 'true' || data?.success === true) {
+        setToast({ message: "Inquiry sent! We'll get back to you within 24 hours.", type: 'success' });
+        setForm({ fullName: '', email: '', service: '', budget: '', message: '' });
+      } else if (data?.message && data.message.includes('Activation')) {
+        setToast({ message: "Inquiry recorded! Please verify email activation at contact@srijandev.in to start receiving instant leads.", type: 'success' });
         setForm({ fullName: '', email: '', service: '', budget: '', message: '' });
       } else {
-        const data = (await res.json().catch(() => ({}))) as any;
-        setToast({ message: data?.error || 'Something went wrong. Please try again or email us directly.', type: 'error' });
+        setToast({ message: data?.message || 'Something went wrong. Please try again or email us directly at Contact@srijandev.in.', type: 'error' });
       }
     } catch {
-      setToast({ message: 'Network error. Please check your connection or email us directly.', type: 'error' });
+      setToast({ message: 'Network error. Please email us directly at Contact@srijandev.in.', type: 'error' });
     } finally {
       setSubmitting(false);
     }
