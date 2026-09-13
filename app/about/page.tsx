@@ -97,7 +97,10 @@ export default function AboutPage() {
           email: 'Contact@srijandev.in',
           availableLanguage: ['English', 'Hindi'],
         },
-        sameAs: ['https://srijandev.in'],
+        sameAs: [
+          'https://srijandev.in',
+          'https://www.linkedin.com/company/srijandev-technologies/',
+        ],
       },
       {
         '@type': 'AboutPage',
@@ -616,6 +619,21 @@ export default function AboutPage() {
                 </div>
 
                 <div>
+                  <div className="text-xs font-mono uppercase text-gray-400 mb-1">Official LinkedIn</div>
+                  <a
+                    href="https://www.linkedin.com/company/srijandev-technologies/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm font-semibold text-[#0077b5] hover:text-[#00e5ff] hover:underline flex items-center gap-1.5"
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 10.9v8.37H9.2V10.9H6.46M7.83 6.6a1.64 1.64 0 1 0 0 3.28 1.64 1.64 0 0 0 0-3.28z" />
+                    </svg>
+                    linkedin.com/company/srijandev-technologies
+                  </a>
+                </div>
+
+                <div>
                   <div className="text-xs font-mono uppercase text-gray-400 mb-1">Industry &amp; Discipline</div>
                   <div className="text-sm font-semibold text-white">Digital Engineering &amp; Enterprise Software</div>
                 </div>
@@ -716,6 +734,17 @@ export default function AboutPage() {
                 className="text-[#8e95a5] hover:text-[#00ff87] text-sm font-medium transition-colors"
               >
                 Contact@srijandev.in
+              </a>
+              <a
+                href="https://www.linkedin.com/company/srijandev-technologies/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[#8e95a5] hover:text-[#0077b5] text-sm font-medium transition-colors flex items-center gap-1.5"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" className="text-[#0077b5]">
+                  <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 10.9v8.37H9.2V10.9H6.46M7.83 6.6a1.64 1.64 0 1 0 0 3.28 1.64 1.64 0 0 0 0-3.28z" />
+                </svg>
+                LinkedIn
               </a>
               <a
                 href="https://local.google.com/place?placeid=ChIJe1RxSDxvBTkRnAN6IJspM8E&utm_medium=noren&utm_source=gbp&utm_campaign=2026"

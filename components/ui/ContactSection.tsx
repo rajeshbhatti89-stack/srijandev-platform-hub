@@ -155,20 +155,38 @@ export default function ContactSection() {
               <p className="text-[#8e95a5] text-sm mb-6">
                 Prefer to reach out directly? Write to us anytime for instant response.
               </p>
-              <a
-                id="contact-mailto-btn"
-                href="mailto:Contact@srijandev.in?subject=Project%20Inquiry%20from%20srijandev.in&body=Hello%20SrijanDev%20Team%2C%0A%0AI%27d%20like%20to%20discuss%20a%20project%3A%0A%0AProject%20Type%3A%20%0ABudget%3A%20%0ATimeline%3A%20%0ADescription%3A%20"
-                className="flex items-center gap-3 w-full px-5 py-3.5 rounded-full bg-[#121318] border border-white/[0.08] text-[#f1f5f9] font-semibold text-sm hover:border-[#00ff87]/40 hover:text-[#00ff87] shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_4px_12px_rgba(0,0,0,0.5)] transition-all duration-300 group"
-              >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-                  <polyline points="22,6 12,13 2,6" />
-                </svg>
-                Contact@srijandev.in
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2" className="ml-auto group-hover:translate-x-1 transition-transform">
-                  <path d="M2 7h10M7 2l5 5-5 5" />
-                </svg>
-              </a>
+              <div className="flex flex-col gap-2.5">
+                <a
+                  id="contact-mailto-btn"
+                  href="mailto:Contact@srijandev.in?subject=Project%20Inquiry%20from%20srijandev.in&body=Hello%20SrijanDev%20Team%2C%0A%0AI%27d%20like%20to%20discuss%20a%20project%3A%0A%0AProject%20Type%3A%20%0ABudget%3A%20%0ATimeline%3A%20%0ADescription%3A%20"
+                  className="flex items-center gap-3 w-full px-5 py-3.5 rounded-full bg-[#121318] border border-white/[0.08] text-[#f1f5f9] font-semibold text-sm hover:border-[#00ff87]/40 hover:text-[#00ff87] shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_4px_12px_rgba(0,0,0,0.5)] transition-all duration-300 group"
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                    <polyline points="22,6 12,13 2,6" />
+                  </svg>
+                  Contact@srijandev.in
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2" className="ml-auto group-hover:translate-x-1 transition-transform">
+                    <path d="M2 7h10M7 2l5 5-5 5" />
+                  </svg>
+                </a>
+
+                <a
+                  id="contact-linkedin-btn"
+                  href="https://www.linkedin.com/company/srijandev-technologies/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-3 w-full px-5 py-3 rounded-full bg-[#121318] border border-white/[0.08] text-[#f1f5f9] font-semibold text-sm hover:border-[#0077b5]/50 hover:text-[#38bdf8] shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_4px_12px_rgba(0,0,0,0.5)] transition-all duration-300 group"
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" className="text-[#0077b5] group-hover:text-[#38bdf8] transition-colors">
+                    <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 10.9v8.37H9.2V10.9H6.46M7.83 6.6a1.64 1.64 0 1 0 0 3.28 1.64 1.64 0 0 0 0-3.28z" />
+                  </svg>
+                  <span>Follow on LinkedIn</span>
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2" className="ml-auto group-hover:translate-x-1 transition-transform">
+                    <path d="M2 7h10M7 2l5 5-5 5" />
+                  </svg>
+                </a>
+              </div>
             </div>
 
             {/* Google Business Profile Review QR Card */}
