@@ -461,11 +461,11 @@ export default function AboutPage() {
                 Our Clients &amp; Live Deployments
               </h2>
               <p className="text-[#8e95a5] text-base sm:text-lg">
-                Software engineered by Srijandev Technologies powering real-world organizations across tourism and heavy industrial infrastructure.
+                Software engineered by Srijandev Technologies powering real-world organizations across tourism, gourmet heritage food platforms, and heavy industrial infrastructure.
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {/* Client 1: Northen Himalayan Tours */}
               <div className="rounded-3xl border border-white/[0.08] bg-gradient-to-b from-[#181b26] to-[#10121a] p-8 sm:p-10 relative overflow-hidden shadow-[8px_8px_28px_rgba(0,0,0,0.7),inset_0_1px_0_rgba(255,255,255,0.12)] hover:border-[#B89355]/40 transition-all duration-300">
                 <div className="flex flex-col sm:flex-row items-center sm:items-start gap-5 mb-6 text-center sm:text-left">
@@ -539,6 +539,46 @@ export default function AboutPage() {
 
                 <div className="flex flex-wrap gap-2 pt-4 border-t border-white/[0.06]">
                   {['Official Website (3D)', 'Corporate Email Portal', 'Workforce Payroll Portal', 'Shift Wage Engine'].map((t) => (
+                    <span key={t} className="text-xs px-2.5 py-1 rounded-md bg-white/[0.04] border border-white/[0.08] text-gray-300">
+                      {t}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              {/* Client 3: Maa's Vatika */}
+              <div className="rounded-3xl border border-white/[0.08] bg-gradient-to-b from-[#181b26] to-[#10121a] p-8 sm:p-10 relative overflow-hidden shadow-[8px_8px_28px_rgba(0,0,0,0.7),inset_0_1px_0_rgba(255,255,255,0.12)] hover:border-[#C85A32]/40 transition-all duration-300">
+                <div className="flex flex-col sm:flex-row items-center sm:items-start gap-5 mb-6 text-center sm:text-left">
+                  <div className="w-24 h-24 rounded-2xl bg-[#090a0f] border border-[#C85A32]/30 p-2 flex items-center justify-center shrink-0 shadow-[0_4px_16px_rgba(0,0,0,0.6),0_0_16px_rgba(200,90,50,0.15)]">
+                    <img
+                      src="/clients/maasvatika.png"
+                      alt="Maa's Vatika Logo"
+                      className="max-h-full max-w-full object-contain"
+                    />
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-mono font-bold tracking-widest uppercase text-[#C85A32] px-2.5 py-0.5 rounded-full bg-[#C85A32]/10 border border-[#C85A32]/30 inline-block mb-1.5">
+                      Scope: Storefront + WhatsApp Ordering + SEO
+                    </span>
+                    <h3 className="text-xl font-bold text-white mb-1">Maa&apos;s Vatika</h3>
+                    <a
+                      href="https://maasvatika.srijandev.in"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs font-mono text-[#00e5ff] hover:underline inline-flex items-center gap-1"
+                    >
+                      <span>maasvatika.srijandev.in</span>
+                      <ArrowRight size={11} />
+                    </a>
+                  </div>
+                </div>
+
+                <p className="text-sm text-[#8e95a5] leading-relaxed mb-6">
+                  Srijandev Technologies engineered their official direct-to-consumer digital storefront for authentic handcrafted Himachali pickles, featuring interactive product showcases, seamless WhatsApp order routing, and regional SEO optimization.
+                </p>
+
+                <div className="flex flex-wrap gap-2 pt-4 border-t border-white/[0.06]">
+                  {['D2C Storefront', 'WhatsApp Ordering', 'Local SEO & Schema', 'Pan-India Delivery UI'].map((t) => (
                     <span key={t} className="text-xs px-2.5 py-1 rounded-md bg-white/[0.04] border border-white/[0.08] text-gray-300">
                       {t}
                     </span>

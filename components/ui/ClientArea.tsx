@@ -13,7 +13,8 @@ import {
   Calculator,
   Laptop,
   Check,
-  Building
+  Building,
+  ShoppingBag
 } from 'lucide-react';
 
 interface ClientItem {
@@ -108,6 +109,45 @@ const clients: ClientItem[] = [
       'Operator Shift & Automated Wage Calculations',
     ],
   },
+  {
+    id: 'maas-vatika',
+    name: "Maa's Vatika",
+    domain: 'maasvatika.srijandev.in',
+    url: 'https://maasvatika.srijandev.in',
+    logo: '/clients/maasvatika.png',
+    industry: 'Himachal Heritage & Artisanal Gourmet Agro-Foods',
+    projectScopeBadge: 'Storefront + WhatsApp Ordering + SEO',
+    accentColor: '#C85A32',
+    glowColor: 'rgba(200, 90, 50, 0.25)',
+    summary:
+      'Engineered their official direct-to-consumer digital storefront for authentic handcrafted Himachali pickles, featuring interactive product showcases, seamless WhatsApp order routing, and regional SEO optimization.',
+    deliveredServices: [
+      {
+        title: 'Official D2C Storefront',
+        description:
+          'Engineered a fast, mobile-optimized digital storefront showcasing artisanal Pahadi pickles sun-cured in ceramic barnis with wood-pressed mustard oil.',
+        icon: 'store',
+      },
+      {
+        title: 'WhatsApp Ordering Telemetry',
+        description:
+          'Integrated seamless direct WhatsApp checkout with instant order generation, customer shipping capture, and multi-tier voucher computations.',
+        icon: 'order',
+      },
+      {
+        title: 'Local SEO & Rich Schemas',
+        description:
+          'Configured rich JSON-LD schema markup, geo-targeting tags for Himachal Pradesh, and automated social preview telemetry for pan-India reach.',
+        icon: 'seo',
+      },
+    ],
+    keyHighlights: [
+      'Official Himachal Heritage Storefront',
+      'Direct WhatsApp Cart & Instant Ordering',
+      'Local SEO & Rich JSON-LD Schemas',
+      'Pan-India Delivery Telemetry',
+    ],
+  },
 ];
 
 export default function ClientArea() {
@@ -147,7 +187,7 @@ export default function ClientArea() {
           </h2>
 
           <p className="text-base sm:text-lg text-[#8e95a5] leading-relaxed">
-            Real enterprise projects designed, developed, and deployed by Srijandev Technologies — delivering custom websites, corporate email infrastructure, and mission-critical payroll portals.
+            Real enterprise projects designed, developed, and deployed by Srijandev Technologies — delivering custom websites, direct-to-consumer e-commerce, corporate email infrastructure, and mission-critical payroll portals.
           </p>
         </div>
 
@@ -177,14 +217,14 @@ export default function ClientArea() {
         </div>
 
         {/* Showcase Cards Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
           {clients.map((client) => {
             const isSelected = activeTab === client.id;
             return (
               <div
                 key={client.id}
                 onMouseEnter={() => setActiveTab(client.id)}
-                className={`relative rounded-3xl p-8 sm:p-10 transition-all duration-500 overflow-hidden border flex flex-col justify-between ${
+                className={`relative rounded-3xl p-7 sm:p-8 transition-all duration-500 overflow-hidden border flex flex-col justify-between ${
                   isSelected
                     ? 'bg-gradient-to-b from-[#1a1d29] via-[#141620] to-[#0e1017] border-white/20 shadow-[0_20px_50px_rgba(0,0,0,0.85),inset_0_1px_0_rgba(255,255,255,0.2)]'
                     : 'bg-gradient-to-b from-[#14161e] to-[#0e0f14] border-white/[0.08] shadow-[0_8px_30px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.06)] opacity-95'
@@ -203,14 +243,14 @@ export default function ClientArea() {
                   {/* Top Header Strip: Project Scope Pill & Live Domain Link */}
                   <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
                     <span
-                      className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[11px] font-bold tracking-wider uppercase border shadow-[inset_0_1px_0_rgba(255,255,255,0.1)]"
+                      className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] sm:text-[11px] font-bold tracking-wider uppercase border shadow-[inset_0_1px_0_rgba(255,255,255,0.1)]"
                       style={{
                         color: client.accentColor,
                         backgroundColor: `${client.accentColor}18`,
                         borderColor: `${client.accentColor}40`,
                       }}
                     >
-                      <Sparkles size={12} />
+                      <Sparkles size={11} />
                       {client.projectScopeBadge}
                     </span>
 
@@ -218,19 +258,19 @@ export default function ClientArea() {
                       href={client.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 text-xs font-mono font-semibold text-gray-300 hover:text-white px-3.5 py-1 rounded-full bg-white/[0.05] border border-white/[0.08] hover:border-white/20 transition-colors group"
+                      className="inline-flex items-center gap-1.5 text-xs font-mono font-semibold text-gray-300 hover:text-white px-3 py-1 rounded-full bg-white/[0.05] border border-white/[0.08] hover:border-white/20 transition-colors group"
                     >
                       <Globe size={12} className="text-[#00e5ff]" />
-                      <span>{client.domain}</span>
-                      <ArrowUpRight size={13} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                      <span className="truncate max-w-[130px]">{client.domain}</span>
+                      <ArrowUpRight size={13} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform shrink-0" />
                     </a>
                   </div>
 
                   {/* Logo + Company Header */}
-                  <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 mb-6 text-center sm:text-left">
+                  <div className="flex flex-col sm:flex-row items-center sm:items-start gap-5 mb-6 text-center sm:text-left">
                     {/* Logo Box */}
                     <div
-                      className="w-28 h-28 sm:w-32 sm:h-32 rounded-2xl bg-[#090a0e] border border-white/10 p-3 flex items-center justify-center relative shrink-0 transition-transform duration-300 hover:scale-105"
+                      className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl bg-[#090a0e] border border-white/10 p-2.5 flex items-center justify-center relative shrink-0 transition-transform duration-300 hover:scale-105"
                       style={{
                         boxShadow: `0 12px 28px rgba(0,0,0,0.7), 0 0 20px ${client.accentColor}25, inset 0 1px 0 rgba(255,255,255,0.15)`,
                       }}
@@ -238,22 +278,22 @@ export default function ClientArea() {
                       <Image
                         src={client.logo}
                         alt={`${client.name} official logo`}
-                        width={120}
-                        height={120}
+                        width={112}
+                        height={112}
                         className="object-contain max-h-full max-w-full drop-shadow-[0_4px_10px_rgba(0,0,0,0.5)]"
                         priority
                       />
                     </div>
 
                     {/* Company Details */}
-                    <div className="flex-1">
-                      <h3 className="text-2xl font-black text-white tracking-tight mb-1.5">
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-xl sm:text-2xl font-black text-white tracking-tight mb-1">
                         {client.name}
                       </h3>
-                      <p className="text-xs font-mono font-medium mb-3" style={{ color: client.accentColor }}>
+                      <p className="text-xs font-mono font-medium mb-2.5" style={{ color: client.accentColor }}>
                         {client.industry}
                       </p>
-                      <p className="text-sm text-[#8e95a5] leading-relaxed">
+                      <p className="text-xs sm:text-sm text-[#8e95a5] leading-relaxed">
                         {client.summary}
                       </p>
                     </div>
@@ -270,22 +310,25 @@ export default function ClientArea() {
                       {client.deliveredServices.map((service, idx) => (
                         <div
                           key={idx}
-                          className="p-3.5 rounded-xl bg-black/40 border border-white/[0.06] flex items-start gap-3.5"
+                          className="p-3.5 rounded-xl bg-black/40 border border-white/[0.06] flex items-start gap-3"
                         >
                           <div
-                            className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 border"
+                            className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 border mt-0.5"
                             style={{
                               backgroundColor: `${client.accentColor}15`,
                               borderColor: `${client.accentColor}35`,
                               color: client.accentColor,
                             }}
                           >
-                            {service.icon === 'website' && <Globe size={16} />}
-                            {service.icon === 'email' && <Mail size={16} />}
-                            {service.icon === 'payroll' && <Calculator size={16} />}
+                            {service.icon === 'website' && <Globe size={15} />}
+                            {service.icon === 'email' && <Mail size={15} />}
+                            {service.icon === 'payroll' && <Calculator size={15} />}
+                            {service.icon === 'store' && <ShoppingBag size={15} />}
+                            {service.icon === 'order' && <CheckCircle2 size={15} />}
+                            {service.icon === 'seo' && <Sparkles size={15} />}
                           </div>
-                          <div>
-                            <h4 className="text-sm font-bold text-white mb-1">
+                          <div className="min-w-0">
+                            <h4 className="text-xs sm:text-sm font-bold text-white mb-1">
                               {service.title}
                             </h4>
                             <p className="text-xs text-[#8e95a5] leading-relaxed">
@@ -302,7 +345,7 @@ export default function ClientArea() {
                     <div className="text-[11px] font-mono uppercase text-gray-400 font-bold mb-2.5 tracking-wider">
                       Engineering Highlights
                     </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <div className="grid grid-cols-1 gap-2">
                       {client.keyHighlights.map((h, idx) => (
                         <div key={idx} className="flex items-center gap-2 text-xs text-gray-300">
                           <Check size={14} className="text-[#00ff87] shrink-0" />
@@ -314,19 +357,19 @@ export default function ClientArea() {
                 </div>
 
                 {/* Footer Action Strip */}
-                <div className="pt-4 border-t border-white/[0.08] flex items-center justify-between">
-                  <div className="text-xs font-mono text-gray-400">
-                    Client Website: <span className="text-white font-medium">{client.domain}</span>
+                <div className="pt-4 border-t border-white/[0.08] flex flex-wrap items-center justify-between gap-3">
+                  <div className="text-xs font-mono text-gray-400 truncate max-w-[170px]">
+                    Site: <span className="text-white font-medium">{client.domain}</span>
                   </div>
 
                   <a
                     href={client.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider px-4 py-2 rounded-lg transition-all duration-300 shadow-md hover:brightness-110"
+                    className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider px-3.5 py-2 rounded-lg transition-all duration-300 shadow-md hover:brightness-110"
                     style={{
                       backgroundColor: client.accentColor,
-                      color: client.id === 'northen-himalayan-tours' ? '#1C3144' : '#0B1936',
+                      color: client.id === 'northen-himalayan-tours' ? '#1C3144' : client.id === 'maas-vatika' ? '#FFFFFF' : '#0B1936',
                     }}
                   >
                     <span>View Live Site</span>
